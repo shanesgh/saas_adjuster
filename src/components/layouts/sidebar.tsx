@@ -91,7 +91,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
             return (
               <div
                 key={item.id}
-                className="relative"
+                className="relative group"
                 onMouseEnter={() => setHoveredItem(item.id)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
@@ -106,7 +106,10 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
                   {!isCollapsed && item.label}
                 </Button>
                 {isCollapsed && hoveredItem === item.id && (
-                  <div className="absolute left-full top-0 ml-2 px-2 py-1 bg-popover text-popover-foreground rounded-md text-sm whitespace-nowrap z-50">
+                  <div 
+                    className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-popover text-popover-foreground rounded-md text-sm whitespace-nowrap z-50 shadow-md"
+                    style={{ pointerEvents: 'none' }}
+                  >
                     {item.label}
                   </div>
                 )}
@@ -117,14 +120,28 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       </ScrollArea>
 
       <div className="p-4 border-t mt-auto">
-        <Button
-          variant="outline"
-          className={`w-full justify-${isCollapsed ? 'center' : 'start'} text-destructive`}
-          onClick={handleLogout}
+        <div 
+          className="relative group"
+          onMouseEnter={() => setHoveredItem('logout')}
+          onMouseLeave={() => setHoveredItem(null)}
         >
-          <LogOut className={`h-4 w-4 ${!isCollapsed && 'mr-2'}`} />
-          {!isCollapsed && 'Log Out'}
-        </Button>
+          <Button
+            variant="outline"
+            className={`w-full justify-${isCollapsed ? 'center' : 'start'} text-destructive`}
+            onClick={handleLogout}
+          >
+            <LogOut className={`h-4 w-4 ${!isCollapsed && 'mr-2'}`} />
+            {!isCollapsed && 'Log Out'}
+          </Button>
+          {isCollapsed && hoveredItem === 'logout' && (
+            <div 
+              className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-popover text-popover-foreground rounded-md text-sm whitespace-nowrap z-50 shadow-md"
+              style={{ pointerEvents: 'none' }}
+            >
+              Log Out
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
