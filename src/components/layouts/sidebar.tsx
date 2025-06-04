@@ -16,6 +16,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuthStore } from '@/stores/auth-store';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -89,59 +95,64 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
-              <div
-                key={item.id}
-                className="relative group"
-                onMouseEnter={() => setHoveredItem(item.id)}
-                onMouseLeave={() => setHoveredItem(null)}
-              >
-                <Button
-                  variant={activeTab === item.id ? 'secondary' : 'ghost'}
-                  className={`w-full justify-${isCollapsed ? 'center' : 'start'} ${
-                    activeTab === item.id ? 'font-medium' : ''
-                  }`}
-                  onClick={() => navigate({ to: item.path })}
-                >
-                  <Icon className={`h-4 w-4 ${!isCollapsed && 'mr-2'}`} />
-                  {!isCollapsed && item.label}
-                </Button>
-                {isCollapsed && hoveredItem === item.id && (
-                  <div 
-                    className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-popover text-popover-foreground rounded-md text-sm whitespace-nowrap z-50 shadow-md"
-                    style={{ pointerEvents: 'none' }}
-                  >
-                    {item.label}
-                  </div>
-                )}
-              </div>
+              <TooltipProvider key={item.id}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div
+                      className="relative group"
+                      onMouseEnter={() => setHoveredItem(item.id)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                    >
+                      <Button
+                        variant={activeTab === item.id ? 'secondary' : 'ghost'}
+                        className={`w-full justify-${isCollapsed ? 'center' : 'start'} ${
+                          activeTab === item.id ? 'font-medium' : ''
+                        }`}
+                        onClick={() => navigate({ to: item.path })}
+                      >
+                        <Icon className={`h-4 w-4 ${!isCollapsed && 'mr-2'}`} />
+                        {!isCollapsed && item.label}
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  {isCollapsed && (
+                    <TooltipContent side="right" sideOffset={10}>
+                      {item.label}
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             );
           })}
         </div>
       </ScrollArea>
 
       <div className="p-4 border-t mt-auto">
-        <div 
-          className="relative group"
-          onMouseEnter={() => setHoveredItem('logout')}
-          onMouseLeave={() => setHoveredItem(null)}
-        >
-          <Button
-            variant="outline"
-            className={`w-full justify-${isCollapsed ? 'center' : 'start'} text-destructive`}
-            onClick={handleLogout}
-          >
-            <LogOut className={`h-4 w-4 ${!isCollapsed && 'mr-2'}`} />
-            {!isCollapsed && 'Log Out'}
-          </Button>
-          {isCollapsed && hoveredItem === 'logout' && (
-            <div 
-              className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-popover text-popover-foreground rounded-md text-sm whitespace-nowrap z-50 shadow-md"
-              style={{ pointerEvents: 'none' }}
-            >
-              Log Out
-            </div>
-          )}
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div 
+                className="relative group"
+                onMouseEnter={() => setHoveredItem('logout')}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                <Button
+                  variant="outline"
+                  className={`w-full justify-${isCollapsed ? 'center' : 'start'} text-destructive`}
+                  onClick={handleLogout}
+                >
+                  <LogOut className={`h-4 w-4 ${!isCollapsed && 'mr-2'}`} />
+                  {!isCollapsed && 'Log Out'}
+                </Button>
+              </div>
+            </TooltipTrigger>
+            {isCollapsed && (
+              <TooltipContent side="right" sideOffset={10}>
+                Log Out
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
