@@ -1,38 +1,63 @@
-import { useState, useEffect } from 'react';
-import { RouterProvider } from '@tanstack/react-router';
-import { router } from './router';
-import { Toaster } from '@/components/ui/toaster';
-import { ThemeProvider } from '@/components/theme-provider';
-import { useAuthStore } from './stores/auth-store';
+import React from 'react';
+import { FormProvider } from './context/FormContext';
+import { Header } from './components/Header';
+import { FormStepper } from './components/FormStepper';
+import { HeaderForm } from './components/forms/HeaderForm';
+import { InsuredForm } from './components/forms/InsuredForm';
+import { VehicleForm } from './components/forms/VehicleForm';
+import { FeaturesForm } from './components/forms/FeaturesForm';
+import { ConditionForm } from './components/forms/ConditionForm';
+import { TyresForm } from './components/forms/TyresForm';
+import { DamageForm } from './components/forms/DamageForm';
+import { EstimateForm } from './components/forms/EstimateForm';
+import { RecommendationForm } from './components/forms/RecommendationForm';
+import { ReviewForm } from './components/forms/ReviewForm';
+import { useForm } from './context/FormContext';
+
+const FormContent = () => {
+  const { currentStep } = useForm();
+  
+  switch (currentStep) {
+    case 'header':
+      return <HeaderForm />;
+    case 'insured':
+      return <InsuredForm />;
+    case 'vehicle':
+      return <VehicleForm />;
+    case 'features':
+      return <FeaturesForm />;
+    case 'condition':
+      return <ConditionForm />;
+    case 'tyres':
+      return <TyresForm />;
+    case 'damage':
+      return <DamageForm />;
+    case 'estimate':
+      return <EstimateForm />;
+    case 'recommendation':
+      return <RecommendationForm />;
+    case 'review':
+      return <ReviewForm />;
+    default:
+      return <HeaderForm />;
+  }
+};
 
 function App() {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
-
-  useEffect(() => {
-    const initialize = async () => {
-      await initializeAuth();
-      setIsInitialized(true);
-    };
-    initialize();
-  }, [initializeAuth]);
-
-  if (!isInitialized) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse space-y-4 text-center">
-          <div className="w-12 h-12 bg-primary/10 rounded-full mx-auto" />
-          <div className="text-muted-foreground">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
-      <Toaster />
-    </ThemeProvider>
+    <FormProvider>
+      <div className="min-h-screen bg-secondary-50">
+        <Header />
+        <main className="container mx-auto px-4 pb-16">
+          <div className="max-w-4xl mx-auto mt-8">
+            <FormStepper />
+            <div className="mt-6 transition-all">
+              <FormContent />
+            </div>
+          </div>
+        </main>
+      </div>
+    </FormProvider>
   );
 }
 
