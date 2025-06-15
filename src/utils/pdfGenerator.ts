@@ -38,7 +38,7 @@ const addPageFooter = (
 
   // Footer text in grey
   pdf.setTextColor(128, 128, 128);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.setFontSize(10);
 
   const refText = `${data.ourRef || "20210103_PDX-7167"}`;
@@ -67,13 +67,13 @@ const generatePdfDocument = async (
   const pdf = new jsPDF("p", "pt", "letter");
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 20;
+  const margin = 40;
   const contentWidth = pageWidth - margin * 2;
-  const maxContentY = pageHeight - 60; // Reserve space for footer
+  // Reserve space for footer
 
   // Add company header
-  pdf.setFontSize(16);
-  pdf.setFont("times", "bold");
+  pdf.setFontSize(18);
+  pdf.setFont("helvetica", "bold");
   pdf.text(
     "Independent Claims Adjusting & Valuation Services Limited",
     pageWidth / 2,
@@ -83,42 +83,36 @@ const generatePdfDocument = async (
 
   // Add company address & contact
   pdf.setFontSize(11);
-  pdf.setFont("times", "normal");
-  pdf.text("#139 Eastern Main Road, Barataria.", pageWidth / 2, margin + 20, {
+  pdf.setFont("helvetica", "normal");
+  pdf.text("#139 Eastern Main Road, Barataria.", pageWidth / 2, margin + 15, {
     align: "center",
   });
-  pdf.text("Tel# 1 (868) 235-5069", pageWidth / 2, margin + 35, {
+  pdf.text("Tel# 1 (868) 235-5069", pageWidth / 2, margin + 30, {
     align: "center",
   });
-  pdf.text("Email: icavslimited@gmail.com", pageWidth / 2, margin + 50, {
+  pdf.setTextColor(70, 130, 180);
+  pdf.text("Email: icavslimited@gmail.com", pageWidth / 2, margin + 45, {
     align: "center",
   });
-
+  pdf.setTextColor(0, 0, 0);
   // Get text width to determine underline length
+
   const emailWidth = pdf.getTextWidth("Email: icavslimited@gmail.com");
 
   // Draw underline slightly below the text
   pdf.setLineWidth(0.5);
-  pdf.setDrawColor(0, 0, 0); // Black color
+  pdf.setDrawColor(70, 130, 180); // Black color
   pdf.line(
     pageWidth / 2 - emailWidth / 2,
-    margin + 52,
+    margin + 48,
     pageWidth / 2 + emailWidth / 2,
-    margin + 52
+    margin + 48
   );
 
   // Add horizontal line
   pdf.setDrawColor(0, 0, 0);
   pdf.setLineWidth(0.5);
-  pdf.line(margin, margin + 55, pageWidth - margin, margin + 55);
-
-  const formattedDate = new Date(
-    data.letterDate || new Date()
-  ).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  pdf.line(margin, margin + 52, pageWidth - margin, margin + 52);
 
   // Date
   pdf.setFontSize(12);
@@ -139,103 +133,103 @@ const generatePdfDocument = async (
   );
 
   // Recipient
-  pdf.text(data.recipient?.name || "", margin, margin + 105);
+  pdf.text(data.recipient?.name || "", margin, margin + 95);
 
-  pdf.text(data.recipient?.address || "", margin, margin + 120);
+  pdf.text(data.recipient?.address || "", margin, margin + 110);
 
   // CLAIMS DEPARTMENT
-  pdf.setFont("times", "bold");
-  pdf.text("CLAIMS DEPARTMENT", margin, margin + 165);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("CLAIMS DEPARTMENT", margin, margin + 140);
 
   // Salutation
-  pdf.setFont("times", "normal");
-  pdf.text("Dear Sir/Madam,", margin, margin + 195);
+  pdf.setFont("helvetica", "normal");
+  pdf.text("Dear Sir/Madam,", margin, margin + 165);
 
   // Opening paragraph
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   const openingText = `We acknowledge receipt of and thank you for your assignment dated ${
     data.letterDate || ""
   } instructing us to survey the damage to ${
     data.vehicle?.registration || ""
   }. We have completed the assignment and submit hereunder our findings.`;
   const splitOpeningText = pdf.splitTextToSize(openingText, contentWidth);
-  pdf.text(splitOpeningText, margin, margin + 220);
+  pdf.text(splitOpeningText, margin, margin + 190);
 
   // INSURED
-  let currentY = margin + 260;
-  pdf.setFont("times", "bold");
+  let currentY = margin + 250;
+  pdf.setFont("helvetica", "bold");
   pdf.text("INSURED [x]:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.insured || "", margin + 80, currentY);
 
-  currentY += 18;
+  currentY += 28;
 
   // Reference information in a table-like format
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("DATE RECEIVED:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.dateReceived || "", margin + 120, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("YOUR REF#:", margin + 300, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.yourRef || "", margin + 380, currentY);
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("DATE INSPECTED:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.dateInspected || "", margin + 120, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("OUR REF#:", margin + 300, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.setTextColor(70, 130, 180);
   pdf.text(data.ourRef || "", margin + 380, currentY);
   pdf.setTextColor(0, 0, 0);
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("DATE OF LOSS:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.dateOfLoss || "", margin + 120, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("INVOICE#:", margin + 300, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.invoice || "", margin + 380, currentY);
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("NUMBER OF PHOTOGRAPHS:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(`(${data.numberOfPhotographs || "0"})`, margin + 180, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("WITNESS:", margin + 300, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.witness || "", margin + 380, currentY);
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("PLACE OF INSPECTION:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.placeOfInspection || "", margin + 150, currentY);
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("CLAIMS TECHNICIAN:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.claimsTechnician || "", margin + 150, currentY);
 
-  currentY += 30;
+  currentY += 25;
 
   // THE VEHICLE section
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("THE VEHICLE", pageWidth / 2, currentY, { align: "center" });
 
@@ -252,13 +246,13 @@ const generatePdfDocument = async (
     currentY + 2
   );
 
-  currentY += 30;
+  currentY += 25;
 
   // Vehicle details
   pdf.setFontSize(12);
   pdf.text("VEHICLE MAKE & MODEL:", margin, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text(data.vehicle?.makeAndModel || "", margin + 165, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(data.vehicle?.makeAndModel || "", margin + 160, currentY);
 
   // Checkboxes for vehicle type
   if (data.vehicle?.isAutomatic) {
@@ -285,43 +279,43 @@ const generatePdfDocument = async (
   currentY += 18;
 
   // More vehicle details
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("VEHICLE REG#:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.vehicle?.registration || "", margin + 100, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("YEAR OF MANU:", margin + 160, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.vehicle?.yearOfManufacture || "", margin + 260, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("COLOUR:", margin + 295, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.vehicle?.color || "", margin + 355, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("ODOMETER:", margin + 420, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.vehicle?.odometer || "", margin + 498, currentY);
 
   currentY += 18;
 
   // Identification
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("IDENTIFICATION:", margin, currentY);
-  pdf.text("VIN/CHASSIS#:", margin + 110, currentY);
-  pdf.setFont("times", "normal");
+  pdf.text("VIN/CHASSIS#:", margin + 105, currentY);
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     data.vehicle?.identification?.vinChassis || "",
     margin + 200,
     currentY
   );
 
-  pdf.setFont("times", "bold");
-  pdf.text("ENGINE#:", margin + 325, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text(data.vehicle?.identification?.engine || "", margin + 385, currentY);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("ENGINE#:", margin + 335, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(data.vehicle?.identification?.engine || "", margin + 395, currentY);
 
   currentY += 18;
 
@@ -331,13 +325,13 @@ const generatePdfDocument = async (
   } else {
     pdf.text("[ ]", margin, currentY);
   }
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("FOREIGN USED", margin + 16, currentY);
 
   currentY += 30;
 
   // Features Header
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("FEATURES:", margin, currentY);
   currentY += 20;
 
@@ -369,7 +363,7 @@ const generatePdfDocument = async (
   currentY += 30;
 
   // CONDITION PRIOR TO THE LOSS section
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("CONDITION PRIOR TO THE LOSS", pageWidth / 2, currentY, {
     align: "center",
@@ -384,61 +378,61 @@ const generatePdfDocument = async (
     pageWidth / 2 + conditionLossWidth / 2,
     currentY + 2
   );
-  currentY += 30;
+  currentY += 25;
 
   // Body condition
   pdf.setFontSize(12);
   pdf.text("BODY CONDITION:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.condition?.body || "", margin + 115, currentY);
 
   currentY += 18;
 
   // Paint condition
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("PAINT CONDITION:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.condition?.paint || "", margin + 120, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("SPECIALIZED PAINT:", margin + 230, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.condition?.specializedPaint || "", margin + 360, currentY);
 
   currentY += 18;
 
   // Trim condition
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("TRIM: DOOR/UPHOLSTERY:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.condition?.doorUpholstery || "", margin + 170, currentY);
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("SEAT TRIM (FRONT & REAR):", margin + 230, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(data.condition?.seatTrim || "", margin + 410, currentY);
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("PREVIOUS DAMAGE:", margin, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text(data.previousDamage || "None Visible", margin + 150, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(data.previousDamage || "None Visible", margin + 130, currentY);
 
-  pdf.setFont("times", "bold");
-  pdf.text("PREVIOUS REPAIR:", margin + 230, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text(data.previousRepairs || "None Visible", margin + 380, currentY);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("PREVIOUS REPAIR:", margin + 220, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(data.previousRepairs || "None Visible", margin + 340, currentY);
 
   // Add page footer for page 1
   addPageFooter(pdf, data, 1);
 
   // PAGE 2 - Create new page for next sections
   pdf.addPage();
-  currentY = margin + 20;
+  currentY = margin;
 
   // GENERAL REMARKS ON VEHICLE CONDITION
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.setTextColor(0, 0, 0); // Ensure black color
   pdf.text("GENERAL REMARKS ON VEHICLE CONDITION", pageWidth / 2, currentY, {
@@ -460,7 +454,7 @@ const generatePdfDocument = async (
   currentY += 25;
 
   pdf.setFontSize(12);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
 
   const vehicleYear = data.vehicle?.yearOfManufacture || "2016";
   const generalRemarksText = `According to the decoded VIN, the vehicle was manufactured in the year ${vehicleYear} prior to being imported into the country used. It has completed its first year of registration locally and was in good condition prior to the loss.`;
@@ -470,13 +464,13 @@ const generatePdfDocument = async (
     contentWidth
   );
   pdf.text(splitGeneralRemarks, margin, currentY);
-  currentY += splitGeneralRemarks.length * 12 + 20;
+  currentY += splitGeneralRemarks.length * 12 + 15;
 
   // TYRES section
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("TYRES:", margin, currentY);
-  currentY += 20;
+  currentY += 15;
 
   // Tyres table - centered on page
   const totalTableWidth = 380;
@@ -489,7 +483,7 @@ const generatePdfDocument = async (
   pdf.setDrawColor(0, 0, 0);
 
   // Table headers
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(10);
 
   // Header row
@@ -563,7 +557,7 @@ const generatePdfDocument = async (
     ],
   ];
 
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   tyreData.forEach((row, index) => {
     const y = tableStartY + rowHeightTyre + index * rowHeightTyre;
 
@@ -594,10 +588,10 @@ const generatePdfDocument = async (
     );
   });
 
-  currentY = tableStartY + rowHeightTyre + tyreData.length * rowHeightTyre + 30;
+  currentY = tableStartY + rowHeightTyre + tyreData.length * rowHeightTyre + 20;
 
   // Legend boxes
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFillColor(173, 216, 230); // Light blue
   pdf.rect(margin, currentY, 15, 15, "F");
   pdf.setTextColor(0, 0, 0);
@@ -610,7 +604,7 @@ const generatePdfDocument = async (
   currentY += 50;
 
   // NATURE OF DAMAGE section
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("NATURE OF DAMAGE", pageWidth / 2, currentY, { align: "center" });
 
@@ -642,7 +636,7 @@ const generatePdfDocument = async (
   pdf.rect(boxX, diagramStartY, boxWidth, boxHeight);
 
   // Add placeholder text
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.setFontSize(12);
   pdf.text(
     "Vehicle Damage Diagram",
@@ -654,11 +648,11 @@ const generatePdfDocument = async (
   currentY = diagramStartY + diagramSectionHeight - 50;
 
   // Damage details
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(12);
   pdf.text("AFFECTED AREA:", margin, currentY);
 
-  pdf.setFont("times", "normal"); // Switch to normal font for data
+  pdf.setFont("helvetica", "normal"); // Switch to normal font for data
   pdf.text(
     data.damage?.affectedArea || "Left broadside",
     margin + 110,
@@ -667,18 +661,18 @@ const generatePdfDocument = async (
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("DEFORMATION SEVERITY:", margin, currentY);
 
-  pdf.setFont("times", "normal"); // Switch to normal font for data
+  pdf.setFont("helvetica", "normal"); // Switch to normal font for data
   pdf.text(data.damage?.deformationSeverity || "Major", margin + 170, currentY);
 
   currentY += 18;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("AFFECTED STRUCTURAL COMPONENTS:", margin, currentY);
 
-  pdf.setFont("times", "normal"); // Switch to normal font for data
+  pdf.setFont("helvetica", "normal"); // Switch to normal font for data
   pdf.text(
     data.damage?.affectedStructuralComponents ||
       'Left "B" pillar and left rear wheel arch',
@@ -689,7 +683,7 @@ const generatePdfDocument = async (
   currentY += 35;
 
   // THE ESTIMATE section
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("THE ESTIMATE", pageWidth / 2, currentY, { align: "center" });
 
@@ -705,7 +699,7 @@ const generatePdfDocument = async (
 
   currentY += 22;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(12);
   pdf.text("Please refer to attached estimate.", margin, currentY);
 
@@ -713,10 +707,10 @@ const generatePdfDocument = async (
 
   // Estimate details
   // ESTIMATE FROM
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("ESTIMATE FROM:", margin, currentY);
 
-  pdf.setFont("times", "normal"); // Normal font for data
+  pdf.setFont("helvetica", "normal"); // Normal font for data
   pdf.text(
     data.estimate?.from || "Aristocraft Auto Collision",
     margin + 110,
@@ -724,10 +718,10 @@ const generatePdfDocument = async (
   );
 
   // DATED
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("DATED:", margin + 300, currentY);
 
-  pdf.setFont("times", "normal"); // Normal font for data
+  pdf.setFont("helvetica", "normal"); // Normal font for data
   pdf.text(
     data.estimate?.dated ? "DATED" : "NOT DATED",
     margin + 350,
@@ -739,26 +733,26 @@ const generatePdfDocument = async (
   // Add page footer for page 2
   addPageFooter(pdf, data, 2);
   pdf.addPage();
-  currentY = margin + 20;
+  currentY = margin;
 
   // SECTION (A): PARTS
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("SECTION (A): PARTS", margin, currentY);
   currentY += 25;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(12);
   pdf.text("Adjusted source & type of parts:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text("Automix - 751-2782 Used parts", margin + 200, currentY);
   currentY += 22;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("Excluded Items & Reason disallowed:", margin, currentY);
   currentY += 18;
 
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     "• Rear bumper and left 'B' pillar- To repair",
     margin + 10,
@@ -778,11 +772,11 @@ const generatePdfDocument = async (
   );
   currentY += 22;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("Remarks:", margin, currentY);
   currentY += 16;
 
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   const remarksText1 =
     "The estimate included provision for a rear bumper and left 'B' pillar under the heading of";
   pdf.text(remarksText1, margin + 70, currentY);
@@ -840,30 +834,30 @@ const generatePdfDocument = async (
   currentY += 14;
   const remarksText14 = "red on the estimate.";
   pdf.text(remarksText14, margin + 70, currentY);
-  currentY += 22;
-
-  pdf.setFont("times", "bold");
-  pdf.text("Parts Figure Quoted:", margin, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text("$23,600.00", margin + 130, currentY);
-  pdf.setFont("times", "bold");
-  pdf.text("Adjusted Parts Figure:", margin + 250, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text("$7,500.00", margin + 380, currentY);
   currentY += 30;
 
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Parts Figure Quoted:", margin, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text("$23,600.00", margin + 125, currentY);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("Adjusted Parts Figure:", margin + 250, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text("$7,500.00", margin + 385, currentY);
+  currentY += 50;
+
   // SECTION (B): LABOUR
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("SECTION (B): LABOUR", margin, currentY);
   currentY += 22;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(12);
   pdf.text("Remarks:", margin, currentY);
   currentY += 16;
 
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   const labourText1 =
     "The labour and material figure was overstated in the amount of $14,730.00 which was";
   pdf.text(labourText1, margin + 10, currentY);
@@ -877,29 +871,31 @@ const generatePdfDocument = async (
   pdf.text(labourText3, margin + 10, currentY);
   currentY += 22;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("Figure Quoted:", margin, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text("$14,730.00", margin + 110, currentY);
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "normal");
+  pdf.text("$14,730.00", margin + 90, currentY);
+  pdf.setFont("helvetica", "bold");
   pdf.text("Adjusted Labour & Material Figure:", margin + 220, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text("$7,690.00", margin + 420, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text("$7,690.00", margin + 425, currentY);
   currentY += 22;
 
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "bold");
   pdf.text(
     "Repairs ought to be completed in (4) working days.",
     margin,
     currentY
   );
-  currentY += 30;
+  pdf.setFont("helvetica", "normal");
+
+  currentY += 45;
 
   // Add page footer for page 3
   addPageFooter(pdf, data, 3);
 
   // RECOMMENDATION section
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.setFontSize(14);
   pdf.text("RECOMMENDATION", pageWidth / 2, currentY, { align: "center" });
 
@@ -913,49 +909,51 @@ const generatePdfDocument = async (
     currentY + 2
   );
 
-  currentY += 30;
+  currentY += 26;
 
   // Settlement basis
   pdf.setFontSize(12);
   pdf.text("SETTLEMENT BASIS:", margin, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text(data.recommendation?.settlementBasis || "", margin + 150, currentY);
-
+  pdf.setFont("helvetica", "bold");
+  pdf.setTextColor(10, 52, 99);
+  pdf.text(data.recommendation?.settlementBasis || "", margin + 130, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.setTextColor(0, 0, 0);
   currentY += 25;
 
   // Cost and value
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("APPARENT COST OF REPAIRS:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     `$${data.recommendation?.apparentCostOfRepairs || "0.00"} (VAT exc.)`,
-    margin + 200,
+    margin + 190,
     currentY
   );
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("PRE-ACCIDENT VALUE:", margin + 330, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     `$${data.recommendation?.preAccidentValue || "0.00"}`,
-    margin + 480,
+    margin + 475,
     currentY
   );
 
-  currentY += 20;
+  currentY += 25;
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("SETTLEMENT OFFER:", margin, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     `$${data.recommendation?.settlementOffer || "0.00"} (VAT exc.)`,
-    margin + 150,
+    margin + 135,
     currentY
   );
 
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("RESERVE:", margin + 330, currentY);
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     `$${data.recommendation?.reserve || "0.00"}`,
     margin + 400,
@@ -964,12 +962,12 @@ const generatePdfDocument = async (
 
   currentY += 40;
   pdf.addPage();
-  currentY = margin + 30;
+  currentY = margin;
   // Remarks
-  pdf.setFont("times", "bold");
+  pdf.setFont("helvetica", "bold");
   pdf.text("REMARKS:", margin, currentY);
   currentY += 20;
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   const remarksText =
     data.recommendation?.remarks ||
     "If you are liable, we suggest that you treat this claim on a repair or cash in lieu of repair basis.";
@@ -982,22 +980,28 @@ const generatePdfDocument = async (
 
   currentY += 40;
 
-  pdf.setFont("times", "normal");
+  pdf.setFont("helvetica", "normal");
   pdf.text("Regards,", margin, currentY);
   currentY += 22;
 
-  pdf.setFont("times", "bold");
-  pdf.text("MR. GERAB", margin, currentY);
-  pdf.setFont("times", "normal");
-  pdf.text("Managing Director", margin + 80, currentY);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("MR. GERARD JOSEPH - Adjuster/Managing Director", margin, currentY);
   currentY += 14;
-  pdf.text("Diploma Investigation & Adjusting (MICIA)", margin, currentY);
-  currentY += 14;
+  pdf.setFont("helvetica", "normal");
+
   pdf.text(
-    "FOR: Independent Investigation & Valuation Services Limited",
+    "Diploma - Motor Insurance Claims, Investigation & Adjusting (MICIA)",
     margin,
     currentY
   );
+  currentY += 14;
+  pdf.text(
+    "FOR: Independent Claims Adjusting & Valuation Services Limited",
+    margin,
+    currentY
+  );
+  pdf.text("GJ/kwj", margin, (currentY += 14));
+  pdf.text("Encs.", margin, (currentY += 20));
 
   // Add page footer for page 4
   addPageFooter(pdf, data, 4);
@@ -1015,7 +1019,7 @@ const generatePdfDocument = async (
 
   // HEADER SECTION
   // Company Name (Center-aligned)
-  pdf.setFontSize(16);
+  pdf.setFontSize(14);
   pdf.setFont("helvetica", "bold");
   const companyName = invoiceData.company.name;
   const companyNameWidth = pdf.getTextWidth(companyName);
@@ -1033,7 +1037,7 @@ const generatePdfDocument = async (
   // TAX INVOICE (Right-aligned below address)
   pdf.setFont("helvetica", "bold");
 
-  pdf.setFontSize(14);
+  pdf.setFontSize(18);
   pdf.setFont("helvetica", "bold");
   const taxInvoiceText = "TAX INVOICE";
   const taxInvoiceWidth = pdf.getTextWidth(taxInvoiceText);
@@ -1042,55 +1046,95 @@ const generatePdfDocument = async (
   currentY += 10;
 
   // V.A.T. Registration Number Box (Right-aligned)
-  const vatBoxHeight = pageHeight * 0.03; // Proportional to page height
+  const vatBoxHeight = pageHeight * 0.025; // Proportional to page height
   const vatBoxWidth = pageWidth * 0.25; // 25% of page width
-  const vatBoxX = pageWidth - margin - vatBoxWidth - 20;
+  const vatBoxX = pageWidth - margin - vatBoxWidth;
   pdf.rect(vatBoxX, currentY, vatBoxWidth, vatBoxHeight);
-  pdf.setFontSize(10);
+  pdf.setFontSize(9);
   pdf.setFont("helvetica", "normal");
   pdf.text(
     `VAT Reg #: ${invoiceData.company.vatRegistration}`,
     vatBoxX + vatBoxWidth / 4,
-    currentY + vatBoxHeight * 0.6
+    currentY + vatBoxHeight * 0.7
   );
   currentY += vatBoxHeight + 10;
 
   // INVOICE DETAILS SECTION
   // Date and Invoice Number (side by side with proper spacing)
-  const detailBoxHeight = pageHeight * 0.04; // Proportional height
+  const detailBoxHeight = pageHeight * 0.03; // Proportional height
   const detailBoxWidth = pageWidth * 0.16; // 20% of page width each
 
-  const dateBoxX = pageWidth - margin - 2 * detailBoxWidth - 10;
+  const dateBoxX = pageWidth - margin - 2 * detailBoxWidth;
   const invoiceBoxX = dateBoxX + detailBoxWidth;
 
-  // Date box
-  pdf.rect(dateBoxX, currentY, detailBoxWidth, detailBoxHeight); // Original box
+  // Phone number box (left of Date box)
+  const phoneBoxX = margin;
+  pdf.rect(phoneBoxX, currentY - 20, detailBoxWidth * 0.8, detailBoxHeight); // Label box
+  pdf.rect(
+    phoneBoxX + detailBoxWidth * 0.8,
+    currentY - 20,
+    detailBoxWidth,
+    detailBoxHeight
+  ); // Value box
+
+  pdf.text("Phone #:", phoneBoxX + 3, currentY - 20 + detailBoxHeight * 0.6);
+  pdf.text(
+    "1 (868) 235-5069",
+    phoneBoxX + detailBoxWidth * 0.8 + 3,
+    currentY - 20 + detailBoxHeight * 0.6
+  );
+
+  // Email box (directly below Phone, NO spacing)
+  pdf.rect(
+    phoneBoxX,
+    currentY - 20 + detailBoxHeight,
+    detailBoxWidth * 0.8,
+    detailBoxHeight
+  ); // Label box
+  pdf.rect(
+    phoneBoxX + detailBoxWidth * 0.8,
+    currentY - 20 + detailBoxHeight,
+    detailBoxWidth * 1.5,
+    detailBoxHeight
+  ); // Value box
+
+  pdf.text("Email:", phoneBoxX + 3, currentY - 20 + detailBoxHeight * 1.6);
+  pdf.text(
+    "icavslimited.com",
+    phoneBoxX + detailBoxWidth * 0.8 + 3,
+    currentY - 20 + detailBoxHeight * 1.6
+  );
+
+  // Date box (unchanged)
+  pdf.rect(dateBoxX, currentY, detailBoxWidth, detailBoxHeight);
   pdf.rect(
     dateBoxX,
     currentY + detailBoxHeight,
     detailBoxWidth,
     detailBoxHeight
-  ); // New box directly below
+  );
 
+  pdf.setFont("helvetica", "bold");
   pdf.text(
     "Date:",
     dateBoxX + detailBoxWidth / 3.5,
     currentY + detailBoxHeight * 0.6
   );
+  pdf.setFont("helvetica", "normal");
   pdf.text(
     `${invoiceData.invoice.date}`,
     dateBoxX + detailBoxWidth / 3.5,
-    currentY + detailBoxHeight + detailBoxHeight * 0.6
+    currentY + detailBoxHeight * 1.6
   );
 
-  // Invoice number box
-  pdf.rect(invoiceBoxX, currentY, detailBoxWidth, detailBoxHeight); // Original box
+  // Invoice number box (unchanged)
+  pdf.rect(invoiceBoxX, currentY, detailBoxWidth, detailBoxHeight);
   pdf.rect(
     invoiceBoxX,
     currentY + detailBoxHeight,
     detailBoxWidth,
     detailBoxHeight
-  ); // New box directly below
+  );
 
   pdf.text(
     "Invoice #:",
@@ -1100,32 +1144,33 @@ const generatePdfDocument = async (
   pdf.text(
     `${invoiceData.invoice.number}`,
     invoiceBoxX + detailBoxWidth / 3.5,
-    currentY + detailBoxHeight + detailBoxHeight * 0.6
+    currentY + detailBoxHeight * 1.6
   );
 
-  currentY += detailBoxHeight + 45; // 20% spacing equivalent
+  currentY += detailBoxHeight + 35; // Maintain spacing // Maintain spacing
+  // 20% spacing equivalent
 
   // BILLING INFORMATION SECTION
-  const billingHeaderHeight = pageHeight * 0.04;
-  const thirdWidth = (pageWidth - 3 * margin) / 3;
+  const billingHeaderHeight = pageHeight * 0.03;
+  const thirdWidth = (pageWidth - 2 * margin) / 3;
 
   // Bill To, Insured Details, Third Party Name headers
   pdf.setFont("helvetica", "normal");
   pdf.rect(margin, currentY, thirdWidth, billingHeaderHeight);
-  pdf.text("BILL TO:", margin + 3, currentY + billingHeaderHeight * 0.6);
+  pdf.text("BILL TO:", margin + 2, currentY + 2 + billingHeaderHeight * 0.6);
 
   pdf.rect(margin + thirdWidth, currentY, thirdWidth, billingHeaderHeight);
   pdf.text(
     "INSURED DETAILS:",
     margin + thirdWidth + 3,
-    currentY + billingHeaderHeight * 0.6
+    currentY + 2 + billingHeaderHeight * 0.6
   );
 
   pdf.rect(margin + 2 * thirdWidth, currentY, thirdWidth, billingHeaderHeight);
   pdf.text(
     "THIRD PARTY NAME:",
     margin + 2 * thirdWidth + 3,
-    currentY + billingHeaderHeight * 0.6
+    currentY + 2 + billingHeaderHeight * 0.6
   );
 
   currentY += billingHeaderHeight;
@@ -1180,91 +1225,78 @@ const generatePdfDocument = async (
   pdf.text(
     invoiceData.thirdParty.vehicle,
     margin + 2 * thirdWidth + 3,
-    currentY + 2 * smallBoxHeight + smallBoxHeight * 0.8
+    currentY + 2.2 * smallBoxHeight + smallBoxHeight * 0.4
   );
 
-  currentY += addressBoxHeight + 15; // 20% spacing equivalent
+  currentY += addressBoxHeight + 10; // 20% spacing equivalent
 
   // REFERENCE SECTION
-  const refBoxHeight = pageHeight * 0.04;
-  const refBoxWidth = pageWidth * 0.18; // Proportional width
-  const refSpacing = pageWidth * 0.02; // 2% spacing between boxes
+  const refBoxHeight = pageHeight * 0.03;
+  const refTotalWidth = pageWidth * 0.6; // Total width of the three main reference boxes
+  const ourRefWidth = refTotalWidth * 0.44;
+  const yourRefWidth = refTotalWidth * 0.31;
+  const claimsTechWidth = refTotalWidth * 0.25;
+  const adjusterWidth = pageWidth * 0.1;
+  const dateLossWidth = adjusterWidth; // Same as adjuster width
 
-  // Left side references
+  // Starting position for left-side reference boxes
   let refX = margin;
 
   // Our Reference
-  pdf.setFont("helvetica", "normal");
-  pdf.rect(refX, currentY, refBoxWidth, refBoxHeight);
+  pdf.rect(refX, currentY, ourRefWidth, refBoxHeight);
   pdf.text("Our Reference:", refX + 3, currentY + refBoxHeight * 0.6);
-  pdf.rect(refX, currentY + refBoxHeight, refBoxWidth, refBoxHeight);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(
-    invoiceData.reference.our,
-    refX + 3,
-    currentY + refBoxHeight + refBoxHeight * 0.6
-  );
+  pdf.rect(refX, currentY + refBoxHeight, ourRefWidth, refBoxHeight);
+  pdf.text(invoiceData.reference.our, refX + 3, currentY + refBoxHeight * 1.6);
 
-  refX += refBoxWidth + refSpacing;
+  refX += ourRefWidth;
 
   // Your Reference
-  pdf.setFont("helvetica", "normal");
-  pdf.rect(refX, currentY, refBoxWidth, refBoxHeight);
+  pdf.rect(refX, currentY, yourRefWidth, refBoxHeight);
   pdf.text("Your Reference:", refX + 3, currentY + refBoxHeight * 0.6);
-  pdf.rect(refX, currentY + refBoxHeight, refBoxWidth, refBoxHeight);
-  pdf.setFont("helvetica", "normal");
-  pdf.text(
-    invoiceData.reference.your,
-    refX + 3,
-    currentY + refBoxHeight + refBoxHeight * 0.6
-  );
+  pdf.rect(refX, currentY + refBoxHeight, yourRefWidth, refBoxHeight);
+  pdf.text(invoiceData.reference.your, refX + 3, currentY + refBoxHeight * 1.6);
 
-  refX += refBoxWidth + refSpacing;
+  refX += yourRefWidth;
 
   // Claim Technician
-  pdf.setFont("helvetica", "normal");
-  pdf.rect(refX, currentY, refBoxWidth, refBoxHeight);
+  pdf.rect(refX, currentY, claimsTechWidth, refBoxHeight);
   pdf.text("Claim Technician:", refX + 3, currentY + refBoxHeight * 0.6);
-  pdf.rect(refX, currentY + refBoxHeight, refBoxWidth, refBoxHeight);
-  pdf.setFont("helvetica", "normal");
+  pdf.rect(refX, currentY + refBoxHeight, claimsTechWidth, refBoxHeight);
   pdf.text(
     invoiceData.reference.claimsTechnician,
     refX + 3,
-    currentY + refBoxHeight + refBoxHeight * 0.6
+    currentY + refBoxHeight * 1.6
   );
 
-  refX += refBoxWidth + refSpacing;
+  // Move Date of Loss & Adjuster to the Right
+  const rightX = pageWidth - margin - 2 * dateLossWidth; // Shift closer to right side
 
   // Date of Loss
-  pdf.setFont("helvetica", "normal");
-  pdf.rect(refX, currentY, refBoxWidth, refBoxHeight);
-  pdf.text("Date of Loss:", refX + 3, currentY + refBoxHeight * 0.6);
-  pdf.rect(refX, currentY + refBoxHeight, refBoxWidth, refBoxHeight);
-  pdf.setFont("helvetica", "normal");
+  pdf.rect(rightX - 30, currentY, dateLossWidth, refBoxHeight);
+  pdf.text("Date of Loss:", rightX - 27, currentY + refBoxHeight * 0.6);
+  pdf.rect(rightX - 30, currentY + refBoxHeight, dateLossWidth, refBoxHeight);
   pdf.text(
     invoiceData.reference.dateOfLoss,
-    refX + 3,
-    currentY + refBoxHeight + refBoxHeight * 0.6
+    rightX - 27,
+    currentY + refBoxHeight * 1.6
   );
 
-  // Adjuster (Right-aligned)
-  const adjusterBoxX = pageWidth - margin - refBoxWidth;
-  pdf.setFont("helvetica", "normal");
-  pdf.rect(adjusterBoxX, currentY, refBoxWidth, refBoxHeight);
-  pdf.text("Adjuster:", adjusterBoxX + 3, currentY + refBoxHeight * 0.6);
-  pdf.rect(adjusterBoxX, currentY + refBoxHeight, refBoxWidth, refBoxHeight);
-  pdf.setFont("helvetica", "normal");
+  // Adjuster (Far Right)
+  const adjusterX = pageWidth - margin - adjusterWidth;
+  pdf.rect(adjusterX, currentY, adjusterWidth, refBoxHeight);
+  pdf.text("Adjuster:", adjusterX + 3, currentY + refBoxHeight * 0.6);
+  pdf.rect(adjusterX, currentY + refBoxHeight, adjusterWidth, refBoxHeight);
   pdf.text(
     invoiceData.reference.adjuster,
-    adjusterBoxX + 3,
-    currentY + refBoxHeight + refBoxHeight * 0.6
+    adjusterX + 3,
+    currentY + refBoxHeight * 1.6
   );
 
-  currentY += 2 * refBoxHeight + pageHeight * 0.04; // 10% spacing equivalent
+  currentY += 2 * refBoxHeight + pageHeight * 0.01; // 10% spacing equivalent
 
   // ITEMIZED CHARGES TABLE
-  const tableHeaderHeight = pageHeight * 0.04;
-  const tableContentHeight = pageHeight * 0.15; // Sufficient height for content
+  const tableHeaderHeight = pageHeight * 0.03;
+  const tableContentHeight = pageHeight * 0.135; // Sufficient height for content
 
   // Column widths based on specifications
   const itemColWidth = pageWidth * 0.18; // Item column
@@ -1276,7 +1308,6 @@ const generatePdfDocument = async (
 
   // Table headers
   pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(10);
 
   let tableX = margin;
   pdf.rect(tableX, currentY, itemColWidth, tableHeaderHeight);
@@ -1349,7 +1380,7 @@ const generatePdfDocument = async (
   currentY += tableContentHeight;
 
   // FINANCIAL SUMMARY (Right half of page)
-  const financialBoxHeight = pageHeight * 0.04;
+  const financialBoxHeight = pageHeight * 0.035;
   const financialBoxWidth = contentWidth * 0.45; // 45% of content width
   const financialX = pageWidth - margin - financialBoxWidth;
 
@@ -1357,7 +1388,6 @@ const generatePdfDocument = async (
   const valueWidth = financialBoxWidth * 0.4;
 
   pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(10);
 
   // Subtotal
   pdf.rect(financialX, currentY, financialBoxWidth, financialBoxHeight);
@@ -1443,18 +1473,16 @@ const generatePdfDocument = async (
     currentY + 4 * financialBoxHeight + financialBoxHeight * 0.6
   );
 
-  currentY += 5 * financialBoxHeight + pageHeight * 0.08; // 20% spacing equivalent
+  currentY += 5 * financialBoxHeight + pageHeight * 0.02; // 20% spacing equivalent
 
   // PAYMENT INSTRUCTIONS
-  const paymentInstructionHeight = pageHeight * 0.06; // Sufficient height for text
-  const paymentInstructionWidth = contentWidth * 0.5; // 50% of content width
+  const paymentInstructionHeight = pageHeight * 0.04; // Sufficient height for text
+  const paymentInstructionWidth = contentWidth * 0.55; // 50% of content width
 
   pdf.rect(margin, currentY, paymentInstructionWidth, paymentInstructionHeight);
   pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(9);
-  const paymentText =
-    "Please make all cheques payable to Independent Claims Adjusting & Valuation Services Limited";
-  pdf.text(paymentText, margin + 3, currentY + 12, {
+  const paymentText = "Please make all cheques payable to ICAVS Limited";
+  pdf.text(paymentText, margin + 3, currentY + 19, {
     maxWidth: paymentInstructionWidth - 6,
   });
 
