@@ -1,6 +1,6 @@
-import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
-import { useForm } from '../context/FormContext';
-import { Button } from './ui/Button';
+import { ArrowLeft, ArrowRight, FileText } from "lucide-react";
+import { useForm } from "../context/FormContext";
+import { Button } from "./ui/Button";
 
 interface FormNavigationProps {
   onSubmit?: () => void;
@@ -28,7 +28,7 @@ export const FormNavigation = ({
         <ArrowLeft size={16} />
         <span>Back</span>
       </Button>
-      
+
       <div className="flex gap-2">
         {isLastStep ? (
           <Button
@@ -49,7 +49,7 @@ export const FormNavigation = ({
             isLoading={isSubmitting}
             disabled={isSubmitting || !canSubmit}
           >
-            <span>Next</span>
+            <span>Save</span>
             <ArrowRight size={16} />
           </Button>
         )}
