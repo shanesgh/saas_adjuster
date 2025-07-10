@@ -1,56 +1,106 @@
-export const FAQ = () => {
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+
+export function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   const faqs = [
     {
-      question: "How long does the claims process take?",
-      answer: "Most claims are processed within 24-48 hours using our AI-powered analysis. Complex cases may take up to 5 business days."
+      question: 'What happens after my free trial ends?',
+      answer: 'After your 1-month free trial, you can choose to upgrade to any paid plan to continue with full access.',
     },
     {
-      question: "Is my data secure on your platform?",
-      answer: "Yes, we use enterprise-grade encryption and comply with all industry security standards including SOC 2 Type II certification."
+      question: 'Can I change my plan later?',
+      answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we\'ll prorate any billing adjustments.',
     },
     {
-      question: "Can I integrate with my existing systems?",
-      answer: "Absolutely! We offer robust API integrations and work with most major insurance management systems."
+      question: 'What\'s included in the Enterprise plan?',
+      answer: 'The Enterprise plan includes an enhanced user access, 24/7 phone support, enterprise security features, custom integrations, SLA guarantee and internal tools for business expansion',
     },
     {
-      question: "What types of claims do you support?",
-      answer: "We support auto, property, liability, and workers' compensation claims. Custom claim types can be configured for enterprise clients."
+      question: 'Do you offer custom solutions?',
+      answer: 'Yes, we work with large enterprises to create custom solutions tailored to their specific needs. Contact our sales team to discuss your requirements.',
     },
     {
-      question: "Do you offer training for new users?",
-      answer: "Yes, we provide comprehensive onboarding, training materials, and ongoing support to ensure your team is successful."
+      question: 'Is there a setup fee?',
+      answer: 'No, there are no setup fees for any of our plans. You only pay the subscription fee',
     },
     {
-      question: "What happens if I need to cancel?",
-      answer: "You can cancel anytime with 30 days notice. We'll help you export your data and ensure a smooth transition."
-    }
+      question: 'What kind of support do you provide?',
+      answer: 'Support varies by plan: Free and Micro includes email support, Standard adds priority email & Whatsapp support while the Enterprise includes 24/7 dedicated phone support',
+    },
   ];
 
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-secondary-900 mb-4">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-xl text-secondary-600 max-w-2xl mx-auto">
-            Find answers to common questions about our claims processing platform.
-          </p>
-        </div>
-        
-        <div className="max-w-3xl mx-auto space-y-6">
-          {faqs.map((faq, index) => (
-            <div key={index} className="border border-secondary-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-secondary-900 mb-2">
-                {faq.question}
-              </h3>
-              <p className="text-secondary-600">
-                {faq.answer}
-              </p>
-            </div>
-          ))}
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gradient mb-6">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-600">
+              Got questions? We've got answers. If you have any other questions, feel free to contact us.
+            </p>
+          </motion.div>
+
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"
+              >
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full px-6 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <span className="text-lg font-semibold text-gray-900 pr-4">
+                    {faq.question}
+                  </span>
+                  {openIndex === index ? (
+                    <ChevronUp className="w-5 h-5 text-primary-500 flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-primary-500 flex-shrink-0" />
+                  )}
+                </button>
+                
+                <AnimatePresence>
+                  {openIndex === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="border-t border-gray-100"
+                    >
+                      <div className="px-6 py-6">
+                        <p className="text-gray-600 leading-relaxed">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
-};
+}
