@@ -9,7 +9,7 @@ export const Header = () => {
             <FileBadge size={32} />
             <div>
               <h1 className="text-xl font-bold">ICAVS Limited</h1>
-              <p className="text-sm text-primary-100">Digital Claims Form</p>
+              <p className="text-sm text-primary-100">Digital Adjusting Platform</p>
             </div>
           </div>
         </div>
