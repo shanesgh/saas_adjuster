@@ -1,9 +1,22 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+import { Hero } from '../components/Hero';
+import { ClaimsProcessInfographic } from '../components/ClaimsProcessInfographic';
+import { Features } from '../components/Features';
+import { Pricing } from '../components/Pricing';
+import { CTA } from '../components/CTA';
 
 export const Route = createFileRoute('/')({
-  beforeLoad: () => {
-    throw redirect({
-      to: '/dashboard',
-    });
-  },
+  component: Index,
 });
+
+function Index() {
+  return (
+    <div className="space-y-0">
+      <Hero />
+      <ClaimsProcessInfographic />
+      <Features />
+      <Pricing />
+      <CTA />
+    </div>
+  );
+}
