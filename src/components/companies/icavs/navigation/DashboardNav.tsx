@@ -30,10 +30,10 @@ export const DashboardNav = () => {
 
   return (
     <>
-      {/* Mobile Navigation - Top Bar (only below sm breakpoint) */}
-      <nav className="sm:hidden bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      {/* Mobile/Tablet Navigation - Top Bar (only below lg breakpoint) */}
+      <nav className="lg:hidden bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 py-3">
-          {/* Mobile Logo */}
+          {/* Mobile/Tablet Logo */}
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <FileText className="w-5 h-5 text-white" />
@@ -41,7 +41,7 @@ export const DashboardNav = () => {
             <h1 className="text-lg font-bold text-gray-800">ICAVS</h1>
           </div>
           
-          {/* Mobile Menu Button */}
+          {/* Mobile/Tablet Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -54,7 +54,7 @@ export const DashboardNav = () => {
           </button>
         </div>
         
-        {/* Mobile Menu Dropdown */}
+        {/* Mobile/Tablet Menu Dropdown */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg">
             <div className="grid grid-cols-2 gap-2 p-4">
@@ -81,8 +81,8 @@ export const DashboardNav = () => {
         )}
       </nav>
 
-      {/* Tablet+ Navigation - Left Sidebar (sm breakpoint and above) */}
-      <nav className={`hidden sm:block ${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
+      {/* Desktop+ Navigation - Left Sidebar (lg breakpoint and above) */}
+      <nav className={`hidden lg:block ${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
         <>
         {/* Sidebar Toggle Button */}
         <button

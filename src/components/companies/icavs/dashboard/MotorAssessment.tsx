@@ -47,12 +47,12 @@ const FormContent = () => {
 export const MotorAssessment = () => {
   return (
     <FormProvider>
-      <div className="min-h-screen bg-secondary-50 sm:bg-transparent">
-        <main className="container mx-auto px-2 sm:px-4 pb-8 sm:pb-16">
-          <div className="max-w-4xl mx-auto mt-4 sm:mt-8">
+      <div className="min-h-screen bg-secondary-50 lg:bg-transparent">
+        <main className="container mx-auto px-2 lg:px-4 pb-8 lg:pb-16">
+          <div className="max-w-4xl mx-auto mt-4 lg:mt-8">
             <div className="mb-6">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Motor Assessment Form</h1>
-              <p className="text-sm sm:text-base text-gray-600">Complete the digital claims form for motor vehicle assessment</p>
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Motor Assessment Form</h1>
+              <p className="text-sm lg:text-base text-gray-600">Complete the digital claims form for motor vehicle assessment</p>
             </div>
             <FormStepper />
             <div className="mt-6 transition-all">
