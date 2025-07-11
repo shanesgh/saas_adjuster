@@ -7,10 +7,6 @@ export function Footer() {
       { name: 'Features', path: '/' },
       { name: 'Pricing', path: '/pricing' },
     ],
-    company: [
-      { name: 'About', path: '#' },
-      { name: 'Contact', path: '/contact' },
-    ],
     legal: [
       { name: 'Privacy', path: '#' },
       { name: 'Terms', path: '#' },
