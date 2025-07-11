@@ -8,10 +8,13 @@ export function Footer() {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
 
+  const handlePricingClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const links = {
     product: [
       { name: 'Features', path: '/' },
-      { name: 'Pricing', path: '/pricing' },
+      { name: 'Pricing', path: '/pricing', onClick: handlePricingClick },
     ],
     legal: [
       { name: 'Privacy', action: () => setShowPrivacyModal(true) },
@@ -63,6 +66,7 @@ export function Footer() {
                     {link.path ? (
                       <Link
                         to={link.path}
+                        onClick={link.onClick}
                         className="text-gray-400 hover:text-white transition-colors duration-200"
                       >
                         {link.name}
