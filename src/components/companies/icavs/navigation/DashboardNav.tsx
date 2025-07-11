@@ -111,7 +111,7 @@ export const DashboardNav = () => {
                 <li key={item.name} className="relative group">
                   <Link
                     to={item.href}
-                    className={`flex items-center px-2 py-2 rounded-lg transition-colors duration-200 relative ${
+                    className={`flex items-center px-2.5 py-2 rounded-lg transition-colors duration-200 relative ${
                       isActive(item.href)
                         ? 'bg-blue-100 text-blue-700'
                         : 'text-gray-700 hover:bg-gray-100'
