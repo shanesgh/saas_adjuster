@@ -90,13 +90,8 @@ export const DashboardNav = () => {
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200 relative">
           <h2 className="font-bold text-xl text-gray-800">
-            <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
-              ICAVS Dashboard
-            </span>
-            <span className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isCollapsed ? 'opacity-100' : 'opacity-0'}`}>
-              ICAVS
-            </span>
-          </h2>
+  {isCollapsed ? 'ICAVS' : 'ICAVS Dashboard'}
+</h2>
           
           {/* Collapse Toggle Button - positioned in header */}
           <button
