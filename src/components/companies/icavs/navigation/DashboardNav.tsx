@@ -89,8 +89,13 @@ export const DashboardNav = () => {
       }`}>
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200 relative">
-          <h2 className="font-bold text-xl text-gray-800">
-  'ICAVS Dashboard'
+          <h2 className="font-bold text-xl text-gray-800 whitespace-nowrap overflow-hidden">
+  <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100'}`}>
+    ICAVS Dashboard
+  </span>
+  <span className={`${isCollapsed ? 'inline' : 'hidden'}`}>
+    ICAVS
+  </span>
 </h2>
           
           {/* Collapse Toggle Button - positioned in header */}
