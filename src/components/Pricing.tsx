@@ -75,7 +75,7 @@ export function Pricing() {
         { name: 'Global data access', icon: Database, description: 'Access your data from anywhere in the world' },
         { name: 'Internal vendor analytics', icon: BarChart3, description: 'Advanced analytics with vendor comparisons for business continuity and expansion' }
       ],
-      buttonText: 'Contact Sales',
+      buttonText: 'Get Started',
       popular: false,
       gradient: 'from-purple-500 to-pink-500'
     }
