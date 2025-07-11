@@ -9,8 +9,8 @@ export const Route = createFileRoute('/dashboard')({
 function DashboardLayout() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header - full width at top on large screens */}
-      <div className="hidden lg:block">
+      {/* Header - full width at top on large screens only */}
+      <div className="hidden lg:block w-full">
         <Header />
       </div>
       
@@ -19,15 +19,15 @@ function DashboardLayout() {
         <DashboardNav />
       </div>
       
-      {/* Content area - sidebar and main content side by side */}
-      <div className="flex flex-1">
+      {/* Content area - sidebar and main content side by side on desktop */}
+      <div className="flex flex-1 lg:flex-row">
         {/* Desktop+ sidebar */}
         <div className="hidden lg:block">
           <DashboardNav />
         </div>
         
         {/* Main content */}
-        <main className="flex-1 overflow-auto p-4 lg:p-6">
+        <main className="flex-1 overflow-auto p-4 lg:p-6 w-full lg:w-auto">
           <Outlet />
         </main>
       </div>
