@@ -1,63 +1,36 @@
-// Your main Dashboard Layout component should look like this:
+import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { DashboardNav } from '../components/companies/icavs/navigation/DashboardNav';
+import { Header } from '../components/shared/layout/Header';
 
-import { DashboardNav } from './DashboardNav';
-import { DashboardHeader } from './DashboardHeader'; // Your blue header component
+export const Route = createFileRoute('/dashboard')({
+  component: DashboardLayout,
+});
 
-export const DashboardLayout = ({ children }) => {
+function DashboardLayout() {
   return (
-    <div className="h-screen flex flex-col">
-      {/* Header - Full width at top for large screens */}
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Header - full width at top on large screens */}
       <div className="hidden lg:block">
-        <DashboardHeader className="bg-blue-600 h-16 w-full" />
+        <Header />
       </div>
       
-      {/* Mobile Navigation (shows on small screens) */}
+      {/* Mobile/Tablet: Top navigation (shows below header space) */}
       <div className="lg:hidden">
         <DashboardNav />
       </div>
       
-      {/* Content Area - Sidebar + Main Content side by side */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Desktop Sidebar (hidden on mobile) */}
+      {/* Content area - sidebar and main content side by side */}
+      <div className="flex flex-1">
+        {/* Desktop+ sidebar */}
         <div className="hidden lg:block">
           <DashboardNav />
         </div>
         
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-auto bg-gray-50 p-6">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
-};
-
-// Alternative structure if you want header to span full width including over sidebar:
-export const DashboardLayoutAlternative = ({ children }) => {
-  return (
-    <div className="h-screen flex flex-col">
-      {/* Header spans full width */}
-      <header className="bg-blue-600 h-16 w-full z-30">
-        <DashboardHeader />
-      </header>
-      
-      {/* Content area below header */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="hidden lg:block">
-          <DashboardNav />
-        </aside>
-        
-        {/* Mobile nav for small screens */}
-        <div className="lg:hidden">
-          <DashboardNav />
-        </div>
-        
         {/* Main content */}
-        <main className="flex-1 overflow-auto bg-gray-50 p-6">
-          {children}
+        <main className="flex-1 overflow-auto p-4 lg:p-6">
+          <Outlet />
         </main>
       </div>
     </div>
   );
-};
+}
