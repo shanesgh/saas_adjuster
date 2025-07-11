@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { to: '/dashboard', label: 'Ovrview', icon: Home },
+  { to: '/dashboard', label: 'Overview', icon: Home },
   { to: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/dashboard/motor-assessment', label: 'Motor Assessment', icon: Car },
   { to: '/dashboard/motor-valuation', label: 'Motor Valuation', icon: Calculator },
@@ -41,7 +41,11 @@ export const DashboardNav = () => {
 
       <div className="p-2">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 whitespace-nowrap overflow-hidden">
-          {isCollapsed ? 'DASH' : 'ICAVS Dashboard'}
+          {isCollapsed ? (
+            <LayoutDashboard size={16} className="text-gray-700" />
+          ) : (
+            'ICAVS Dashboard'
+          )}
         </h2>
         
         <ul className="space-y-2">
