@@ -9,7 +9,7 @@ import {
   FileText, 
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight, LayoutDashboardIcon
 } from 'lucide-react';
 
 const navItems = [
