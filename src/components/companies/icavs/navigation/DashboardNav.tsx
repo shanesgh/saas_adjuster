@@ -9,8 +9,7 @@ import {
   FileText, 
   Settings,
   ChevronLeft,
-  ChevronRight, 
-  LayoutDashboard
+  ChevronRight
 } from 'lucide-react';
 
 const navItems = [
@@ -42,11 +41,7 @@ export const DashboardNav = () => {
 
       <div className="p-2">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 whitespace-nowrap overflow-hidden">
-          {isCollapsed ? (
-            <LayoutDashboard size={16} className="text-gray-700" />
-          ) : (
-            'ICAVS Dashboard'
-          )}
+          {isCollapsed ? 'DASH' : 'ICAVS Dashboard'}
         </h2>
         
         <ul className="space-y-2">
