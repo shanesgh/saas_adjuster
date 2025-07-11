@@ -41,23 +41,26 @@ export const DashboardNav = () => {
 
       <div className="p-4">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 whitespace-nowrap overflow-hidden">
-          {isCollapsed ? 'ICAVS' : 'ICAVS Dashboard'}
+          {isCollapsed ? 'DASH' : 'ICAVS Dashboard'}
         </h2>
+        
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item.to}>
               <div className="relative group">
                 <Link
                   to={item.to}
-                  className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
                   activeProps={{
                     className: "bg-primary-100 text-primary-700"
                   }}
                 >
                   <item.icon size={20} className="flex-shrink-0" />
-                  <span className={`${isCollapsed ? 'hidden' : 'block'} whitespace-nowrap`}>
-                    {item.label}
-                  </span>
+                  {!isCollapsed && (
+                    <span className="ml-3 whitespace-nowrap">
+                      {item.label}
+                    </span>
+                  )}
                 </Link>
                 
                 {/* Custom Tooltip - only shows when collapsed */}
