@@ -15,7 +15,7 @@ function DashboardLayout() {
       </div>
       
       {/* Mobile: Top navigation, Tablet+: Left sidebar */}
-      <div className="sm:hidden">
+      <div className="lg:hidden">
         <DashboardNav />
       </div>
       
