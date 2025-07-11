@@ -30,8 +30,8 @@ export const DashboardNav = () => {
 
   return (
     <>
-      {/* Mobile Navigation - Top Bar */}
-      <nav className="lg:hidden bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+      {/* Mobile Navigation - Top Bar (only below sm breakpoint) */}
+      <nav className="sm:hidden bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="flex items-center justify-between px-4 py-3">
           {/* Mobile Logo */}
           <div className="flex items-center space-x-3">
@@ -81,10 +81,10 @@ export const DashboardNav = () => {
         )}
       </nav>
 
-      {/* Desktop Navigation - Left Sidebar */}
-      <nav className={`hidden lg:block ${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
+      {/* Tablet+ Navigation - Left Sidebar (sm breakpoint and above) */}
+      <nav className={`hidden sm:block ${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
         <>
-        {/* Desktop Toggle Button */}
+        {/* Sidebar Toggle Button */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-1 shadow-md hover:shadow-lg transition-shadow z-10"
@@ -122,7 +122,7 @@ export const DashboardNav = () => {
                     )}
                   </Link>
                   
-                  {/* Desktop Tooltip - only shows when collapsed */}
+                  {/* Sidebar Tooltip - only shows when collapsed */}
                   {isCollapsed && (
                     <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white text-sm px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
                       {item.label}
