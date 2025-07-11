@@ -83,6 +83,7 @@ export const DashboardNav = () => {
 
       {/* Desktop Navigation - Left Sidebar */}
       <nav className={`hidden lg:block ${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
+        <>
         {/* Desktop Toggle Button */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -133,6 +134,7 @@ export const DashboardNav = () => {
             ))}
           </ul>
         </div>
+        </>
       </nav>
     </>
   );
