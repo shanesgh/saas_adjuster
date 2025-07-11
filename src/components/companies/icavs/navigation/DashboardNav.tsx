@@ -85,15 +85,26 @@ export const DashboardNav = () => {
 
       {/* Desktop Sidebar (lg+) */}
       <nav className={`hidden lg:flex flex-col bg-white border-r border-gray-200 transition-all duration-300 ${
-        isCollapsed ? 'w-16' : 'w-64'
+        isCollapsed ? 'w-20' : 'w-64'
       }`}>
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-gray-200">
-          <h2 className={`font-bold text-xl text-gray-800 transition-all duration-300 ${
-            isCollapsed ? 'text-center' : ''
-          }`}>
-            {isCollapsed ? 'ICAVS' : 'ICAVS Dashboard'}
+        <div className="p-4 border-b border-gray-200 relative">
+          <h2 className="font-bold text-xl text-gray-800">
+            <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
+              ICAVS Dashboard
+            </span>
+            <span className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isCollapsed ? 'opacity-100' : 'opacity-0'}`}>
+              ICAVS
+            </span>
           </h2>
+          
+          {/* Collapse Toggle Button - positioned in header */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow duration-200 z-10"
+          >
+            {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          </button>
         </div>
 
         {/* Navigation Links */}
@@ -105,14 +116,16 @@ export const DashboardNav = () => {
                 <li key={item.name} className="relative group">
                   <Link
                     to={item.href}
-                    className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200 ${
+                    className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200 relative ${
                       isActive(item.href)
                         ? 'bg-blue-100 text-blue-700'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    <Icon size={20} className="flex-shrink-0" />
-                    <span className={`ml-3 ${isCollapsed ? 'hidden' : ''}`}>
+                    <Icon size={20} className="flex-shrink-0 min-w-[20px]" />
+                    <span className={`ml-3 transition-opacity duration-300 whitespace-nowrap ${
+                      isCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}>
                       {item.name}
                     </span>
                   </Link>
@@ -128,16 +141,6 @@ export const DashboardNav = () => {
               );
             })}
           </ul>
-        </div>
-
-        {/* Collapse Toggle Button */}
-        <div className="relative">
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow duration-200 z-10"
-          >
-            {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-          </button>
         </div>
       </nav>
     </>
