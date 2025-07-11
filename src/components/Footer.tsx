@@ -20,7 +20,7 @@ export function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-12 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Logo and Description */}
           <div className="lg:col-span-2">
@@ -51,7 +51,7 @@ export function Footer() {
           {Object.entries(links).map(([category, categoryLinks]) => (
             <div key={category}>
               <h3 className="font-semibold text-white mb-4 capitalize">{category}</h3>
-              <ul className="space-y-8">
+              <ul className="space-y-2">
                 {categoryLinks.map((link) => (
                   <li key={link.name}>
                     <Link
