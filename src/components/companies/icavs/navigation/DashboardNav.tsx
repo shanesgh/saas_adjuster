@@ -39,7 +39,7 @@ export const DashboardNav = () => {
         )}
       </button>
 
-      <div className="p-4">
+      <div className="p-2">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 whitespace-nowrap overflow-hidden">
           {isCollapsed ? 'DASH' : 'ICAVS Dashboard'}
         </h2>
