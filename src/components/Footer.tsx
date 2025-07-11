@@ -1,15 +1,21 @@
 import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
 import { FileText,Linkedin, Mail } from 'lucide-react';
+import { PrivacyModal } from './PrivacyModal';
+import { TermsModal } from './TermsModal';
 
 export function Footer() {
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   const links = {
     product: [
       { name: 'Features', path: '/' },
       { name: 'Pricing', path: '/pricing' },
     ],
     legal: [
-      { name: 'Privacy', path: '#' },
-      { name: 'Terms', path: '#' },
+      { name: 'Privacy', action: () => setShowPrivacyModal(true) },
+      { name: 'Terms', action: () => setShowTermsModal(true) },
     ],
   };
 
@@ -54,12 +60,21 @@ export function Footer() {
               <ul className="space-y-2">
                 {categoryLinks.map((link) => (
                   <li key={link.name}>
-                    <Link
-                      to={link.path}
-                      className="text-gray-400 hover:text-white transition-colors duration-200"
-                    >
-                      {link.name}
-                    </Link>
+                    {link.path ? (
+                      <Link
+                        to={link.path}
+                        className="text-gray-400 hover:text-white transition-colors duration-200"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={link.action}
+                        className="text-gray-400 hover:text-white transition-colors duration-200"
+                      >
+                        {link.name}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -77,6 +92,9 @@ export function Footer() {
           </div>
         </div>
       </div>
+      
+      <PrivacyModal isOpen={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} />
+      <TermsModal isOpen={showTermsModal} onClose={() => setShowTermsModal(false)} />
     </footer>
   );
 }
