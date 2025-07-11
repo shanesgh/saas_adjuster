@@ -50,12 +50,14 @@ export const DashboardNav = () => {
               <div className="relative group">
                 <Link
                   to={item.to}
-                  className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition-colors h-10"
                   activeProps={{
                     className: "bg-primary-100 text-primary-700"
                   }}
                 >
-                  <item.icon size={20} className="flex-shrink-0" />
+                  <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                    <item.icon size={20} />
+                  </div>
                   {!isCollapsed && (
                     <span className="ml-3 whitespace-nowrap">
                       {item.label}
