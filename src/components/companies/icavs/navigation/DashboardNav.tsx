@@ -26,7 +26,7 @@ export const DashboardNav = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <nav className={`${isCollapsed ? 'w-18' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
+    <nav className={`${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-sm border-r border-gray-200 h-full transition-all duration-300 relative`}>
       {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
