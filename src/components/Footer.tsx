@@ -51,7 +51,7 @@ export function Footer() {
           {Object.entries(links).map(([category, categoryLinks]) => (
             <div key={category}>
               <h3 className="font-semibold text-white mb-4 capitalize">{category}</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-6">
                 {categoryLinks.map((link) => (
                   <li key={link.name}>
                     <Link
