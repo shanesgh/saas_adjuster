@@ -843,11 +843,7 @@ name="labourRemarks"
           <FormNavigation onSubmit={handleSubmit} />
 </div>
       </CardContent>
-                onChange={(e) => {
-                  handleChange(e);
-                  // Force re-render to update labour preview
-                  setTimeout(() => setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() })), 0);
-                }}
+          
 </Card>
 );
 };
