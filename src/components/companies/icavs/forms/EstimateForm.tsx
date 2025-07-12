@@ -63,6 +63,10 @@ export const EstimateForm = () => {
   const [adjusterSourceCustom, setAdjusterSourceCustom] = useState('');
   const [excludedItemsList, setExcludedItemsList] = useState([]);
 
+  // State for trade discount and contribution
+  const [tradeDiscountList, setTradeDiscountList] = useState([]);
+  const [contributionList, setContributionList] = useState([]);
+
   // Helper function to generate parts source text
   const generatePartsSourceText = (sourceType, supplier, custom) => {
     if (sourceType === 'custom') return custom;
