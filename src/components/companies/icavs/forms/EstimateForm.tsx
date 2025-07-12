@@ -108,8 +108,8 @@ export const EstimateForm = () => {
     updated[index] = { ...updated[index], [field]: value };
     setExcludedItemsList(updated);
     
-    // Force re-render of preview by updating a dummy state
-    setEstimateData(prev => ({ ...prev }));
+    // Force immediate re-render of preview
+    setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
   };
 
   // Helper function to remove excluded item
@@ -554,7 +554,7 @@ export const EstimateForm = () => {
               <button
                 type="button"
                 onClick={addExcludedItem}
-                className="w-full px-3 py-2 bg-primary-500 text-white rounded text-sm hover:bg-primary-600 border-2 border-dashed border-primary-300 hover:border-primary-500"
+                className="mx-auto block px-4 py-2 bg-primary-500 text-white rounded text-sm hover:bg-primary-600 transition-colors"
               >
                 + Add Item
               </button>
