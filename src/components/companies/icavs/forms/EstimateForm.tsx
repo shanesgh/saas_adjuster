@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '../../../../context/companies/icavs/FormContext';
-import { Input } from '../../../ui/input';
-import { Select } from '../../../ui/select';
-import { Checkbox } from '../../../ui/checkbox';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { EstimateSourceSection } from './EstimateSourceSection';
+import { PartsSection } from './PartsSection';
+import { LabourSection } from './LabourSection';
 
 // Parts source options
 const partsSourceOptions = [
@@ -117,78 +117,15 @@ export const EstimateForm = () => {
     }
   };
 
-  // Helper function to add excluded item
-const addExcludedItem = () => {
-  setExcludedItemsList([...excludedItemsList, { 
-    partName: '', 
-    reason: 'to-repair', // Set default reason to first option
-    customReason: '' 
-  }]);
-  // Force preview update after adding item
-  setTimeout(() => {
-    setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
-  }, 0);
-};
-
-  // Helper function to update excluded item
-const updateExcludedItem = (index, field, value) => {
-  const updated = [...excludedItemsList];
-  updated[index] = { ...updated[index], [field]: value };
-  setExcludedItemsList(updated);
-
-  // Force immediate re-render of preview
-  setTimeout(() => {
-    setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
-  }, 0);
-};
-useEffect(() => {
-  // This will trigger whenever excludedItemsList changes
-  setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
-}, [excludedItemsList]);
-  // Helper function to remove excluded item
-  const removeExcludedItem = (index) => {
-    setExcludedItemsList(excludedItemsList.filter((_, i) => i !== index));
-  };
-
   // Helper function to generate excluded items text
-const generateExcludedItemsText = () => {
-  return excludedItemsList
-    .filter(item => item.partName.trim() !== '') // Only include items with part names
-    .map(item => {
-      const reasonText = item.reason === 'custom' ? item.customReason : 
-        exclusionReasonOptions.find(opt => opt.value === item.reason)?.label || '';
-      return `${item.partName} - ${reasonText}`;
-    }).join('\n');
-};
-
-  // Helper functions for trade discount
-  const addTradeDiscount = () => {
-    setTradeDiscountList([...tradeDiscountList, { percentage: '', description: '' }]);
-  };
-
-  const updateTradeDiscount = (index, field, value) => {
-    const updated = [...tradeDiscountList];
-    updated[index] = { ...updated[index], [field]: value };
-    setTradeDiscountList(updated);
-  };
-
-  const removeTradeDiscount = (index) => {
-    setTradeDiscountList(tradeDiscountList.filter((_, i) => i !== index));
-  };
-
-  // Helper functions for contribution
-  const addContribution = () => {
-    setContributionList([...contributionList, { percentage: '', description: '' }]);
-  };
-
-  const updateContribution = (index, field, value) => {
-    const updated = [...contributionList];
-    updated[index] = { ...updated[index], [field]: value };
-    setContributionList(updated);
-  };
-
-  const removeContribution = (index) => {
-    setContributionList(contributionList.filter((_, i) => i !== index));
+  const generateExcludedItemsText = () => {
+    return excludedItemsList
+      .filter(item => item.partName.trim() !== '')
+      .map(item => {
+        const reasonText = item.reason === 'custom' ? item.customReason : 
+          exclusionReasonOptions.find(opt => opt.value === item.reason)?.label || '';
+        return `${item.partName} - ${reasonText}`;
+      }).join('\n');
   };
 
   // Generate remarks preview based on excluded items
@@ -285,14 +222,11 @@ const generateExcludedItemsText = () => {
     const hasContribution = contributionPercentage && contributionPercentage.trim() !== '';
 
     if (hasTradeDiscount && !hasContribution) {
-      // Trade discount applied but no contribution
       preview += `On account of the age and condition of the vehicle no contribution ought to be applied to the irreparable items.\n\n`;
     } else if (hasContribution) {
-      // Contribution applied (with or without trade discount)
       preview += `On account of the age of the vehicle we applied ${contributionPercentage}% contribution towards the O.E.M. parts which has been reflected in our handwritten workings on the attached estimate.\n\n`;
     }
 
-    // Add custom remarks if any
     if (estimateData.partsRemarks) {
       preview += `${estimateData.partsRemarks}\n\n`;
     }
@@ -327,94 +261,10 @@ const generateExcludedItemsText = () => {
     }
   };
 
-  // Generate full preview with paragraphs
-  const generateFullPreview = () => {
-    let preview = '';
+  useEffect(() => {
+    setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
+  }, [excludedItemsList]);
 
-    // Group excluded items by reason for better paragraph generation
-    const groupedItems = {};
-    excludedItemsList.forEach(item => {
-      const reasonKey = item.reason === 'custom' ? item.customReason : item.reason;
-      if (!groupedItems[reasonKey]) {
-        groupedItems[reasonKey] = [];
-      }
-      groupedItems[reasonKey].push(item.partName);
-    });
-
-    // Generate excluded items list
-    Object.entries(groupedItems).forEach(([reason, parts]) => {
-      const reasonText = exclusionReasonOptions.find(opt => opt.value === reason)?.label || reason;
-      const partsText = parts.join(', ');
-      preview += `${partsText} – ${reasonText}\n`;
-    });
-
-    // Add trade discount
-    if (tradeDiscountPercentage && tradeDiscountPercentage.trim() !== '') {
-      preview += `Trade Discount: ${tradeDiscountPercentage}%\n`;
-    }
-
-    // Add contribution
-    if (contributionPercentage && contributionPercentage.trim() !== '') {
-      preview += `Contribution: ${contributionPercentage}%\n`;
-    }
-
-    // Add salvageable items (from excluded items with salvageable reason)
-    const salvageableItems = excludedItemsList.filter(item => item.reason === 'salvageable');
-    if (salvageableItems.length > 0) {
-      const salvageText = salvageableItems.map(item => `${item.partName} ($${item.customReason || '0.00'})`).join(', ');
-      preview += `Salvageable items & Estimated value: ${salvageText}\n`;
-    }
-
-    preview += '\nRemarks:\n';
-
-    // Generate detailed remarks paragraphs
-    Object.entries(groupedItems).forEach(([reason, parts]) => {
-      const partsText = parts.join(', ');
-
-      switch (reason) {
-        case 'to-repair':
-          preview += `The estimate included provision for ${partsText} under the heading of material items. The damage to ${parts.length > 1 ? 'these components are' : 'this component is'} reparable and ${parts.length > 1 ? 'were' : 'was'} as a result excluded from the material items by way of ${parts.length > 1 ? 'adjustments' : 'an adjustment'}.\n\n`;
-          break;
-        case 'no-visible-damage':
-          preview += `The ${partsText} showed no signs of impact damage and were struck off the material section of the estimate by way of adjustments.\n\n`;
-          break;
-        case 'closer-inspection':
-          preview += `The estimate included provision for the replacement of ${partsText} under the heading of material items. No damage was visible to ${parts.length > 1 ? 'these components' : 'this component'} at the time of inspection. ${parts.length > 1 ? 'These components' : 'This component'} will require verification by the repairer after the job is opened and the findings communicated to your office following which the damage can be confirmed by our office. To this end the above-mentioned items were excluded from the material items in the interim.\n\n`;
-          break;
-        case 'not-consistent':
-          preview += `The damage to the ${partsText} is not consistent with this claim and was therefore not allowed.\n\n`;
-          break;
-        case 'reusable':
-          preview += `The material section of the estimate included ${partsText}. These components are re-usable and were excluded from the material section by way of adjustments.\n\n`;
-          break;
-        case 'salvageable':
-          parts.forEach(part => {
-            const item = excludedItemsList.find(i => i.partName === part);
-            const amount = item?.customReason || '0.00';
-            preview += `The unaffected ${part} has salvageable worth which we estimate to be in the order of $${amount}. You may wish to have this item turned into your Office as a result.\n\n`;
-          });
-          break;
-        default:
-          if (reason) {
-            preview += `${partsText} - ${reason}\n\n`;
-          }
-      }
-    });
-
-    // Add contribution remarks
-    if (contributionList.length > 0) {
-      contributionList.forEach(contribution => {
-        preview += `On account of the age of the vehicle we applied ${contribution.percentage}% contribution towards the O.E.M. parts which has been reflected in our handwritten workings on the attached estimate.\n\n`;
-      });
-    }
-
-    // Add custom remarks
-    if (estimateData.partsRemarks) {
-      preview += `${estimateData.partsRemarks}\n`;
-    }
-
-    return preview.trim();
-  };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -439,7 +289,6 @@ const generateExcludedItemsText = () => {
       .split('\n')
       .filter(item => item.trim() !== '');
 
-    // Update adjusted source with generated text
     const finalAdjustedSource = generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSourceCustom);
     const finalExcludedItems = generateExcludedItemsText();
 
@@ -468,7 +317,6 @@ const generateExcludedItemsText = () => {
       },
     });
 
-    // Auto-navigate to next step after saving
     setTimeout(() => {
       goToNextStep();
     }, 100);
@@ -481,366 +329,47 @@ const generateExcludedItemsText = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Estimate Source</h3>
+          <EstimateSourceSection 
+            estimateData={estimateData}
+            handleChange={handleChange}
+          />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Estimate From"
-                name="from"
-                value={estimateData.from}
-                onChange={handleChange}
-                placeholder="e.g. Aristocraft Auto Collision"
-              />
+          <PartsSection
+            reportedSource={reportedSource}
+            setReportedSource={setReportedSource}
+            adjusterSource={adjusterSource}
+            setAdjusterSource={setAdjusterSource}
+            adjusterSourceSupplier={adjusterSourceSupplier}
+            setAdjusterSourceSupplier={setAdjusterSourceSupplier}
+            excludedItemsList={excludedItemsList}
+            setExcludedItemsList={setExcludedItemsList}
+            tradeDiscountPercentage={tradeDiscountPercentage}
+            setTradeDiscountPercentage={setTradeDiscountPercentage}
+            contributionPercentage={contributionPercentage}
+            setContributionPercentage={setContributionPercentage}
+            estimateData={estimateData}
+            handleChange={handleChange}
+            partsSourceOptions={partsSourceOptions}
+            exclusionReasonOptions={exclusionReasonOptions}
+            generatePartsSourceText={generatePartsSourceText}
+            generateExcludedItemsText={generateExcludedItemsText}
+            generateRemarksPreview={generateRemarksPreview}
+          />
 
-              <Input
-                label="Estimate Date"
-                type="date"
-                name="estimateDate"
-                value={estimateData.estimateDate || ''}
-                onChange={handleChange}
-              />
-            </div>
+          <LabourSection
+            estimateData={estimateData}
+            handleChange={handleChange}
+            selectedLabourCategory={selectedLabourCategory}
+            setSelectedLabourCategory={setSelectedLabourCategory}
+            labourCategoryData={labourCategoryData}
+            setLabourCategoryData={setLabourCategoryData}
+            labourCategoryOptions={labourCategoryOptions}
+            generateLabourRemarksPreview={generateLabourRemarksPreview}
+          />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center mt-8">
-                <Checkbox
-                  id="dated"
-                  name="dated"
-                  label="Dated"
-                  checked={estimateData.dated}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div></div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Invoice From"
-                name="invoiceFrom"
-                value={estimateData.invoiceFrom}
-                onChange={handleChange}
-                placeholder="e.g. White Boy Auto"
-              />
-
-              <Input
-                label="Invoice Dated"
-                type="date"
-                name="invoiceDated"
-                value={estimateData.invoiceDated}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="border-t border-secondary-200 pt-4 space-y-4">
-            <h3 className="text-lg font-medium">Parts (Section A)</h3>
-
-            {/* Reported Source Dropdown */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-secondary-700">
-                Reported Source & Type of Parts
-              </label>
-              <Select
-                value={reportedSource}
-                onChange={(e) => setReportedSource(e.target.value)}
-                options={partsSourceOptions}
-              />
-            </div>
-
-            {/* Adjuster Source Dropdown */}
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-secondary-700">
-                Adjusted Source & Type of Parts
-              </label>
-              <Select
-                value={adjusterSource}
-                onChange={(e) => setAdjusterSource(e.target.value)}
-                options={partsSourceOptions}
-              />
-              <Input
-                label={adjusterSource === 'custom' ? "Custom Entry" : "Supplier Name (with phone if applicable)"}
-                value={adjusterSourceSupplier}
-                onChange={(e) => setAdjusterSourceSupplier(e.target.value)}
-                placeholder={adjusterSource === 'custom' ? "Enter custom parts source" : "e.g. Seenath's (360-7033) or Automix - 751-2782"}
-              />
-              {adjusterSource && (
-                <div className="p-2 bg-gray-50 rounded border text-sm">
-                  <strong>Preview:</strong> {generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSource === 'custom' ? adjusterSourceSupplier : '')}
-                </div>
-              )}
-            </div>
-
-            {/* Excluded Items Section */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-secondary-700">
-                  Excluded Items & Reason Disallowed
-                </label>
-              </div>
-
-              {excludedItemsList.map((item, index) => (
-                <div key={index} className="border border-gray-200 rounded p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Item {index + 1}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeExcludedItem(index)}
-                      className="text-red-500 hover:text-red-700 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <Input
-                    label="Part Name"
-                    value={item.partName}
-                    onChange={(e) => {
-                      updateExcludedItem(index, 'partName', e.target.value);
-                      // Force immediate preview update
-                      setTimeout(() => setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() })), 0);
-                    }}
-                    placeholder="e.g. Rear bumper"
-                  />
-                  <Select
-                    label="Reason"
-                    value={item.reason}
-                    onChange={(e) => updateExcludedItem(index, 'reason', e.target.value)}
-                    options={exclusionReasonOptions}
-                  />
-                  {item.reason === 'custom' && (
-                    <Input
-                      label="Custom Reason"
-                      value={item.customReason}
-                      onChange={(e) => updateExcludedItem(index, 'customReason', e.target.value)}
-                      placeholder="Enter custom reason"
-                    />
-                  )}
-                </div>
-              ))}
-
-              <button
-                type="button"
-                onClick={addExcludedItem}
-                className="mx-auto block px-4 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
-              >
-                + Add Excluded Item
-              </button>
-
-              {excludedItemsList.length > 0 && (
-                <div className="p-2 bg-gray-50 rounded border text-sm">
-                  <strong>Preview:</strong>
-                  <pre className="whitespace-pre-wrap mt-1">{generateExcludedItemsText()}</pre>
-                </div>
-              )}
-            </div>
-
-            {/* Trade Discount and Contribution */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Trade Discount (%)"
-                type="number"
-                step="0.1"
-                value={tradeDiscountPercentage}
-                onChange={(e) => setTradeDiscountPercentage(e.target.value)}
-                placeholder="e.g. 40"
-              />
-
-              <Input
-                label="Contribution (%)"
-                type="number"
-                step="0.1"
-                value={contributionPercentage}
-                onChange={(e) => setContributionPercentage(e.target.value)}
-                placeholder="e.g. 10"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Parts Figure Quoted ($)"
-                type="number"
-                step="0.01"
-                name="partsQuotedFigure"
-                value={estimateData.partsQuotedFigure}
-                onChange={handleChange}
-              />
-
-              <Input
-                label="Adjusted Parts Figure ($)"
-                type="number"
-                step="0.01"
-                name="partsAdjustedFigure"
-                value={estimateData.partsAdjustedFigure}
-                onChange={handleChange}
-              />
-            </div>
-
-            
-
-            {/* Remarks Preview */}
-            {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
-              <div className="p-3 bg-gray-50 rounded border text-sm">
-                <strong>Remarks Preview:</strong>
-                <div className="mt-2 whitespace-pre-line text-gray-700">
-                  {generateRemarksPreview()}
-                </div>
-              </div>
-            )}
-          </div>
-<div className="space-y-1">
-              <label
-                htmlFor="partsRemarks"
-                className="block text-sm font-medium text-secondary-700"
-              >
-                Custom Section(A) Parts Remarks
-              </label>
-              <textarea
-                id="partsRemarks"
-                name="partsRemarks"
-                value={estimateData.partsRemarks}
-                onChange={handleChange}
-                rows={4}
-                className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="Enter remarks about parts..."
-              />
-            </div>
-          <div className="border-t border-secondary-200 pt-4 space-y-4">
-            <h3 className="text-lg font-medium">Labour (Section B)</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Figure Quoted ($)"
-                type="number"
-                step="0.01"
-                name="labourQuotedFigure"
-                value={estimateData.labourQuotedFigure}
-                onChange={handleChange}
-              />
-
-              <Input
-                label="Adjusted Labour & Material Figure ($)"
-                type="number"
-                step="0.01"
-                name="labourAdjustedFigure"
-                value={estimateData.labourAdjustedFigure}
-                onChange={handleChange}
-              />
-            </div>
-
-            <Input
-              label="Repairs ought to be completed in (days)"
-              type="number"
-              name="completionDays"
-              value={estimateData.completionDays}
-              onChange={handleChange}
-            />
-
-            {/* Labour Category Dropdown */}
-          {/* Remarks Preview */}
-          {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
-            <div className="p-3 bg-gray-50 rounded border text-sm">
-              <strong>Remarks Preview:</strong>
-              <div className="mt-2 whitespace-pre-line text-gray-700">
-                {generateRemarksPreview()}
-              </div>
-            </div>
-          )}
-          
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-secondary-700">
-                Labour Category
-              </label>
-              <Select
-                value={selectedLabourCategory}
-                onChange={(e) => setSelectedLabourCategory(e.target.value)}
-                options={labourCategoryOptions}
-              />
-            </div>
-
-            {/* Dynamic fields based on labour category */}
-            {selectedLabourCategory === 'overstated' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Original Figure ($)"
-                  value={labourCategoryData.originalFigure}
-                  onChange={(e) => setLabourCategoryData(prev => ({ ...prev, originalFigure: e.target.value }))}
-                  placeholder="e.g. 14730.00"
-                />
-                <Input
-                  label="Adjusted Figure ($)"
-                  value={labourCategoryData.adjustedFigure}
-                  onChange={(e) => setLabourCategoryData(prev => ({ ...prev, adjustedFigure: e.target.value }))}
-                  placeholder="e.g. 7690.00"
-                />
-              </div>
-            )}
-
-            {selectedLabourCategory === 'negotiated' && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Person Name"
-                    value={labourCategoryData.personName}
-                    onChange={(e) => setLabourCategoryData(prev => ({ ...prev, personName: e.target.value }))}
-                    placeholder="e.g. John Smith"
-                  />
-                  <Input
-                    label="Company/Location"
-                    value={labourCategoryData.companyLocation}
-                    onChange={(e) => setLabourCategoryData(prev => ({ ...prev, companyLocation: e.target.value }))}
-                    placeholder="e.g. ABC Auto Body Shop"
-                  />
-                </div>
-                <Input
-                  label="Agreed Figure ($)"
-                  value={labourCategoryData.agreedFigure}
-                  onChange={(e) => setLabourCategoryData(prev => ({ ...prev, agreedFigure: e.target.value }))}
-                  placeholder="e.g. 8500.00"
-                />
-              </div>
-            )}
-
-            {(selectedLabourCategory === 'estimated' || selectedLabourCategory === 'exceeds') && (
-              <Input
-                label="Labour Figure ($)"
-                value={labourCategoryData.labourFigure}
-                onChange={(e) => setLabourCategoryData(prev => ({ ...prev, labourFigure: e.target.value }))}
-                placeholder="e.g. 7500.00"
-              />
-            )}
-
-            {/* Labour Remarks Preview */}
-            {selectedLabourCategory && (
-              <div className="p-3 bg-gray-50 rounded border text-sm">
-                <strong>Labour Remarks Preview:</strong>
-                <div className="mt-2 text-gray-700">
-                  {generateLabourRemarksPreview()}
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-1">
-              <label
-                htmlFor="labourRemarks"
-                className="block text-sm font-medium text-secondary-700"
-              >
-                Custom Section(B) Labour Remarks
-              </label>
-              <textarea
-                id="labourRemarks"
-                name="labourRemarks"
-                rows={4}
-className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="Enter remarks about labour..."
-              
-                />
-            </div>
-          </div>
+          <FormNavigation onSubmit={handleSubmit} />
         </div>
       </CardContent>
     </Card>
-                       
   );
 };
