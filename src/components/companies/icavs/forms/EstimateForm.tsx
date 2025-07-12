@@ -834,7 +834,7 @@ const generateExcludedItemsText = () => {
                 />
             </div>
           </div>
-        
+        </div>
                         </div>
 
 
