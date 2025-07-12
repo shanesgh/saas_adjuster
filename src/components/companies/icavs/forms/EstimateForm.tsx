@@ -110,6 +110,126 @@ export const EstimateForm = () => {
     }).join('\n');
   };
 
+  // Helper functions for trade discount
+  const addTradeDiscount = () => {
+    setTradeDiscountList([...tradeDiscountList, { percentage: '', description: '' }]);
+  };
+
+  const updateTradeDiscount = (index, field, value) => {
+    const updated = [...tradeDiscountList];
+    updated[index] = { ...updated[index], [field]: value };
+    setTradeDiscountList(updated);
+  };
+
+  const removeTradeDiscount = (index) => {
+    setTradeDiscountList(tradeDiscountList.filter((_, i) => i !== index));
+  };
+
+  // Helper functions for contribution
+  const addContribution = () => {
+    setContributionList([...contributionList, { percentage: '', description: '' }]);
+  };
+
+  const updateContribution = (index, field, value) => {
+    const updated = [...contributionList];
+    updated[index] = { ...updated[index], [field]: value };
+    setContributionList(updated);
+  };
+
+  const removeContribution = (index) => {
+    setContributionList(contributionList.filter((_, i) => i !== index));
+  };
+
+  // Generate full preview with paragraphs
+  const generateFullPreview = () => {
+    let preview = '';
+    
+    // Group excluded items by reason for better paragraph generation
+    const groupedItems = {};
+    excludedItemsList.forEach(item => {
+      const reasonKey = item.reason === 'custom' ? item.customReason : item.reason;
+      if (!groupedItems[reasonKey]) {
+        groupedItems[reasonKey] = [];
+      }
+      groupedItems[reasonKey].push(item.partName);
+    });
+
+    // Generate excluded items list
+    Object.entries(groupedItems).forEach(([reason, parts]) => {
+      const reasonText = exclusionReasonOptions.find(opt => opt.value === reason)?.label || reason;
+      const partsText = parts.join(', ');
+      preview += `${partsText} – ${reasonText}\n`;
+    });
+
+    // Add trade discount
+    if (tradeDiscountList.length > 0) {
+      const discounts = tradeDiscountList.map(d => `${d.percentage}%`).join(', ');
+      preview += `Trade Discount: ${discounts}\n`;
+    }
+
+    // Add contribution
+    if (contributionList.length > 0) {
+      const contributions = contributionList.map(c => `${c.percentage}%`).join(', ');
+      preview += `Contribution: ${contributions}\n`;
+    }
+
+    // Add salvageable items (from excluded items with salvageable reason)
+    const salvageableItems = excludedItemsList.filter(item => item.reason === 'salvageable');
+    if (salvageableItems.length > 0) {
+      const salvageText = salvageableItems.map(item => `${item.partName} ($${item.customReason || '0.00'})`).join(', ');
+      preview += `Salvageable items & Estimated value: ${salvageText}\n`;
+    }
+
+    preview += '\nRemarks:\n';
+
+    // Generate detailed remarks paragraphs
+    Object.entries(groupedItems).forEach(([reason, parts]) => {
+      const partsText = parts.join(', ');
+      
+      switch (reason) {
+        case 'to-repair':
+          preview += `The estimate included provision for ${partsText} under the heading of material items. The damage to ${parts.length > 1 ? 'these components are' : 'this component is'} reparable and ${parts.length > 1 ? 'were' : 'was'} as a result excluded from the material items by way of ${parts.length > 1 ? 'adjustments' : 'an adjustment'}.\n\n`;
+          break;
+        case 'no-visible-damage':
+          preview += `The ${partsText} showed no signs of impact damage and were struck off the material section of the estimate by way of adjustments.\n\n`;
+          break;
+        case 'closer-inspection':
+          preview += `The estimate included provision for the replacement of ${partsText} under the heading of material items. No damage was visible to ${parts.length > 1 ? 'these components' : 'this component'} at the time of inspection. ${parts.length > 1 ? 'These components' : 'This component'} will require verification by the repairer after the job is opened and the findings communicated to your office following which the damage can be confirmed by our office. To this end the above-mentioned items were excluded from the material items in the interim.\n\n`;
+          break;
+        case 'not-consistent':
+          preview += `The damage to the ${partsText} is not consistent with this claim and was therefore not allowed.\n\n`;
+          break;
+        case 'reusable':
+          preview += `The material section of the estimate included ${partsText}. These components are re-usable and were excluded from the material section by way of adjustments.\n\n`;
+          break;
+        case 'salvageable':
+          parts.forEach(part => {
+            const item = excludedItemsList.find(i => i.partName === part);
+            const amount = item?.customReason || '0.00';
+            preview += `The unaffected ${part} has salvageable worth which we estimate to be in the order of $${amount}. You may wish to have this item turned into your Office as a result.\n\n`;
+          });
+          break;
+        default:
+          if (reason) {
+            preview += `${partsText} - ${reason}\n\n`;
+          }
+      }
+    });
+
+    // Add contribution remarks
+    if (contributionList.length > 0) {
+      contributionList.forEach(contribution => {
+        preview += `On account of the age of the vehicle we applied ${contribution.percentage}% contribution towards the O.E.M. parts which has been reflected in our handwritten workings on the attached estimate.\n\n`;
+      });
+    }
+
+    // Add custom remarks
+    if (estimateData.partsRemarks) {
+      preview += `${estimateData.partsRemarks}\n`;
+    }
+
+    return preview.trim();
+  };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
