@@ -140,6 +140,109 @@ export const EstimateForm = () => {
     setContributionList(contributionList.filter((_, i) => i !== index));
   };
 
+  // Generate remarks preview based on excluded items
+  const generateRemarksPreview = () => {
+    let preview = '';
+    
+    // Group excluded items by reason for better paragraph generation
+    const groupedItems = {};
+    excludedItemsList.forEach(item => {
+      const reasonKey = item.reason;
+      if (!groupedItems[reasonKey]) {
+        groupedItems[reasonKey] = [];
+      }
+      groupedItems[reasonKey].push(item.partName);
+    });
+
+    // Generate remarks paragraphs for each reason category
+    Object.entries(groupedItems).forEach(([reason, parts]) => {
+      if (!reason || parts.length === 0) return;
+      
+      const partsText = parts.length === 1 ? parts[0] : 
+        parts.length === 2 ? parts.join(' and ') :
+        parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1];
+      
+      switch (reason) {
+        case 'to-repair':
+          if (parts.length === 1) {
+            preview += `The estimate included provision for a ${partsText} under the heading of material items. The damage to this component is reparable and was as a result excluded from the material items by way of an adjustment.\n\n`;
+          } else {
+            preview += `The estimate included provision for ${partsText} under the heading of material items. The damage to these components are reparable and were as a result excluded from the material items by way of adjustments.\n\n`;
+          }
+          break;
+        case 'no-visible-damage':
+          if (parts.length === 1) {
+            preview += `The ${partsText} showed no signs of impact damage and was struck off the material section of the estimate by way of adjustments.\n\n`;
+          } else {
+            preview += `The ${partsText} showed no signs of impact damage and were struck off the material section of the estimate by way of adjustments.\n\n`;
+          }
+          break;
+        case 'closer-inspection':
+          if (parts.length === 1) {
+            preview += `The estimate included provision for the replacement of a ${partsText} under the heading of material items. No damage was visible to this component at the time of inspection. This component will require verification by the repairer after the job is opened and the findings communicated to your office following which the damage can be confirmed by our office. To this end the above-mentioned item was excluded from the material items in the interim.\n\n`;
+          } else {
+            preview += `The estimate included provision for the replacement of ${partsText} under the heading of material items. No damage was visible to these components at the time of inspection. These components will require verification by the repairer after the job is opened and the findings communicated to your office following which the damage can be confirmed by our office. To this end the above-mentioned items were excluded from the material items in the interim.\n\n`;
+          }
+          break;
+        case 'not-consistent':
+          if (parts.length === 1) {
+            preview += `The damage to the ${partsText} is not consistent with this claim and was therefore not allowed.\n\n`;
+          } else {
+            preview += `The damage to the ${partsText} is not consistent with this claim and was therefore not allowed.\n\n`;
+          }
+          break;
+        case 'reusable':
+          if (parts.length === 1) {
+            preview += `The material section of the estimate included a ${partsText}. This component is re-usable and was excluded from the material section by way of adjustments.\n\n`;
+          } else {
+            preview += `The material section of the estimate included ${partsText}. These components are re-usable and were excluded from the material section by way of adjustments.\n\n`;
+          }
+          break;
+        case 'salvageable':
+          parts.forEach(part => {
+            const item = excludedItemsList.find(i => i.partName === part);
+            const amount = item?.customReason || '0.00';
+            preview += `The unaffected ${part} has salvageable worth which we estimate to be in the order of $${amount}. You may wish to have this item turned into your Office as a result.\n\n`;
+          });
+          break;
+        case 'lower-price':
+          preview += `The material section of the estimate made provision for secondhand components. We were able to locate the required items on the market at lower prices, which are shown in red on the estimate.\n\n`;
+          break;
+        case 'total-loss':
+          const item = excludedItemsList.find(i => i.reason === 'total-loss');
+          const company = item?.customReason || '[company name]';
+          preview += `We were presented with a letter from ${company} which recommended that this loss be treated as a 'Constructive Total Loss.' The parts figure will be in excess of $[amount] which no doubt far exceeds an economical undertaking.\n\n`;
+          break;
+        case 'no-contribution':
+          preview += `On account of the age and condition of the vehicle no contribution ought to be applied to the irreparable items. There is a possibility that unseen damage may come to light after the job is opened. In the event that there is unseen damage, this ought to be the subject of a supplementary estimate by a further inspection.\n\n`;
+          break;
+        default:
+          if (reason === 'custom') {
+            const customReason = excludedItemsList.find(i => i.partName === parts[0])?.customReason;
+            if (customReason) {
+              preview += `${partsText} - ${customReason}\n\n`;
+            }
+          }
+      }
+    });
+
+    // Add contribution remarks
+    if (contributionList.length > 0) {
+      contributionList.forEach(contribution => {
+        if (contribution.percentage) {
+          preview += `On account of the age of the vehicle we applied ${contribution.percentage}% contribution towards the O.E.M. parts which has been reflected in our handwritten workings on the attached estimate.\n\n`;
+        }
+      });
+    }
+
+    // Add custom remarks if any
+    if (estimateData.partsRemarks) {
+      preview += `${estimateData.partsRemarks}\n\n`;
+    }
+
+    return preview.trim();
+  };
+
   // Generate full preview with paragraphs
   const generateFullPreview = () => {
     let preview = '';
@@ -456,6 +559,16 @@ export const EstimateForm = () => {
                 placeholder="Enter remarks about parts..."
               />
             </div>
+            
+            {/* Remarks Preview */}
+            {(excludedItemsList.length > 0 || contributionList.length > 0 || estimateData.partsRemarks) && (
+              <div className="p-3 bg-gray-50 rounded border text-sm">
+                <strong>Remarks Preview:</strong>
+                <div className="mt-2 whitespace-pre-line text-gray-700">
+                  {generateRemarksPreview()}
+                </div>
+              </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
