@@ -832,6 +832,9 @@ const generateExcludedItemsText = () => {
                 id="labourRemarks"
                 name="labourRemarks"
                 />
+            </div>
+          </div>
+        
                         </div>
 
 
