@@ -836,10 +836,7 @@ const generateExcludedItemsText = () => {
           </div>
         </div>
       </CardContent>
-                        </div>
-
-
-                  
     </Card>
+                       
   );
 };
