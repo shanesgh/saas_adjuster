@@ -831,6 +831,8 @@ const generateExcludedItemsText = () => {
               <textarea
                 id="labourRemarks"
                 name="labourRemarks"
+                                rows={4}
+
                 />
             </div>
           </div>
