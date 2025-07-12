@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Plus, X } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { Button } from '../../../ui/button';
 import { Input } from '../../../ui/input';
