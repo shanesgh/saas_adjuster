@@ -854,6 +854,7 @@ name="labourRemarks"
           />
         </div>
       </div>
+    </div>
     </CardContent>
   </Card>
 );
