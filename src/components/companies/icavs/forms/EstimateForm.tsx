@@ -8,7 +8,7 @@ import { FormNavigation } from '../navigation/FormNavigation';
 
 // Parts source options
 const partsSourceOptions = [
-  { value: 'new-oem', label: 'New O.E.M. parts' },
+  { value: 'franchise', label: 'Franchise Parts' },
   { value: 'used', label: 'Used parts' },
   { value: 'oem', label: 'O.E.M.' },
   { value: 'aftermarket', label: 'Aftermarket parts' },
@@ -30,6 +30,7 @@ const exclusionReasonOptions = [
   { value: 'lower-price', label: 'Lower Price Parts Found' },
   { value: 'total-loss', label: 'Constructive Total Loss' },
   { value: 'no-contribution', label: 'No Contribution Applied + Unseen Damage Warning' },
+  { value: 'no-contribution-applied', label: 'No Contribution Applied' },
   { value: 'custom', label: 'Custom Reason' },
 ];
 
@@ -66,6 +67,8 @@ export const EstimateForm = () => {
   // State for trade discount and contribution
   const [tradeDiscountList, setTradeDiscountList] = useState([]);
   const [contributionList, setContributionList] = useState([]);
+  const [tradeDiscountPercentage, setTradeDiscountPercentage] = useState('');
+  const [contributionPercentage, setContributionPercentage] = useState('');
 
   // Helper function to generate parts source text
   const generatePartsSourceText = (sourceType, supplier, custom) => {
@@ -73,8 +76,8 @@ export const EstimateForm = () => {
     if (!supplier) return partsSourceOptions.find(opt => opt.value === sourceType)?.label || '';
     
     switch (sourceType) {
-      case 'new-oem':
-        return `New O.E.M. parts – ${supplier}`;
+      case 'franchise':
+        return `Franchise Parts – ${supplier}`;
       case 'used':
         return `${supplier} – Used parts`;
       case 'aftermarket':
@@ -220,6 +223,9 @@ export const EstimateForm = () => {
         case 'no-contribution':
           preview += `On account of the age and condition of the vehicle no contribution ought to be applied to the irreparable items. There is a possibility that unseen damage may come to light after the job is opened. In the event that there is unseen damage, this ought to be the subject of a supplementary estimate by a further inspection.\n\n`;
           break;
+        case 'no-contribution-applied':
+          preview += `On account of the age and condition of the vehicle no contribution ought to be applied to the irreparable items.\n\n`;
+          break;
         default:
           if (reason === 'custom') {
             const customReason = excludedItemsList.find(i => i.partName === parts[0])?.customReason;
@@ -230,13 +236,16 @@ export const EstimateForm = () => {
       }
     });
 
-    // Add contribution remarks
-    if (contributionList.length > 0) {
-      contributionList.forEach(contribution => {
-        if (contribution.percentage) {
-          preview += `On account of the age of the vehicle we applied ${contribution.percentage}% contribution towards the O.E.M. parts which has been reflected in our handwritten workings on the attached estimate.\n\n`;
-        }
-      });
+    // Add trade discount and contribution logic
+    const hasTradeDiscount = tradeDiscountPercentage && tradeDiscountPercentage.trim() !== '';
+    const hasContribution = contributionPercentage && contributionPercentage.trim() !== '';
+    
+    if (hasTradeDiscount && !hasContribution) {
+      // Trade discount applied but no contribution
+      preview += `On account of the age and condition of the vehicle no contribution ought to be applied to the irreparable items.\n\n`;
+    } else if (hasContribution) {
+      // Contribution applied (with or without trade discount)
+      preview += `On account of the age of the vehicle we applied ${contributionPercentage}% contribution towards the O.E.M. parts which has been reflected in our handwritten workings on the attached estimate.\n\n`;
     }
 
     // Add custom remarks if any
@@ -269,15 +278,13 @@ export const EstimateForm = () => {
     });
 
     // Add trade discount
-    if (tradeDiscountList.length > 0) {
-      const discounts = tradeDiscountList.map(d => `${d.percentage}%`).join(', ');
-      preview += `Trade Discount: ${discounts}\n`;
+    if (tradeDiscountPercentage && tradeDiscountPercentage.trim() !== '') {
+      preview += `Trade Discount: ${tradeDiscountPercentage}%\n`;
     }
 
     // Add contribution
-    if (contributionList.length > 0) {
-      const contributions = contributionList.map(c => `${c.percentage}%`).join(', ');
-      preview += `Contribution: ${contributions}\n`;
+    if (contributionPercentage && contributionPercentage.trim() !== '') {
+      preview += `Contribution: ${contributionPercentage}%\n`;
     }
 
     // Add salvageable items (from excluded items with salvageable reason)
@@ -546,6 +553,27 @@ export const EstimateForm = () => {
               )}
             </div>
             
+            {/* Trade Discount and Contribution */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Trade Discount (%)"
+                type="number"
+                step="0.1"
+                value={tradeDiscountPercentage}
+                onChange={(e) => setTradeDiscountPercentage(e.target.value)}
+                placeholder="e.g. 40"
+              />
+              
+              <Input
+                label="Contribution (%)"
+                type="number"
+                step="0.1"
+                value={contributionPercentage}
+                onChange={(e) => setContributionPercentage(e.target.value)}
+                placeholder="e.g. 10"
+              />
+            </div>
+            
             <div className="space-y-1">
               <label
                 htmlFor="partsRemarks"
@@ -565,7 +593,7 @@ export const EstimateForm = () => {
             </div>
             
             {/* Remarks Preview */}
-            {(excludedItemsList.length > 0 || contributionList.length > 0 || estimateData.partsRemarks) && (
+            {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
               <div className="p-3 bg-gray-50 rounded border text-sm">
                 <strong>Remarks Preview:</strong>
                 <div className="mt-2 whitespace-pre-line text-gray-700">
