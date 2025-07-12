@@ -123,7 +123,7 @@ const defaultFormData: Partial<ClaimsFormData> = {
       adjustedFigure: 5200.00,
     },
     labour: {
-      remarks: 'Standard labour rates applied',
+      remarks: '',
       quotedFigure: 2200.00,
       adjustedFigure: 2000.00,
     },
