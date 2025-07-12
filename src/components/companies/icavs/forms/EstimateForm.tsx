@@ -4,9 +4,43 @@ import { Button } from '../../../ui/button';
 import { Input } from '../../../ui/input';
 import { Label } from '../../../ui/label';
 import { Textarea } from '../../../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../ui/select';
-import { Plus, X } from 'lucide-react';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { useForm } from '../../../../context/companies/icavs/FormContext';
+
+// Create a simple Select component since we don't have the full shadcn select
+interface SelectProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  children: React.ReactNode;
+}
+
+const Select: React.FC<SelectProps> = ({ value, onValueChange, children }) => {
+  return (
+    <select 
+      value={value} 
+      onChange={(e) => onValueChange(e.target.value)}
+      className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+    >
+      {children}
+    </select>
+  );
+};
+
+const SelectTrigger: React.FC<{ className?: string; children: React.ReactNode }> = ({ className, children }) => (
+  <div className={className}>{children}</div>
+);
+
+const SelectValue: React.FC<{ placeholder?: string }> = ({ placeholder }) => (
+  <span>{placeholder}</span>
+);
+
+const SelectContent: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <>{children}</>
+);
+
+const SelectItem: React.FC<{ value: string; children: React.ReactNode }> = ({ value, children }) => (
+  <option value={value}>{children}</option>
+);
 
 interface ExcludedItem {
   id: string;
@@ -25,7 +59,27 @@ interface LabourCategory {
 }
 
 export const EstimateForm: React.FC = () => {
-  const { estimateData, updateEstimateData } = useFormContext();
+  const { formData, updateFormData } = useForm();
+  const [estimateData, setEstimateData] = useState({
+    estimateFrom: formData.estimate?.from || '',
+    estimateDate: formData.estimate?.dated ? new Date().toISOString().split('T')[0] : '',
+    adjusterSource: formData.estimate?.parts?.adjustedSource || '',
+    supplierName: '',
+    tradeDiscount: '',
+    contribution: '',
+    partsQuoted: formData.estimate?.parts?.quotedFigure || '',
+    adjustedParts: formData.estimate?.parts?.adjustedFigure || '',
+    partsRemarks: formData.estimate?.parts?.remarks || '',
+    figureQuoted: formData.estimate?.labour?.quotedFigure || '',
+    adjustedLabour: formData.estimate?.labour?.adjustedFigure || '',
+    completionDays: formData.estimate?.completionDays || '',
+    labourRemarks: formData.estimate?.labour?.remarks || '',
+  });
+  
+  const updateEstimateData = (data: any) => {
+    setEstimateData(prev => ({ ...prev, ...data }));
+  };
+  
   const [excludedItems, setExcludedItems] = useState<ExcludedItem[]>([]);
   const [labourCategory, setLabourCategory] = useState<LabourCategory>({ category: '' });
 
@@ -135,6 +189,27 @@ export const EstimateForm: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    // Update form data with estimate information
+    updateFormData({
+      estimate: {
+        from: estimateData.estimateFrom,
+        dated: !!estimateData.estimateDate,
+        parts: {
+          adjustedSource: estimateData.adjusterSource,
+          quotedFigure: parseFloat(estimateData.partsQuoted) || 0,
+          adjustedFigure: parseFloat(estimateData.adjustedParts) || 0,
+          remarks: estimateData.partsRemarks,
+          excludedItems: excludedItems.map(item => item.partName).filter(Boolean),
+        },
+        labour: {
+          quotedFigure: parseFloat(estimateData.figureQuoted) || 0,
+          adjustedFigure: parseFloat(estimateData.adjustedLabour) || 0,
+          remarks: estimateData.labourRemarks,
+        },
+        completionDays: parseInt(estimateData.completionDays) || 0,
+      }
+    });
+    
     // Auto-navigate to next tab after save
     setTimeout(() => {
       const event = new CustomEvent('navigateToNextTab');
