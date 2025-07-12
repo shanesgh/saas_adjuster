@@ -160,7 +160,7 @@ export const EstimateForm: React.FC = () => {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle>Estimate Information</CardTitle>
+        <h2 className="text-xl font-semibold">Estimate Information</h2>
       </CardHeader>
       <CardContent className="space-y-8">
         {/* Estimate From and Date */}
