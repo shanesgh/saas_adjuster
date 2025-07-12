@@ -346,22 +346,6 @@ export const EstimateForm = () => {
                 onChange={(e) => setReportedSource(e.target.value)}
                 options={partsSourceOptions}
               />
-              {reportedSource && reportedSource !== 'oem' && reportedSource !== 'mixed' && reportedSource !== 'custom' && (
-                <Input
-                  label="Supplier Name (with phone if applicable)"
-                  value={reportedSourceSupplier}
-                  onChange={(e) => setReportedSourceSupplier(e.target.value)}
-                  placeholder="e.g. Seenath's (360-7033) or Automix - 751-2782"
-                />
-              )}
-              {reportedSource === 'custom' && (
-                <Input
-                  label="Custom Entry"
-                  value={reportedSourceCustom}
-                  onChange={(e) => setReportedSourceCustom(e.target.value)}
-                  placeholder="Enter custom parts source"
-                />
-              )}
             </div>
 
             {/* Adjuster Source Dropdown */}
