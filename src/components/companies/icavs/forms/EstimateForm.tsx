@@ -475,16 +475,16 @@ goToNextStep();
 };
 
 return (
-<Card className="w-full">
-<CardHeader>
-<h2 className="text-xl font-semibold">Estimate Information</h2>
-</CardHeader>
-<CardContent>
-<div className="space-y-6">
-<div className="space-y-4">
-<h3 className="text-lg font-medium">Estimate Source</h3>
+  <Card className="w-full">
+  <CardHeader>
+    <h2 className="text-xl font-semibold">Estimate Information</h2>
+  </CardHeader>
+  <CardContent>
+    <div className="space-y-6">
+    <div className="space-y-4">  
+    <h3 className="text-lg font-medium">Estimate Source</h3>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 <Input
 label="Estimate From"
 name="from"
@@ -843,8 +843,6 @@ name="labourRemarks"
               </div>
             )}
         </div>
-
-        {/* ADD THE FORM NAVIGATION HERE - INSIDE THE SPACE-Y-6 DIV */}
         <div className="border-t border-secondary-200 pt-6">
           <FormNavigation 
             onNext={handleSubmit} 
