@@ -439,25 +439,6 @@ export const EstimateForm = () => {
               )}
             </div>
             
-            {/* Keep original textarea as fallback */}
-            <div className="space-y-1">
-              <label
-                htmlFor="excludedItems"
-                className="block text-sm font-medium text-secondary-700"
-              >
-                Manual Entry - Excluded Items & Reason disallowed (one per line)
-              </label>
-              <textarea
-                id="excludedItems"
-                name="excludedItems"
-                value={estimateData.excludedItems}
-                onChange={handleChange}
-                rows={4}
-                className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="Manual entry if needed (will be overridden by dropdown selections above)"
-              />
-            </div>
-            
             <div className="space-y-1">
               <label
                 htmlFor="partsRemarks"
