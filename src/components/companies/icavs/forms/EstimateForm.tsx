@@ -44,7 +44,7 @@ export const EstimateForm = () => {
     
     adjustedSource: formData.estimate?.parts.adjustedSource || '',
     excludedItems: formData.estimate?.parts.excludedItems?.join('\n') || '',
-    partsRemarks: formData.estimate?.parts.remarks || '',
+    partsRemarks: '',
     partsQuotedFigure: formData.estimate?.parts.quotedFigure || 0,
     partsAdjustedFigure: formData.estimate?.parts.adjustedFigure || 0,
     
@@ -53,6 +53,7 @@ export const EstimateForm = () => {
     labourAdjustedFigure: formData.estimate?.labour.adjustedFigure || 0,
     
     completionDays: formData.estimate?.completionDays || 0,
+    estimateDate: '',
   });
 
   // New state for dropdown functionality
@@ -86,8 +87,13 @@ export const EstimateForm = () => {
         return `Custom Built aftermarket – ${supplier}`;
       case 'reconditioned':
         return `${supplier} – Reconditioned parts`;
+      case 'oem':
+        return `O.E.M. – ${supplier}`;
+      case 'mixed':
+        return `Mixed (O.E.M. & Used) – ${supplier}`;
       default:
-        return partsSourceOptions.find(opt => opt.value === sourceType)?.label || '';
+        const baseLabel = partsSourceOptions.find(opt => opt.value === sourceType)?.label || '';
+        return supplier ? `${baseLabel} – ${supplier}` : baseLabel;
     }
   };
 
@@ -101,6 +107,9 @@ export const EstimateForm = () => {
     const updated = [...excludedItemsList];
     updated[index] = { ...updated[index], [field]: value };
     setExcludedItemsList(updated);
+    
+    // Force re-render of preview by updating a dummy state
+    setEstimateData(prev => ({ ...prev }));
   };
 
   // Helper function to remove excluded item
@@ -417,6 +426,16 @@ export const EstimateForm = () => {
                 placeholder="e.g. Aristocraft Auto Collision"
               />
               
+              <Input
+                label="Estimate Date"
+                type="date"
+                name="estimateDate"
+                value={estimateData.estimateDate || ''}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center mt-8">
                 <Checkbox
                   id="dated"
@@ -426,6 +445,8 @@ export const EstimateForm = () => {
                   onChange={handleChange}
                 />
               </div>
+              
+              <div></div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -472,25 +493,17 @@ export const EstimateForm = () => {
                 onChange={(e) => setAdjusterSource(e.target.value)}
                 options={partsSourceOptions}
               />
-              {adjusterSource && adjusterSource !== 'oem' && adjusterSource !== 'mixed' && adjusterSource !== 'custom' && (
+              {adjusterSource && (
                 <Input
-                  label="Supplier Name (with phone if applicable)"
+                  label={adjusterSource === 'custom' ? "Custom Entry" : "Supplier Name (with phone if applicable)"}
                   value={adjusterSourceSupplier}
                   onChange={(e) => setAdjusterSourceSupplier(e.target.value)}
-                  placeholder="e.g. Seenath's (360-7033) or Automix - 751-2782"
-                />
-              )}
-              {adjusterSource === 'custom' && (
-                <Input
-                  label="Custom Entry"
-                  value={adjusterSourceCustom}
-                  onChange={(e) => setAdjusterSourceCustom(e.target.value)}
-                  placeholder="Enter custom parts source"
+                  placeholder={adjusterSource === 'custom' ? "Enter custom parts source" : "e.g. Seenath's (360-7033) or Automix - 751-2782"}
                 />
               )}
               {adjusterSource && (
                 <div className="p-2 bg-gray-50 rounded border text-sm">
-                  <strong>Preview:</strong> {generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSourceCustom)}
+                  <strong>Preview:</strong> {generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSource === 'custom' ? adjusterSourceSupplier : '')}
                 </div>
               )}
             </div>
@@ -501,13 +514,6 @@ export const EstimateForm = () => {
                 <label className="block text-sm font-medium text-secondary-700">
                   Excluded Items & Reason Disallowed
                 </label>
-                <button
-                  type="button"
-                  onClick={addExcludedItem}
-                  className="px-3 py-1 bg-primary-500 text-white rounded text-sm hover:bg-primary-600"
-                >
-                  Add Item
-                </button>
               </div>
               
               {excludedItemsList.map((item, index) => (
@@ -544,6 +550,14 @@ export const EstimateForm = () => {
                   )}
                 </div>
               ))}
+              
+              <button
+                type="button"
+                onClick={addExcludedItem}
+                className="w-full px-3 py-2 bg-primary-500 text-white rounded text-sm hover:bg-primary-600 border-2 border-dashed border-primary-300 hover:border-primary-500"
+              >
+                + Add Item
+              </button>
               
               {excludedItemsList.length > 0 && (
                 <div className="p-2 bg-gray-50 rounded border text-sm">
