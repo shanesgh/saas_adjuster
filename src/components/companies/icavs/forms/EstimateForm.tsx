@@ -677,7 +677,19 @@ const generateExcludedItemsText = () => {
               />
             </div>
 
-            <div className="space-y-1">
+            
+
+            {/* Remarks Preview */}
+            {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
+              <div className="p-3 bg-gray-50 rounded border text-sm">
+                <strong>Remarks Preview:</strong>
+                <div className="mt-2 whitespace-pre-line text-gray-700">
+                  {generateRemarksPreview()}
+                </div>
+              </div>
+            )}
+          </div>
+<div className="space-y-1">
               <label
                 htmlFor="partsRemarks"
                 className="block text-sm font-medium text-secondary-700"
@@ -694,18 +706,6 @@ const generateExcludedItemsText = () => {
                 placeholder="Enter remarks about parts..."
               />
             </div>
-
-            {/* Remarks Preview */}
-            {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
-              <div className="p-3 bg-gray-50 rounded border text-sm">
-                <strong>Remarks Preview:</strong>
-                <div className="mt-2 whitespace-pre-line text-gray-700">
-                  {generateRemarksPreview()}
-                </div>
-              </div>
-            )}
-          </div>
-
           <div className="border-t border-secondary-200 pt-4 space-y-4">
             <h3 className="text-lg font-medium">Labour (Section B)</h3>
 
