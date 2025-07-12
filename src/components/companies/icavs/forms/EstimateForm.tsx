@@ -738,6 +738,16 @@ const generateExcludedItemsText = () => {
             />
 
             {/* Labour Category Dropdown */}
+          {/* Remarks Preview */}
+          {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
+            <div className="p-3 bg-gray-50 rounded border text-sm">
+              <strong>Remarks Preview:</strong>
+              <div className="mt-2 whitespace-pre-line text-gray-700">
+                {generateRemarksPreview()}
+              </div>
+            </div>
+          )}
+          
             <div className="space-y-2">
               <label className="block text-sm font-medium text-secondary-700">
                 Labour Category
@@ -821,18 +831,12 @@ const generateExcludedItemsText = () => {
               <textarea
                 id="labourRemarks"
                 name="labourRemarks"
-                value={estimateData.labourRemarks}
-                onChange={handleChange}
-                rows={4}
-                className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="Enter remarks about labour..."
-              />
-            </div>
-          </div>
-          
-          <FormNavigation onSubmit={handleSubmit} />
         </div>
-      </CardContent>
+                onChange={(e) => {
+                  handleChange(e);
+                  // Force re-render to update labour preview
+                  setTimeout(() => setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() })), 0);
+                }}
     </Card>
   );
 };
