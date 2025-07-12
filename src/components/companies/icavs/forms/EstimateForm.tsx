@@ -843,3 +843,9 @@ name="labourRemarks"
               </div>
             )}
           
+          <FormNavigation onNext={handleSubmit} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
