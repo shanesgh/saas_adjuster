@@ -822,18 +822,24 @@ Custom Section(B) Labour Remarks
 id="labourRemarks"
 name="labourRemarks"
                 value={estimateData.labourRemarks}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  // Force immediate preview update
+                  setTimeout(() => setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() })), 0);
+                }}
                 rows={4}
                 className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
                 placeholder="Enter remarks about labour..."
               />
             </div>
+
+            {/* Labour Remarks Preview */}
+            {(selectedLabourCategory || (estimateData.labourRemarks && estimateData.labourRemarks.trim() !== '')) && (
+              <div className="p-3 bg-gray-50 rounded border text-sm">
+                <strong>Labour Remarks Preview:</strong>
+                <div className="mt-2 whitespace-pre-line text-gray-700">
+                  {generateLabourRemarksPreview()}
+                </div>
+              </div>
+            )}
           </div>
-          
-          <FormNavigation onSubmit={handleSubmit} />
-</div>
-      </CardContent>
-                
-</Card>
-);
-};
