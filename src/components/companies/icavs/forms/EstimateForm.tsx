@@ -841,5 +841,22 @@ name="labourRemarks"
                   {generateLabourRemarksPreview()}
                 </div>
               </div>
-            
+            )}
+        </div>
+
+        {/* ADD THE FORM NAVIGATION HERE - INSIDE THE SPACE-Y-6 DIV */}
+        <div className="border-t border-secondary-200 pt-6">
+          <FormNavigation 
+            onNext={handleSubmit} 
+            onBack={() => {
+              // You'll need to get this function from your form context
+              // or implement navigation logic
+              console.log('Go back to previous step');
+            }} 
+          />
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
           
