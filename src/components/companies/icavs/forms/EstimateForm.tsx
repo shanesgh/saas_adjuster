@@ -99,7 +99,7 @@ export const EstimateForm = () => {
 
   // Helper function to add excluded item
   const addExcludedItem = () => {
-    setExcludedItemsList([...excludedItemsList, { partName: '', reason: '', customReason: '' }]);
+    setExcludedItemsList([...excludedItemsList, { partName: '', reason: '', customReason: 'to-repair' }]);
   };
 
   // Helper function to update excluded item
