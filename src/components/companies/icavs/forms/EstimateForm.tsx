@@ -843,7 +843,7 @@ name="labourRemarks"
           <FormNavigation onSubmit={handleSubmit} />
 </div>
       </CardContent>
-          
+                
 </Card>
 );
 };
