@@ -71,6 +71,26 @@ export const EstimateForm = () => {
   const [tradeDiscountPercentage, setTradeDiscountPercentage] = useState('');
   const [contributionPercentage, setContributionPercentage] = useState('');
 
+  // State for labour categories
+  const [selectedLabourCategory, setSelectedLabourCategory] = useState('');
+  const [labourCategoryData, setLabourCategoryData] = useState({
+    originalFigure: '',
+    adjustedFigure: '',
+    personName: '',
+    companyLocation: '',
+    agreedFigure: '',
+    labourFigure: ''
+  });
+
+  const labourCategoryOptions = [
+    { value: '', label: 'Select labour category...' },
+    { value: 'overstated', label: 'Overstated - Adjusted Downward' },
+    { value: 'negotiated', label: 'Negotiated with Repairer' },
+    { value: 'reasonable', label: 'Reasonable - Should be Allowed' },
+    { value: 'estimated', label: 'Estimated Labour Figure' },
+    { value: 'exceeds', label: 'Labour Figure Exceeds Amount' },
+  ];
+
   // Helper function to generate parts source text
   const generatePartsSourceText = (sourceType, supplier, custom) => {
     if (sourceType === 'custom') return custom;
@@ -278,6 +298,33 @@ const generateExcludedItemsText = () => {
     }
 
     return preview.trim();
+  };
+
+  // Generate labour remarks preview
+  const generateLabourRemarksPreview = () => {
+    if (!selectedLabourCategory) return '';
+
+    const { originalFigure, adjustedFigure, personName, companyLocation, agreedFigure, labourFigure } = labourCategoryData;
+
+    switch (selectedLabourCategory) {
+      case 'overstated':
+        return `The labour and material figure was overstated in the amount of $${originalFigure || '[original figure]'} which was adjusted downward to $${adjustedFigure || '[adjusted figure]'} which would be more realistic when compared to the actual man hours involved to complete the repair exercise.`;
+      
+      case 'negotiated':
+        return `In keeping with your instructions we have negotiated a labour figure with ${personName || '[person name]'} of ${companyLocation || '[company/location]'} and after a deliberation on the issue, a labour and material figure of $${agreedFigure || '[agreed figure]'} was mutually agreed.`;
+      
+      case 'reasonable':
+        return `The labour and material figure quoted is reasonable when one considers the nature of repairs and time involved to restore the vehicle to its pre-accident condition. This figure therefore should be allowed.`;
+      
+      case 'estimated':
+        return `When one considers the nature of the repairs and the man-hours required to restore the vehicle to its pre-accident condition, a labour figure will be in the region of $${labourFigure || '[labour figure]'}.`;
+      
+      case 'exceeds':
+        return `When one considers the nature of the repairs and the man-hours required to restore the vehicle to its pre-accident condition, a labour figure will be in excess of $${labourFigure || '[labour figure]'}.`;
+      
+      default:
+        return '';
+    }
   };
 
   // Generate full preview with paragraphs
@@ -576,9 +623,9 @@ const generateExcludedItemsText = () => {
               <button
                 type="button"
                 onClick={addExcludedItem}
-                className="mx-auto block px-4 py-2 bg-primary-500 text-white rounded text-sm hover:bg-primary-600 transition-colors"
+                className="mx-auto block px-4 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
               >
-                + Add Item
+                + Add Excluded Item
               </button>
               
               {excludedItemsList.length > 0 && (
@@ -610,12 +657,32 @@ const generateExcludedItemsText = () => {
               />
             </div>
             
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Parts Figure Quoted ($)"
+                type="number"
+                step="0.01"
+                name="partsQuotedFigure"
+                value={estimateData.partsQuotedFigure}
+                onChange={handleChange}
+              />
+              
+              <Input
+                label="Adjusted Parts Figure ($)"
+                type="number"
+                step="0.01"
+                name="partsAdjustedFigure"
+                value={estimateData.partsAdjustedFigure}
+                onChange={handleChange}
+              />
+            </div>
+            
             <div className="space-y-1">
               <label
                 htmlFor="partsRemarks"
                 className="block text-sm font-medium text-secondary-700"
               >
-                Remarks
+                Custom Section(A) Parts Remarks
               </label>
               <textarea
                 id="partsRemarks"
@@ -637,48 +704,10 @@ const generateExcludedItemsText = () => {
                 </div>
               </div>
             )}
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Parts Figure Quoted ($)"
-                type="number"
-                step="0.01"
-                name="partsQuotedFigure"
-                value={estimateData.partsQuotedFigure}
-                onChange={handleChange}
-              />
-              
-              <Input
-                label="Adjusted Parts Figure ($)"
-                type="number"
-                step="0.01"
-                name="partsAdjustedFigure"
-                value={estimateData.partsAdjustedFigure}
-                onChange={handleChange}
-              />
-            </div>
           </div>
           
           <div className="border-t border-secondary-200 pt-4 space-y-4">
             <h3 className="text-lg font-medium">Labour (Section B)</h3>
-            
-            <div className="space-y-1">
-              <label
-                htmlFor="labourRemarks"
-                className="block text-sm font-medium text-secondary-700"
-              >
-                Remarks
-              </label>
-              <textarea
-                id="labourRemarks"
-                name="labourRemarks"
-                value={estimateData.labourRemarks}
-                onChange={handleChange}
-                rows={4}
-                className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="Enter remarks about labour..."
-              />
-            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
@@ -707,6 +736,98 @@ const generateExcludedItemsText = () => {
               value={estimateData.completionDays}
               onChange={handleChange}
             />
+
+            {/* Labour Category Dropdown */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-secondary-700">
+                Labour Category
+              </label>
+              <Select
+                value={selectedLabourCategory}
+                onChange={(e) => setSelectedLabourCategory(e.target.value)}
+                options={labourCategoryOptions}
+              />
+            </div>
+
+            {/* Dynamic fields based on labour category */}
+            {selectedLabourCategory === 'overstated' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Original Figure ($)"
+                  value={labourCategoryData.originalFigure}
+                  onChange={(e) => setLabourCategoryData(prev => ({ ...prev, originalFigure: e.target.value }))}
+                  placeholder="e.g. 14730.00"
+                />
+                <Input
+                  label="Adjusted Figure ($)"
+                  value={labourCategoryData.adjustedFigure}
+                  onChange={(e) => setLabourCategoryData(prev => ({ ...prev, adjustedFigure: e.target.value }))}
+                  placeholder="e.g. 7690.00"
+                />
+              </div>
+            )}
+
+            {selectedLabourCategory === 'negotiated' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Person Name"
+                    value={labourCategoryData.personName}
+                    onChange={(e) => setLabourCategoryData(prev => ({ ...prev, personName: e.target.value }))}
+                    placeholder="e.g. John Smith"
+                  />
+                  <Input
+                    label="Company/Location"
+                    value={labourCategoryData.companyLocation}
+                    onChange={(e) => setLabourCategoryData(prev => ({ ...prev, companyLocation: e.target.value }))}
+                    placeholder="e.g. ABC Auto Body Shop"
+                  />
+                </div>
+                <Input
+                  label="Agreed Figure ($)"
+                  value={labourCategoryData.agreedFigure}
+                  onChange={(e) => setLabourCategoryData(prev => ({ ...prev, agreedFigure: e.target.value }))}
+                  placeholder="e.g. 8500.00"
+                />
+              </div>
+            )}
+
+            {(selectedLabourCategory === 'estimated' || selectedLabourCategory === 'exceeds') && (
+              <Input
+                label="Labour Figure ($)"
+                value={labourCategoryData.labourFigure}
+                onChange={(e) => setLabourCategoryData(prev => ({ ...prev, labourFigure: e.target.value }))}
+                placeholder="e.g. 7500.00"
+              />
+            )}
+
+            {/* Labour Remarks Preview */}
+            {selectedLabourCategory && (
+              <div className="p-3 bg-gray-50 rounded border text-sm">
+                <strong>Labour Remarks Preview:</strong>
+                <div className="mt-2 text-gray-700">
+                  {generateLabourRemarksPreview()}
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-1">
+              <label
+                htmlFor="labourRemarks"
+                className="block text-sm font-medium text-secondary-700"
+              >
+                Custom Section(B) Labour Remarks
+              </label>
+              <textarea
+                id="labourRemarks"
+                name="labourRemarks"
+                value={estimateData.labourRemarks}
+                onChange={handleChange}
+                rows={4}
+                className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+                placeholder="Enter remarks about labour..."
+              />
+            </div>
           </div>
           
           <FormNavigation onSubmit={handleSubmit} />
