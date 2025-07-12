@@ -832,7 +832,11 @@ Custom Section(B) Labour Remarks
 id="labourRemarks"
 name="labourRemarks"
                 value={estimateData.labourRemarks}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e);
+                  // Force re-render to update labour preview
+                  setTimeout(() => setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() })), 0);
+                }}
                 rows={4}
                 className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
                 placeholder="Enter remarks about labour..."
