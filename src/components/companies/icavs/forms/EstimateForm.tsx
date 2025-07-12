@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Input } from '../../../ui/input';
 import { Select } from '../../../ui/select';
@@ -98,33 +98,48 @@ export const EstimateForm = () => {
   };
 
   // Helper function to add excluded item
-  const addExcludedItem = () => {
-    setExcludedItemsList([...excludedItemsList, { partName: '', reason: '', customReason: 'to-repair' }]);
-  };
+const addExcludedItem = () => {
+  setExcludedItemsList([...excludedItemsList, { 
+    partName: '', 
+    reason: 'to-repair', // Set default reason to first option
+    customReason: '' 
+  }]);
+  // Force preview update after adding item
+  setTimeout(() => {
+    setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
+  }, 0);
+};
 
   // Helper function to update excluded item
-  const updateExcludedItem = (index, field, value) => {
-    const updated = [...excludedItemsList];
-    updated[index] = { ...updated[index], [field]: value };
-    setExcludedItemsList(updated);
-    
-    // Force immediate re-render of preview
+const updateExcludedItem = (index, field, value) => {
+  const updated = [...excludedItemsList];
+  updated[index] = { ...updated[index], [field]: value };
+  setExcludedItemsList(updated);
+  
+  // Force immediate re-render of preview
+  setTimeout(() => {
     setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
-  };
-
+  }, 0);
+};
+useEffect(() => {
+  // This will trigger whenever excludedItemsList changes
+  setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() }));
+}, [excludedItemsList]);
   // Helper function to remove excluded item
   const removeExcludedItem = (index) => {
     setExcludedItemsList(excludedItemsList.filter((_, i) => i !== index));
   };
 
   // Helper function to generate excluded items text
-  const generateExcludedItemsText = () => {
-    return excludedItemsList.map(item => {
+const generateExcludedItemsText = () => {
+  return excludedItemsList
+    .filter(item => item.partName.trim() !== '') // Only include items with part names
+    .map(item => {
       const reasonText = item.reason === 'custom' ? item.customReason : 
         exclusionReasonOptions.find(opt => opt.value === item.reason)?.label || '';
       return `${item.partName} - ${reasonText}`;
     }).join('\n');
-  };
+};
 
   // Helper functions for trade discount
   const addTradeDiscount = () => {
