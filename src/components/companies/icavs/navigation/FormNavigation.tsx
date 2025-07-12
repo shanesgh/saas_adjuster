@@ -42,10 +42,9 @@ export const FormNavigation = ({
           </Button>
         ) : (
           <Button
-            variant="default"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
             onClick={onSubmit || goToNextStep}
             type={onSubmit ? "submit" : "button"}
-            className="flex items-center gap-1"
             disabled={isSubmitting || !canSubmit}
           >
             <span>Save</span>

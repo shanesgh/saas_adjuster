@@ -35,7 +35,7 @@ const exclusionReasonOptions = [
 ];
 
 export const EstimateForm = () => {
-  const { formData, updateFormData } = useForm();
+  const { formData, updateFormData, goToNextStep } = useForm();
   const [estimateData, setEstimateData] = useState({
     from: formData.estimate?.from || '',
     dated: formData.estimate?.dated || false,
@@ -405,6 +405,11 @@ export const EstimateForm = () => {
         completionDays: Number(estimateData.completionDays),
       },
     });
+    
+    // Auto-navigate to next step after saving
+    setTimeout(() => {
+      goToNextStep();
+    }, 100);
   };
 
   return (
@@ -493,14 +498,12 @@ export const EstimateForm = () => {
                 onChange={(e) => setAdjusterSource(e.target.value)}
                 options={partsSourceOptions}
               />
-              {adjusterSource && (
-                <Input
-                  label={adjusterSource === 'custom' ? "Custom Entry" : "Supplier Name (with phone if applicable)"}
-                  value={adjusterSourceSupplier}
-                  onChange={(e) => setAdjusterSourceSupplier(e.target.value)}
-                  placeholder={adjusterSource === 'custom' ? "Enter custom parts source" : "e.g. Seenath's (360-7033) or Automix - 751-2782"}
-                />
-              )}
+              <Input
+                label={adjusterSource === 'custom' ? "Custom Entry" : "Supplier Name (with phone if applicable)"}
+                value={adjusterSourceSupplier}
+                onChange={(e) => setAdjusterSourceSupplier(e.target.value)}
+                placeholder={adjusterSource === 'custom' ? "Enter custom parts source" : "e.g. Seenath's (360-7033) or Automix - 751-2782"}
+              />
               {adjusterSource && (
                 <div className="p-2 bg-gray-50 rounded border text-sm">
                   <strong>Preview:</strong> {generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSource === 'custom' ? adjusterSourceSupplier : '')}
