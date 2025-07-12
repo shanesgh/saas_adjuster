@@ -118,6 +118,23 @@ export const LabourSection = ({
         />
       )}
 
+      
+
+      {/* Labour Remarks Preview */}
+      {(selectedLabourCategory || estimateData.labourRemarks) && (
+        <div className="p-3 bg-gray-50 rounded border text-sm">
+          <strong>Labour Remarks Preview:</strong>
+          <div className="mt-2 whitespace-pre-line text-gray-700">
+            {generateLabourRemarksPreview()}
+            {estimateData.labourRemarks && (
+              <>
+                {generateLabourRemarksPreview() && '\n\n'}
+                {estimateData.labourRemarks}
+              </>
+            )}
+          </div>
+        </div>
+      )}
       <div className="space-y-1">
         <label
           htmlFor="labourRemarks"
@@ -135,22 +152,6 @@ export const LabourSection = ({
           placeholder="Enter remarks about labour..."
         />
       </div>
-
-      {/* Labour Remarks Preview */}
-      {(selectedLabourCategory || estimateData.labourRemarks) && (
-        <div className="p-3 bg-gray-50 rounded border text-sm">
-          <strong>Labour Remarks Preview:</strong>
-          <div className="mt-2 whitespace-pre-line text-gray-700">
-            {generateLabourRemarksPreview()}
-            {estimateData.labourRemarks && (
-              <>
-                {generateLabourRemarksPreview() && '\n\n'}
-                {estimateData.labourRemarks}
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
