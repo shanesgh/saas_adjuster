@@ -738,16 +738,6 @@ onChange={handleChange}
 />
 
 {/* Labour Category Dropdown */}
-          {/* Remarks Preview */}
-          {(excludedItemsList.length > 0 || tradeDiscountPercentage || contributionPercentage || estimateData.partsRemarks) && (
-            <div className="p-3 bg-gray-50 rounded border text-sm">
-              <strong>Remarks Preview:</strong>
-              <div className="mt-2 whitespace-pre-line text-gray-700">
-                {generateRemarksPreview()}
-              </div>
-            </div>
-          )}
-          
 <div className="space-y-2">
 <label className="block text-sm font-medium text-secondary-700">
 Labour Category
