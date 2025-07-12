@@ -531,7 +531,11 @@ export const EstimateForm = () => {
                   <Input
                     label="Part Name"
                     value={item.partName}
-                    onChange={(e) => updateExcludedItem(index, 'partName', e.target.value)}
+                    onChange={(e) => {
+                      updateExcludedItem(index, 'partName', e.target.value);
+                      // Force immediate preview update
+                      setTimeout(() => setEstimateData(prev => ({ ...prev, _forceUpdate: Date.now() })), 0);
+                    }}
                     placeholder="e.g. Rear bumper"
                   />
                   <Select
