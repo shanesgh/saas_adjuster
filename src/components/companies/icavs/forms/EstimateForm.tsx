@@ -1,9 +1,37 @@
 import { useState } from 'react';
 import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Input } from '../../../ui/input';
+import { Select } from '../../../ui/select';
 import { Checkbox } from '../../../ui/checkbox';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+
+// Parts source options
+const partsSourceOptions = [
+  { value: 'new-oem', label: 'New O.E.M. parts' },
+  { value: 'used', label: 'Used parts' },
+  { value: 'oem', label: 'O.E.M.' },
+  { value: 'aftermarket', label: 'Aftermarket parts' },
+  { value: 'custom-built', label: 'Custom Built aftermarket' },
+  { value: 'reconditioned', label: 'Reconditioned parts' },
+  { value: 'mixed', label: 'Mixed (O.E.M. & Used)' },
+  { value: 'custom', label: 'Custom Entry' },
+];
+
+// Exclusion reason options
+const exclusionReasonOptions = [
+  { value: 'to-repair', label: 'To repair' },
+  { value: 'no-visible-damage', label: 'No visible damage' },
+  { value: 'closer-inspection', label: 'For closer inspection' },
+  { value: 'not-consistent', label: 'Not consistent' },
+  { value: 'reusable', label: 'Reusable' },
+  { value: 'salvageable', label: 'Salvageable Value' },
+  { value: 'age-contribution', label: 'Age-Related Contribution' },
+  { value: 'lower-price', label: 'Lower Price Parts Found' },
+  { value: 'total-loss', label: 'Constructive Total Loss' },
+  { value: 'no-contribution', label: 'No Contribution Applied + Unseen Damage Warning' },
+  { value: 'custom', label: 'Custom Reason' },
+];
 
 export const EstimateForm = () => {
   const { formData, updateFormData } = useForm();
@@ -25,6 +53,62 @@ export const EstimateForm = () => {
     
     completionDays: formData.estimate?.completionDays || 0,
   });
+
+  // New state for dropdown functionality
+  const [reportedSource, setReportedSource] = useState('');
+  const [reportedSourceSupplier, setReportedSourceSupplier] = useState('');
+  const [reportedSourceCustom, setReportedSourceCustom] = useState('');
+  const [adjusterSource, setAdjusterSource] = useState('');
+  const [adjusterSourceSupplier, setAdjusterSourceSupplier] = useState('');
+  const [adjusterSourceCustom, setAdjusterSourceCustom] = useState('');
+  const [excludedItemsList, setExcludedItemsList] = useState([]);
+
+  // Helper function to generate parts source text
+  const generatePartsSourceText = (sourceType, supplier, custom) => {
+    if (sourceType === 'custom') return custom;
+    if (!supplier) return partsSourceOptions.find(opt => opt.value === sourceType)?.label || '';
+    
+    switch (sourceType) {
+      case 'new-oem':
+        return `New O.E.M. parts – ${supplier}`;
+      case 'used':
+        return `${supplier} – Used parts`;
+      case 'aftermarket':
+        return `Aftermarket parts – ${supplier}`;
+      case 'custom-built':
+        return `Custom Built aftermarket – ${supplier}`;
+      case 'reconditioned':
+        return `${supplier} – Reconditioned parts`;
+      default:
+        return partsSourceOptions.find(opt => opt.value === sourceType)?.label || '';
+    }
+  };
+
+  // Helper function to add excluded item
+  const addExcludedItem = () => {
+    setExcludedItemsList([...excludedItemsList, { partName: '', reason: '', customReason: '' }]);
+  };
+
+  // Helper function to update excluded item
+  const updateExcludedItem = (index, field, value) => {
+    const updated = [...excludedItemsList];
+    updated[index] = { ...updated[index], [field]: value };
+    setExcludedItemsList(updated);
+  };
+
+  // Helper function to remove excluded item
+  const removeExcludedItem = (index) => {
+    setExcludedItemsList(excludedItemsList.filter((_, i) => i !== index));
+  };
+
+  // Helper function to generate excluded items text
+  const generateExcludedItemsText = () => {
+    return excludedItemsList.map(item => {
+      const reasonText = item.reason === 'custom' ? item.customReason : 
+        exclusionReasonOptions.find(opt => opt.value === item.reason)?.label || '';
+      return `${item.partName} - ${reasonText}`;
+    }).join('\n');
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -50,6 +134,10 @@ export const EstimateForm = () => {
       .split('\n')
       .filter(item => item.trim() !== '');
     
+    // Update adjusted source with generated text
+    const finalAdjustedSource = generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSourceCustom);
+    const finalExcludedItems = generateExcludedItemsText();
+    
     updateFormData({
       estimate: {
         from: estimateData.from,
@@ -58,8 +146,8 @@ export const EstimateForm = () => {
         invoiceDated: estimateData.invoiceDated,
         
         parts: {
-          adjustedSource: estimateData.adjustedSource,
-          excludedItems: excludedItemsArray,
+          adjustedSource: finalAdjustedSource || estimateData.adjustedSource,
+          excludedItems: finalExcludedItems ? finalExcludedItems.split('\n') : excludedItemsArray,
           remarks: estimateData.partsRemarks,
           quotedFigure: Number(estimateData.partsQuotedFigure),
           adjustedFigure: Number(estimateData.partsAdjustedFigure),
@@ -128,20 +216,132 @@ export const EstimateForm = () => {
           <div className="border-t border-secondary-200 pt-4 space-y-4">
             <h3 className="text-lg font-medium">Parts (Section A)</h3>
             
-            <Input
-              label="Adjusted source & type of parts"
-              name="adjustedSource"
-              value={estimateData.adjustedSource}
-              onChange={handleChange}
-              placeholder="e.g. Automix - 751-2782 Used parts"
-            />
+            {/* Reported Source Dropdown */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-secondary-700">
+                Reported Source & Type of Parts
+              </label>
+              <Select
+                value={reportedSource}
+                onChange={(e) => setReportedSource(e.target.value)}
+                options={partsSourceOptions}
+              />
+              {reportedSource && reportedSource !== 'oem' && reportedSource !== 'mixed' && reportedSource !== 'custom' && (
+                <Input
+                  label="Supplier Name (with phone if applicable)"
+                  value={reportedSourceSupplier}
+                  onChange={(e) => setReportedSourceSupplier(e.target.value)}
+                  placeholder="e.g. Seenath's (360-7033) or Automix - 751-2782"
+                />
+              )}
+              {reportedSource === 'custom' && (
+                <Input
+                  label="Custom Entry"
+                  value={reportedSourceCustom}
+                  onChange={(e) => setReportedSourceCustom(e.target.value)}
+                  placeholder="Enter custom parts source"
+                />
+              )}
+            </div>
+
+            {/* Adjuster Source Dropdown */}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-secondary-700">
+                Adjusted Source & Type of Parts
+              </label>
+              <Select
+                value={adjusterSource}
+                onChange={(e) => setAdjusterSource(e.target.value)}
+                options={partsSourceOptions}
+              />
+              {adjusterSource && adjusterSource !== 'oem' && adjusterSource !== 'mixed' && adjusterSource !== 'custom' && (
+                <Input
+                  label="Supplier Name (with phone if applicable)"
+                  value={adjusterSourceSupplier}
+                  onChange={(e) => setAdjusterSourceSupplier(e.target.value)}
+                  placeholder="e.g. Seenath's (360-7033) or Automix - 751-2782"
+                />
+              )}
+              {adjusterSource === 'custom' && (
+                <Input
+                  label="Custom Entry"
+                  value={adjusterSourceCustom}
+                  onChange={(e) => setAdjusterSourceCustom(e.target.value)}
+                  placeholder="Enter custom parts source"
+                />
+              )}
+              {adjusterSource && (
+                <div className="p-2 bg-gray-50 rounded border text-sm">
+                  <strong>Preview:</strong> {generatePartsSourceText(adjusterSource, adjusterSourceSupplier, adjusterSourceCustom)}
+                </div>
+              )}
+            </div>
+
+            {/* Excluded Items Section */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-secondary-700">
+                  Excluded Items & Reason Disallowed
+                </label>
+                <button
+                  type="button"
+                  onClick={addExcludedItem}
+                  className="px-3 py-1 bg-primary-500 text-white rounded text-sm hover:bg-primary-600"
+                >
+                  Add Item
+                </button>
+              </div>
+              
+              {excludedItemsList.map((item, index) => (
+                <div key={index} className="border border-gray-200 rounded p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Item {index + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeExcludedItem(index)}
+                      className="text-red-500 hover:text-red-700 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <Input
+                    label="Part Name"
+                    value={item.partName}
+                    onChange={(e) => updateExcludedItem(index, 'partName', e.target.value)}
+                    placeholder="e.g. Rear bumper"
+                  />
+                  <Select
+                    label="Reason"
+                    value={item.reason}
+                    onChange={(e) => updateExcludedItem(index, 'reason', e.target.value)}
+                    options={exclusionReasonOptions}
+                  />
+                  {item.reason === 'custom' && (
+                    <Input
+                      label="Custom Reason"
+                      value={item.customReason}
+                      onChange={(e) => updateExcludedItem(index, 'customReason', e.target.value)}
+                      placeholder="Enter custom reason"
+                    />
+                  )}
+                </div>
+              ))}
+              
+              {excludedItemsList.length > 0 && (
+                <div className="p-2 bg-gray-50 rounded border text-sm">
+                  <strong>Preview:</strong>
+                  <pre className="whitespace-pre-wrap mt-1">{generateExcludedItemsText()}</pre>
+                </div>
+              )}
+            </div>
             
+            {/* Keep original textarea as fallback */}
             <div className="space-y-1">
               <label
                 htmlFor="excludedItems"
                 className="block text-sm font-medium text-secondary-700"
               >
-                Excluded Items & Reason disallowed (one per line)
+                Manual Entry - Excluded Items & Reason disallowed (one per line)
               </label>
               <textarea
                 id="excludedItems"
@@ -150,7 +350,7 @@ export const EstimateForm = () => {
                 onChange={handleChange}
                 rows={4}
                 className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-                placeholder="e.g. Rear bumper and left 'B' pillar- To repair"
+                placeholder="Manual entry if needed (will be overridden by dropdown selections above)"
               />
             </div>
             
