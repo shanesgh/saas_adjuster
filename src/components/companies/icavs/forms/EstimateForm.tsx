@@ -841,6 +841,6 @@ name="labourRemarks"
                   {generateLabourRemarksPreview()}
                 </div>
               </div>
-            )}
+            
           
         </div>
