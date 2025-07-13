@@ -103,26 +103,26 @@ export const FeaturesForm = () => {
             ))}
           </div>
           
-          {/* Custom Features - Inline with predefined features */}
+          {/* Custom Features - Integrated with predefined features */}
           {customFeatures.map((feature, index) => (
             <div key={`custom-${index}`} className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 checked={feature.checked}
                 onChange={(e) => updateCustomFeature(index, 'checked', e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 rounded border-secondary-300 text-primary-500 focus:ring-primary-500"
               />
               <input
                 type="text"
                 value={feature.name}
                 onChange={(e) => updateCustomFeature(index, 'name', e.target.value)}
                 placeholder="Enter feature name"
-                className="flex-1 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="flex-1 text-sm text-secondary-900"
               />
               <button
                 type="button"
                 onClick={() => removeCustomFeature(index)}
-                className="text-red-500 hover:text-red-700 text-lg font-bold leading-none"
+                className="text-red-500 hover:text-red-700 text-sm font-bold w-4 h-4 flex items-center justify-center"
                 title="Remove feature"
               >
                 ×
@@ -133,7 +133,7 @@ export const FeaturesForm = () => {
           <button
             type="button"
             onClick={addCustomFeature}
-            className="text-blue-500 hover:text-blue-700 text-sm font-medium underline"
+            className="text-primary-500 hover:text-primary-700 text-sm underline"
           >
             + Add Custom Feature
           </button>
