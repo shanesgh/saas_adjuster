@@ -88,9 +88,9 @@ export const FeaturesForm = () => {
         <h2 className="text-xl font-semibold">Vehicle Features</h2>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* All Features in unified grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6">
             {/* Predefined Features */}
             {PREDEFINED_FEATURES.map((feature) => (
               <Checkbox
