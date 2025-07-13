@@ -62,34 +62,22 @@ export function SignupForm() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // Step 1: Create the user account
+      // Step 1: Create the user account with unsafeMetadata
       const signUpResult = await signUp?.create({
         emailAddress: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        unsafeMetadata: {
+          company: data.company,
+          role: 'owner'
+        }
       });
 
       if (signUpResult?.status === 'complete') {
-        // Step 2: Set the session as active
+        // Step 2: Set the session as active  
         await setActive?.({ session: signUpResult.createdSessionId });
-        
-        // Step 3: Update user metadata after successful signup
-        try {
-          await signUpResult.createdUserId && await fetch('/api/clerk/update-metadata', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId: signUpResult.createdUserId,
-              company: data.company,
-              role: 'owner'
-            })
-          });
-        } catch (metadataError) {
-          console.warn('Failed to set metadata:', metadataError);
-          // Continue anyway - user is created successfully
-        }
-        
+        // Step 3: Navigate to dashboard (metadata already set during signup)
         navigate({ to: '/dashboard' });
       } else if (signUpResult?.status === 'missing_requirements') {
         // Handle email verification if required
