@@ -38,26 +38,33 @@ export interface ClaimsFormData {
     isForeignUsed: boolean;
   };
   
-  // Vehicle Features
-  features: {
-    antiTheftDevice: boolean;
-    hubCaps: boolean;
-    airCondition: boolean;
-    powerWindows: boolean;
-    powerMirror: boolean;
-    foldingWingMirrors: boolean;
-    driverPassengerAirbags: boolean;
-    radio: boolean;
-    cdDeck: boolean;
-    displayScreen: boolean;
-    multifunctionalSteeringWheel: boolean;
-    fogLamps: boolean;
-    rearCamera: boolean;
-    tractionControl: boolean;
-    absBrakingSystem: boolean;
-    rearWiper: boolean;
-    ecoMode: boolean;
-  };
+CustomFeature : {
+  name: string;
+  checked: boolean;
+}
+
+// Update your features object in ClaimsFormData to include:
+features: {
+  antiTheftDevice: boolean;
+  hubCaps: boolean;
+  airCondition: boolean;
+  powerWindows: boolean;
+  powerMirror: boolean;
+  foldingWingMirrors: boolean;
+  driverPassengerAirbags: boolean;
+  radio: boolean;
+  cdDeck: boolean;
+  displayScreen: boolean;
+  multifunctionalSteeringWheel: boolean;
+  fogLamps: boolean;
+  rearCamera: boolean;
+  tractionControl: boolean;
+  absBrakingSystem: boolean;
+  rearWiper: boolean;
+  ecoMode: boolean;
+  customFeatures?: CustomFeature[]; 
+};
+
   
   // Condition Prior to Loss
   condition: {
