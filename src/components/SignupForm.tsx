@@ -67,7 +67,7 @@ export function SignupForm() {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
-        unsafeMetadata: {
+        publicMetadata: {
           company: data.company,
           role: 'owner'
         }
@@ -82,7 +82,7 @@ export function SignupForm() {
       }
     } catch (error) {
       console.error('Signup error:', error);
-      // Handle signup errors appropriately
+      alert('Signup failed. Please try again.');
     }
   };
 
