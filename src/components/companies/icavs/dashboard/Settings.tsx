@@ -25,67 +25,40 @@ export const Settings = () => {
     if (isOwner) loadUsers();
   }, [isOwner]);
 
-  const loadUsers = async () => {
-    try {
-      const response = await fetch('/api/users', {
-        headers: { 'Authorization': `Bearer ${await user.getToken()}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
-      }
-    } catch (error) {
-      console.error('Failed to load users:', error);
-    }
+  const loadUsers = () => {
+    const stored = localStorage.getItem(`company_users_${company}`);
+    if (stored) setUsers(JSON.parse(stored));
   };
 
-  const addUser = async () => {
+  const saveUsers = (userList) => {
+    localStorage.setItem(`company_users_${company}`, JSON.stringify(userList));
+    setUsers(userList);
+  };
+
+  const addUser = () => {
     if (!newUser.firstName || !newUser.lastName) return;
     
     const pin = generateMixedCasePIN();
     const userData = {
+      id: Date.now().toString(),
       ...newUser,
       company,
       pin,
       pinExpiry: Date.now() + (3 * 24 * 60 * 60 * 1000), // 3 days
       pinAttempts: 0,
-      pinLockout: null
+      pinLockout: null,
+      isRegistered: false
     };
 
-    try {
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await user.getToken()}`
-        },
-        body: JSON.stringify(userData)
-      });
-
-      if (response.ok) {
-        const createdUser = await response.json();
-        setUsers([...users, createdUser]);
-        setNewUser({ firstName: '', lastName: '', role: 'adjuster' });
-        setShowAddUser(false);
-      }
-    } catch (error) {
-      console.error('Failed to add user:', error);
-    }
+    const updatedUsers = [...users, userData];
+    saveUsers(updatedUsers);
+    setNewUser({ firstName: '', lastName: '', role: 'adjuster' });
+    setShowAddUser(false);
   };
 
-  const deleteUser = async (userId) => {
-    try {
-      const response = await fetch(`/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${await user.getToken()}` }
-      });
-
-      if (response.ok) {
-        setUsers(users.filter(u => u.id !== userId));
-      }
-    } catch (error) {
-      console.error('Failed to delete user:', error);
-    }
+  const deleteUser = (userId) => {
+    const updatedUsers = users.filter(u => u.id !== userId);
+    saveUsers(updatedUsers);
   };
 
   const togglePinVisibility = (userId) => {
@@ -172,9 +145,14 @@ export const Settings = () => {
                 <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
                   {u.role}
                 </span>
+                {!u.isRegistered && (
+                  <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
+                    Pending
+                  </span>
+                )}
               </div>
               <div className="flex items-center space-x-2">
-                {u.pin && (
+                {u.pin && !u.isRegistered && (
                   <div className="flex items-center space-x-1">
                     <span className="text-sm text-gray-600">PIN:</span>
                     <span className="font-mono text-sm">
