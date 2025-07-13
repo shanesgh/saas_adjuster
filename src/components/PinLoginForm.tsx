@@ -258,5 +258,3 @@ export function PinLoginForm() {
     </div>
   );
 }
-
-export { PinLoginForm }
