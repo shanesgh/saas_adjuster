@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSignIn, useSignUp } from '@clerk/clerk-react';
 import { useNavigate } from '@tanstack/react-router';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { useUserStore } from '../store/userStore';
 
 export function PinLoginForm() {
   const { signIn } = useSignIn();
   const { signUp, setActive } = useSignUp();
   const navigate = useNavigate();
+  const { findUser, validatePin, markUserRegistered } = useUserStore();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -18,107 +20,41 @@ export function PinLoginForm() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isFirstTime, setIsFirstTime] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setError('');
   };
 
-  const checkUserExists = () => {
-    const stored = localStorage.getItem(`company_users_${formData.company}`);
-    if (!stored) return null;
-    
-    const users = JSON.parse(stored);
-    return users.find(u => 
-      u.firstName.toLowerCase() === formData.firstName.toLowerCase() &&
-      u.lastName.toLowerCase() === formData.lastName.toLowerCase() &&
-      u.company === formData.company
-    );
-  };
-
-  const validatePin = (userData) => {
-    if (!userData.pin || userData.isRegistered) return false;
-    if (userData.pinExpiry < Date.now()) return false;
-    if (userData.pinLockout && userData.pinLockout > Date.now()) return false;
-    if (userData.pinAttempts >= 3) return false;
-    
-    if (userData.pin !== formData.pin) {
-      // Update attempts
-      const stored = localStorage.getItem(`company_users_${formData.company}`);
-      const users = JSON.parse(stored);
-      const userIndex = users.findIndex(u => u.id === userData.id);
-      users[userIndex].pinAttempts++;
-      
-      if (users[userIndex].pinAttempts >= 3) {
-        users[userIndex].pinLockout = Date.now() + (30 * 60 * 1000); // 30 min
-      }
-      
-      localStorage.setItem(`company_users_${formData.company}`, JSON.stringify(users));
-      return false;
-    }
-    
-    return true;
-  };
-
-  const markUserRegistered = (userData) => {
-    const stored = localStorage.getItem(`company_users_${formData.company}`);
-    const users = JSON.parse(stored);
-    const userIndex = users.findIndex(u => u.id === userData.id);
-    users[userIndex].isRegistered = true;
-    users[userIndex].pin = null; // Single use
-    localStorage.setItem(`company_users_${formData.company}`, JSON.stringify(users));
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      const userData = checkUserExists();
-      
-      if (!userData) {
-        setError('Invalid credentials');
-        setLoading(false);
-        return;
-      }
-
-      if (userData.isRegistered) {
-        // Returning user - regular login
-        try {
-          const email = `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '')}.local`;
-          const result = await signIn.create({
-            identifier: email,
-            password: formData.password
-          });
-
-          if (result.status === 'complete') {
-            navigate({ to: '/dashboard' });
-          }
-        } catch {
-          setError('Invalid credentials');
-        }
-      } else {
-        // First-time user - validate PIN and register
+      if (isNewUser) {
+        // New user flow - validate PIN and create account
         if (!formData.pin || !formData.password || formData.password !== formData.confirmPassword) {
           setError('Please fill all fields and ensure passwords match');
           setLoading(false);
           return;
         }
 
-        if (!validatePin(userData)) {
-          setError('Invalid PIN or PIN expired');
+        const userData = findUser(formData.firstName, formData.lastName, formData.company);
+        
+        if (!userData || !validatePin(userData.id, formData.pin)) {
+          setError('Invalid credentials');
           setLoading(false);
           return;
         }
 
-        // Register user with Clerk
+        // Create Clerk account
         try {
           const email = `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '')}.local`;
-          const result = await signUp.create({
+          const result = await signUp?.create({
             emailAddress: email,
             password: formData.password,
             firstName: userData.firstName,
@@ -129,13 +65,34 @@ export function PinLoginForm() {
             }
           });
 
-          if (result.status === 'complete') {
-            await setActive({ session: result.createdSessionId });
-            markUserRegistered(userData);
+          if (result?.status === 'complete') {
+            await setActive?.({ session: result.createdSessionId });
+            markUserRegistered(userData.id);
             navigate({ to: '/dashboard' });
           }
         } catch {
           setError('Registration failed');
+        }
+      } else {
+        // Returning user flow - regular login
+        if (!formData.password) {
+          setError('Please enter your password');
+          setLoading(false);
+          return;
+        }
+
+        try {
+          const email = `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@${formData.company.toLowerCase().replace(/\s+/g, '')}.local`;
+          const result = await signIn?.create({
+            identifier: email,
+            password: formData.password
+          });
+
+          if (result?.status === 'complete') {
+            navigate({ to: '/dashboard' });
+          }
+        } catch {
+          setError('Invalid credentials');
         }
       }
     } catch {
@@ -145,19 +102,39 @@ export function PinLoginForm() {
     setLoading(false);
   };
 
-  // Check if user exists when form changes
-  useEffect(() => {
-    if (formData.firstName && formData.lastName && formData.company) {
-      const userData = checkUserExists();
-      setIsFirstTime(userData && !userData.isRegistered);
-    }
-  }, [formData.firstName, formData.lastName, formData.company]);
-
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
       <div className="text-center mb-6">
         <LogIn className="w-12 h-12 text-primary-500 mx-auto mb-2" />
         <h2 className="text-2xl font-bold text-gray-900">Team Login</h2>
+      </div>
+
+      {/* User Type Selection */}
+      <div className="mb-6">
+        <div className="flex space-x-2">
+          <button
+            type="button"
+            onClick={() => setIsNewUser(false)}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              !isNewUser 
+                ? 'bg-primary-500 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Returning User
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsNewUser(true)}
+            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
+              isNewUser 
+                ? 'bg-primary-500 text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            New User
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -192,7 +169,7 @@ export function PinLoginForm() {
           required
         />
 
-        {isFirstTime && (
+        {isNewUser && (
           <input
             name="pin"
             type="text"
@@ -201,6 +178,7 @@ export function PinLoginForm() {
             onChange={handleChange}
             className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500"
             maxLength={7}
+            required
           />
         )}
 
@@ -223,7 +201,7 @@ export function PinLoginForm() {
           </button>
         </div>
 
-        {isFirstTime && (
+        {isNewUser && (
           <div className="relative">
             <input
               name="confirmPassword"
@@ -232,6 +210,7 @@ export function PinLoginForm() {
               value={formData.confirmPassword}
               onChange={handleChange}
               className="w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500"
+              required
             />
             <button
               type="button"
@@ -252,7 +231,7 @@ export function PinLoginForm() {
           disabled={loading}
           className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-3 rounded-lg hover:shadow-lg transition-all disabled:opacity-50"
         >
-          {loading ? 'Logging in...' : 'Login'}
+          {loading ? 'Processing...' : isNewUser ? 'Register & Login' : 'Login'}
         </button>
       </form>
     </div>

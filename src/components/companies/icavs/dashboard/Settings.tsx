@@ -1,67 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { UserPlus, Trash2, Eye, EyeOff } from 'lucide-react';
-
-const generateMixedCasePIN = () => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let pin = '';
-  for (let i = 0; i < 7; i++) {
-    pin += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return pin;
-};
+import { useUserStore } from '../../../store/userStore';
 
 export const Settings = () => {
   const { user } = useUser();
-  const [users, setUsers] = useState([]);
+  const { users, addUser, removeUser } = useUserStore();
   const [showAddUser, setShowAddUser] = useState(false);
-  const [newUser, setNewUser] = useState({ firstName: '', lastName: '', role: 'adjuster' });
-  const [showPins, setShowPins] = useState({});
+  const [newUser, setNewUser] = useState({ firstName: '', lastName: '', role: 'adjuster' as const });
+  const [showPins, setShowPins] = useState<Record<string, boolean>>({});
 
   const isOwner = user?.unsafeMetadata?.role === 'owner';
-  const company = user?.unsafeMetadata?.company;
+  const company = user?.unsafeMetadata?.company as string;
 
-  useEffect(() => {
-    if (isOwner) loadUsers();
-  }, [isOwner]);
+  const companyUsers = users.filter(u => u.company === company);
 
-  const loadUsers = () => {
-    const stored = localStorage.getItem(`company_users_${company}`);
-    if (stored) setUsers(JSON.parse(stored));
-  };
-
-  const saveUsers = (userList) => {
-    localStorage.setItem(`company_users_${company}`, JSON.stringify(userList));
-    setUsers(userList);
-  };
-
-  const addUser = () => {
-    if (!newUser.firstName || !newUser.lastName) return;
+  const handleAddUser = () => {
+    if (!newUser.firstName || !newUser.lastName || !company) return;
     
-    const pin = generateMixedCasePIN();
-    const userData = {
-      id: Date.now().toString(),
+    addUser({
       ...newUser,
       company,
-      pin,
-      pinExpiry: Date.now() + (3 * 24 * 60 * 60 * 1000), // 3 days
-      pinAttempts: 0,
-      pinLockout: null,
-      isRegistered: false
-    };
-
-    const updatedUsers = [...users, userData];
-    saveUsers(updatedUsers);
+      pinExpiry: Date.now() + (3 * 24 * 60 * 60 * 1000),
+    });
+    
     setNewUser({ firstName: '', lastName: '', role: 'adjuster' });
     setShowAddUser(false);
   };
 
-  const deleteUser = (userId) => {
-    const updatedUsers = users.filter(u => u.id !== userId);
-    saveUsers(updatedUsers);
-  };
-
-  const togglePinVisibility = (userId) => {
+  const togglePinVisibility = (userId: string) => {
     setShowPins(prev => ({ ...prev, [userId]: !prev[userId] }));
   };
 
@@ -112,7 +79,7 @@ export const Settings = () => {
               />
               <select
                 value={newUser.role}
-                onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                onChange={(e) => setNewUser({...newUser, role: e.target.value as 'owner' | 'adjuster' | 'clerical'})}
                 className="px-3 py-2 border rounded-lg"
               >
                 <option value="adjuster">Adjuster</option>
@@ -122,7 +89,7 @@ export const Settings = () => {
             </div>
             <div className="flex space-x-2 mt-3">
               <button
-                onClick={addUser}
+                onClick={handleAddUser}
                 className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
               >
                 Create User
@@ -138,7 +105,7 @@ export const Settings = () => {
         )}
 
         <div className="space-y-3">
-          {users.map((u) => (
+          {companyUsers.map((u) => (
             <div key={u.id} className="flex items-center justify-between p-3 border rounded-lg">
               <div>
                 <span className="font-medium">{u.firstName} {u.lastName}</span>
@@ -167,7 +134,7 @@ export const Settings = () => {
                   </div>
                 )}
                 <button
-                  onClick={() => deleteUser(u.id)}
+                  onClick={() => removeUser(u.id)}
                   className="text-red-500 hover:text-red-700"
                 >
                   <Trash2 className="w-4 h-4" />
