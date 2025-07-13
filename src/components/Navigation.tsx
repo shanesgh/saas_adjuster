@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useAuth, UserButton } from '@clerk/clerk-react';
 import { Menu, X, FileText } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navigation() {
+  const { isSignedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -36,12 +38,24 @@ export function Navigation() {
                 {item.name}
               </Link>
             ))}
-            <Link
-              to="/signup"
-              className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-150 font-medium"
-            >
-              Get Started
-            </Link>
+            {isSignedIn ? (
+              <div className="flex items-center space-x-4">
+                <Link
+                  to="/dashboard"
+                  className="text-gray-600 hover:text-primary-600 transition-colors duration-150 font-medium"
+                >
+                  Dashboard
+                </Link>
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            ) : (
+              <Link
+                to="/signup"
+                className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-150 font-medium"
+              >
+                Get Started
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -71,13 +85,26 @@ export function Navigation() {
                     {item.name}
                   </Link>
                 ))}
-                <Link
-                  to="/signup"
-                  className="block mx-4 mt-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg text-center font-medium"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Get Started
-                </Link>
+                {isSignedIn ? (
+                  <div className="mx-4 mt-4 flex items-center justify-between">
+                    <Link
+                      to="/dashboard"
+                      className="text-gray-600 hover:text-primary-600 transition-colors duration-150 font-medium"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <UserButton afterSignOutUrl="/" />
+                  </div>
+                ) : (
+                  <Link
+                    to="/signup"
+                    className="block mx-4 mt-4 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg text-center font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                )}
               </div>
             </motion.div>
           )}
