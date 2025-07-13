@@ -64,6 +64,32 @@ export function PrivacyModal({ isOpen, onClose }: PrivacyModalProps) {
                 
                 <h3 className="text-lg font-semibold mb-3">9. Contact Information</h3>
                 <p className="mb-4">For privacy questions or to exercise your rights, contact us at privacy@zenassess.com or use our secure contact form. Response time is typically 48 hours.</p>
+                <h3 className="text-lg font-semibold mb-3">1. Information Collection</h3>
+                <p className="mb-4">ZenAssess collects information you provide when creating accounts, using our claims processing services, and contacting support. This includes personal details, company information, claims data, and usage analytics.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">2. Data Usage</h3>
+                <p className="mb-4">We use collected information to provide claims processing services, generate reports, improve our AI algorithms, process payments, and communicate important updates about your account and services.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">3. Information Sharing</h3>
+                <p className="mb-4">ZenAssess does not sell personal information. We may share data with service providers, legal authorities when required, and with your explicit consent for specific business purposes.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">4. Data Security</h3>
+                <p className="mb-4">We implement enterprise-grade security measures including encryption, secure data centers, regular security audits, and compliance with insurance industry standards to protect your sensitive claims data.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">5. Data Retention</h3>
+                <p className="mb-4">Claims data is retained according to insurance industry requirements and legal obligations. Personal account information is kept while your account is active and for a reasonable period thereafter.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">6. Your Rights</h3>
+                <p className="mb-4">You can access, update, or request deletion of your personal information. You may also export your claims data, opt out of marketing communications, and request data portability.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">7. Cookies and Analytics</h3>
+                <p className="mb-4">We use cookies for authentication, preferences, and analytics. Our AI systems analyze usage patterns to improve claims processing accuracy and user experience.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">8. Policy Updates</h3>
+                <p className="mb-4">Privacy policy updates will be communicated via email and dashboard notifications. Continued use of ZenAssess after changes constitutes acceptance of the updated policy.</p>
+                
+                <h3 className="text-lg font-semibold mb-3">9. Contact Information</h3>
+                <p className="mb-4">For privacy questions or to exercise your rights, contact us at privacy@zenassess.com or use our secure contact form. Response time is typically 48 hours.</p>
               </div>
             </div>
             
