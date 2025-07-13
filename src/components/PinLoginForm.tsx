@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSignIn, useSignUp } from '@clerk/clerk-react';
 import { useNavigate } from '@tanstack/react-router';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
@@ -146,7 +146,7 @@ export function PinLoginForm() {
   };
 
   // Check if user exists when form changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (formData.firstName && formData.lastName && formData.company) {
       const userData = checkUserExists();
       setIsFirstTime(userData && !userData.isRegistered);
