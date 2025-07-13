@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { UserPlus, Trash2, Eye, EyeOff } from 'lucide-react';
-
+import { useUserStore } from '@/store/userStore';
 export const Settings = () => {
   const { user } = useUser();
   const { users, addUser, removeUser } = useUserStore();

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSignIn, useSignUp } from '@clerk/clerk-react';
 import { useNavigate } from '@tanstack/react-router';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
-import { useUserStore } from '../store/userStore';
+import { useUserStore } from '@/store/userStore';
 
 export function PinLoginForm() {
   const { signIn } = useSignIn();
