@@ -62,27 +62,42 @@ export function SignupForm() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      const result = await signUp?.create({
+      // Step 1: Create the user account
+      const signUpResult = await signUp?.create({
         emailAddress: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
-        publicMetadata: {
-          company: data.company,
-          role: 'owner'
-        }
       });
 
-      if (result?.status === 'complete') {
-        await setActive?.({ session: result.createdSessionId });
+      if (signUpResult?.status === 'complete') {
+        // Step 2: Set the session as active
+        await setActive?.({ session: signUpResult.createdSessionId });
+        
+        // Step 3: Update user metadata after successful signup
+        try {
+          await signUpResult.createdUserId && await fetch('/api/clerk/update-metadata', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: signUpResult.createdUserId,
+              company: data.company,
+              role: 'owner'
+            })
+          });
+        } catch (metadataError) {
+          console.warn('Failed to set metadata:', metadataError);
+          // Continue anyway - user is created successfully
+        }
+        
         navigate({ to: '/dashboard' });
-      } else if (result?.status === 'missing_requirements') {
+      } else if (signUpResult?.status === 'missing_requirements') {
         // Handle email verification if required
         console.log('Email verification required');
       }
     } catch (error) {
       console.error('Signup error:', error);
-      alert('Signup failed. Please try again.');
+      alert(`Signup failed: ${error.message || 'Please try again.'}`);
     }
   };
 
