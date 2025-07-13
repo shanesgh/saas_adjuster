@@ -133,6 +133,7 @@ export function SignupForm() {
                   First Name *
                 </label>
                 <input
+                  autoComplete="given-name"
                   {...register('firstName')}
                   type="text"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
@@ -158,6 +159,7 @@ export function SignupForm() {
                   Last Name *
                 </label>
                 <input
+                  autoComplete="family-name"
                   {...register('lastName')}
                   type="text"
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
@@ -184,6 +186,7 @@ export function SignupForm() {
                 Email Address *
               </label>
               <input
+                autoComplete="email"
                 {...register('email')}
                 type="email"
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
@@ -209,6 +212,7 @@ export function SignupForm() {
                 Company Name *
               </label>
               <input
+                autoComplete="organization"
                 {...register('company')}
                 type="text"
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
@@ -235,6 +239,7 @@ export function SignupForm() {
               </label>
               <div className="relative">
                 <input
+                  autoComplete="new-password"
                   
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
@@ -288,6 +293,7 @@ export function SignupForm() {
               </label>
               <div className="relative">
                 <input
+                  autoComplete="new-password"
                   {...register('confirmPassword')}
                   type={showConfirmPassword ? 'text' : 'password'}
                   className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
