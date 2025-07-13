@@ -8,6 +8,8 @@ export interface ClaimsFormData {
   
   // Insured Information
   insured: string;
+
+  thirdParty: string;
   
   // Reference Information
   dateReceived: string;
