@@ -88,7 +88,7 @@ export const FeaturesForm = () => {
         <h2 className="text-xl font-semibold">Vehicle Features</h2>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* All Features in unified grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6">
             {/* Predefined Features */}
@@ -117,7 +117,7 @@ export const FeaturesForm = () => {
                   value={feature.name}
                   onChange={(e) => updateCustomFeature(index, 'name', e.target.value)}
                   placeholder="Enter feature name"
-                  className="w-full sm:w-48 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  className="w-full sm:w-48 px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
                 <button
                   type="button"
