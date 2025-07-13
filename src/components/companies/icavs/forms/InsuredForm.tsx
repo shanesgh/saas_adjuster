@@ -7,13 +7,18 @@ import { FormNavigation } from '../navigation/FormNavigation';
 export const InsuredForm = () => {
   const { formData, updateFormData } = useForm();
   const [insured, setInsured] = useState(formData.insured || '');
+  const [thirdParty, setThirdParty] = useState(formData.thirdParty || '');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInsuredChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInsured(e.target.value);
   };
 
+  const handleThirdPartyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setThirdParty(e.target.value);
+  };
+
   const handleSubmit = () => {
-    updateFormData({ insured });
+    updateFormData({ insured, thirdParty });
   };
 
   return (
@@ -26,15 +31,15 @@ export const InsuredForm = () => {
           <Input
             label="Client Name"
             name="insured"
-            value={formState.insured}
-            onChange={handleChange}
+            value={insured}
+            onChange={handleInsuredChange}
           />
           
           <Input
             label="Third Party"
             name="thirdParty"
-            value={formState.thirdParty}
-            onChange={handleChange}
+            value={thirdParty}
+            onChange={handleThirdPartyChange}
             placeholder="Add third party name if applicable"
           />
           
