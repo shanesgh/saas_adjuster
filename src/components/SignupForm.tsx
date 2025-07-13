@@ -66,6 +66,7 @@ export function SignupForm() {
         emailAddress: data.email,
         password: data.password,
         firstName: data.firstName,
+        lastName: data.lastName,
       });
 
       if (result?.status === 'complete') {
