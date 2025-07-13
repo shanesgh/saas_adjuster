@@ -6,9 +6,30 @@ import { FormNavigation } from '../navigation/FormNavigation';
 
 export const HeaderForm = () => {
   const { formData, updateFormData } = useForm();
+  
+  const recipientOptions = [
+    { name: 'General Accident Insurance Company (Trinidad and Tobago) Limited', address: '36A Ariapita Avenue, Woodbrook, Port of Spain' },
+    { name: 'Guardian General Insurance Limited', address: '30–34 Maraval Road, Newtown Centre, Port of Spain' },
+    { name: 'Gulf Insurance Limited', address: '1 Gray Street, St Clair, Port of Spain' },
+    { name: 'Maritime General Insurance Company Limited', address: 'Maritime Centre, 29 Tenth Avenue, Barataria' },
+    { name: 'Nagico Insurance Company (Trinidad and Tobago) Limited', address: '95–97 Queen Janelle Commissiong Street, Port of Spain' },
+    { name: 'Sagicor General Insurance Trinidad & Tobago Limited', address: '122 St. Vincent Street, Port of Spain' },
+    { name: 'The Beacon Insurance Company Limited', address: '13 Stanmore Avenue, Port of Spain' },
+    { name: 'The Insurance Company of the West Indies (Trinidad) Limited', address: '13 Gray Street, St Clair, Port of Spain' },
+    { name: 'The New India Assurance Company (Trinidad and Tobago) Limited', address: '6A Victoria Avenue, Port of Spain' },
+    { name: 'The Presidential Insurance Company Limited', address: '54 Richmond Street, Port of Spain' },
+    { name: 'Trinidad and Tobago Insurance Limited (TATIL)', address: 'TATIL Building, 11A Maraval Road, Port of Spain' },
+    { name: 'TRINRE Insurance Company Limited', address: '69 Edward Street, Port of Spain' },
+    { name: 'Bankers Insurance Company of Trinidad and Tobago Limited', address: '#40 Main Road, Chaguanas' },
+    { name: 'Capital Insurance Limited', address: '38–42 Cipero Street, San Fernando' },
+    { name: 'CG United Insurance TT Limited', address: '2nd Floor, Princes Court, 13–17 Keate Street, Port of Spain' },
+    { name: 'Colonial Fire and General Insurance Company Limited (COLFIRE)', address: 'Corner Duke & Abercromby Streets, Port of Spain' },
+  ];
+  
   const [formState, setFormState] = useState({
     letterDate: formData.letterDate || '',
     recipientName: formData.recipient?.name || '',
+    customRecipientName: '',
     recipientAddress: formData.recipient?.address || '',
     dateReceived: formData.dateReceived || '',
     yourRef: formData.yourRef || '',
@@ -34,11 +55,22 @@ export const HeaderForm = () => {
     }));
   };
 
+  const handleRecipientChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedName = e.target.value;
+    const selectedRecipient = recipientOptions.find(r => r.name === selectedName);
+    
+    setFormState((prev) => ({
+      ...prev,
+      recipientName: selectedName,
+      recipientAddress: selectedName === 'custom' ? 'Custom address' : (selectedRecipient?.address || ''),
+    }));
+  };
+
   const handleSubmit = () => {
     updateFormData({
       letterDate: formState.letterDate,
       recipient: {
-        name: formState.recipientName,
+        name: formState.recipientName === 'custom' ? formState.customRecipientName : formState.recipientName,
         address: formState.recipientAddress,
       },
       dateReceived: formState.dateReceived,
@@ -70,12 +102,35 @@ export const HeaderForm = () => {
               onChange={handleChange}
             />
             
-            <Input
-              label="Recipient Name"
-              name="recipientName"
-              value={formState.recipientName}
-              onChange={handleChange}
-            />
+            <div>
+              <label htmlFor="recipientName" className="block text-sm font-medium text-secondary-700 mb-2">
+                Recipient Name
+              </label>
+              <select
+                name="recipientName"
+                value={formState.recipientName}
+                onChange={handleRecipientChange}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors border-gray-300"
+              >
+                <option value="">Select recipient...</option>
+                {recipientOptions.map((option) => (
+                  <option key={option.name} value={option.name}>
+                    {option.name}
+                  </option>
+                ))}
+                <option value="custom">Custom</option>
+              </select>
+              {formState.recipientName === 'custom' && (
+                <input
+                  type="text"
+                  name="customRecipientName"
+                  value={formState.customRecipientName}
+                  onChange={handleChange}
+                  placeholder="Enter custom recipient name"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors border-gray-300 mt-2"
+                />
+              )}
+            </div>
           </div>
           
           <Input
