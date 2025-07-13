@@ -4,10 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignUp, useAuth } from '@clerk/clerk-react';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { UserPlus, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { UserPlus, CheckCircle, AlertCircle, Eye, EyeOff, LogIn } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { PrivacyModal } from './PrivacyModal';
 import { TermsModal } from './TermsModal';
+import { PinLoginForm } from './PinLoginForm';
 
 const signupSchema = z.object({
   firstName: z.string()
@@ -38,6 +39,7 @@ export function SignupForm() {
   const { signUp, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
   const navigate = useNavigate();
+  const [showLogin, setShowLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -120,6 +122,30 @@ export function SignupForm() {
 
   const passwordStrength = getPasswordStrength(watchedPassword);
 
+  if (showLogin) {
+    return (
+      <div className="max-w-md mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gradient mb-4">
+            Welcome Back
+          </h1>
+          <p className="text-gray-600">
+            Sign in to your account
+          </p>
+        </div>
+        <PinLoginForm />
+        <div className="text-center mt-4">
+          <button
+            onClick={() => setShowLogin(false)}
+            className="text-primary-600 hover:text-primary-700 underline"
+          >
+            Need to create an account?
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <motion.div
@@ -133,6 +159,22 @@ export function SignupForm() {
             <div className="text-center mb-6">
               <UserPlus className="w-12 h-12 text-primary-500 mx-auto mb-2" />
               <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
+              <div className="flex justify-center space-x-4 mt-4">
+                <button
+                  type="button"
+                  className="bg-primary-500 text-white px-4 py-2 rounded-lg"
+                >
+                  Create Account
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowLogin(true)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>Login</span>
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
