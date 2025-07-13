@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -25,6 +26,11 @@ import { Route as DashboardAiDataInquiriesRouteImport } from './routes/dashboard
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingRoute = PricingRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/dashboard/ai-data-inquiries': typeof DashboardAiDataInquiriesRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contact': typeof ContactRoute
   '/pricing': typeof PricingRoute
+  '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/dashboard/ai-data-inquiries': typeof DashboardAiDataInquiriesRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/pricing': typeof PricingRoute
+  '/signin': typeof SigninRoute
   '/signup': typeof SignupRoute
   '/dashboard/ai-data-inquiries': typeof DashboardAiDataInquiriesRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/pricing'
+    | '/signin'
     | '/signup'
     | '/dashboard/ai-data-inquiries'
     | '/dashboard/analytics'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contact'
     | '/pricing'
+    | '/signin'
     | '/signup'
     | '/dashboard/ai-data-inquiries'
     | '/dashboard/analytics'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/pricing'
+    | '/signin'
     | '/signup'
     | '/dashboard/ai-data-inquiries'
     | '/dashboard/analytics'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   PricingRoute: typeof PricingRoute
+  SigninRoute: typeof SigninRoute
   SignupRoute: typeof SignupRoute
 }
 
@@ -186,6 +199,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing': {
@@ -297,6 +317,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
   PricingRoute: PricingRoute,
+  SigninRoute: SigninRoute,
   SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
