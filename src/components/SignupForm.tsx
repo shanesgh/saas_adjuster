@@ -235,6 +235,7 @@ export function SignupForm() {
               </label>
               <div className="relative">
                 <input
+                  
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
