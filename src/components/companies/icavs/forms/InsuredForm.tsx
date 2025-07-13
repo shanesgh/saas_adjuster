@@ -19,15 +19,23 @@ export const InsuredForm = () => {
   return (
     <Card className="w-full">
       <CardHeader>
-        <h2 className="text-xl font-semibold">Insured Details</h2>
+        <h2 className="text-xl font-semibold">Client Details</h2>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <Input
-            label="Insured"
+            label="Client Name"
             name="insured"
-            value={insured}
+            value={formState.insured}
             onChange={handleChange}
+          />
+          
+          <Input
+            label="Third Party"
+            name="thirdParty"
+            value={formState.thirdParty}
+            onChange={handleChange}
+            placeholder="Add third party name if applicable"
           />
           
           <FormNavigation onSubmit={handleSubmit} />

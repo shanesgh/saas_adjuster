@@ -142,7 +142,7 @@ export const ConditionForm = () => {
               onChange={handleChange}
               rows={4}
               className="block w-full rounded-md border border-secondary-300 shadow-sm px-3 py-2 text-secondary-900 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
-              placeholder="Enter general remarks on the vehicle condition..."
+              placeholder="Add general remarks on vehicle"
             />
           </div>
           

@@ -183,6 +183,32 @@ export const FeaturesForm = () => {
             />
           </div>
           
+          {customFeatures.map((feature, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={feature.name}
+                onChange={(e) => updateCustomFeature(index, 'name', e.target.value)}
+                placeholder="Enter feature name"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md"
+              />
+              <input
+                type="checkbox"
+                checked={feature.checked}
+                onChange={(e) => updateCustomFeature(index, 'checked', e.target.checked)}
+                className="h-4 w-4"
+              />
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={addCustomFeature}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Add Feature
+          </button>
+          
           <FormNavigation onSubmit={handleSubmit} />
         </div>
       </CardContent>

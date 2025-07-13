@@ -75,7 +75,7 @@ const defaultFormData: Partial<ClaimsFormData> = {
   
   previousDamage: 'None visible',
   previousRepairs: 'None visible',
-  generalRemarks: 'Vehicle is in excellent overall condition with regular maintenance records.',
+  generalRemarks: '',
   
   tyres: {
     rightFront: {
