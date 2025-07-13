@@ -27,40 +27,49 @@ export function PinLoginForm() {
     setError('');
   };
 
-  const checkUserExists = async () => {
-    try {
-      const response = await fetch('/api/check-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          company: formData.company
-        })
-      });
-      
-      const data = await response.json();
-      return data.exists ? data.user : null;
-    } catch {
-      return null;
-    }
+  const checkUserExists = () => {
+    const stored = localStorage.getItem(`company_users_${formData.company}`);
+    if (!stored) return null;
+    
+    const users = JSON.parse(stored);
+    return users.find(u => 
+      u.firstName.toLowerCase() === formData.firstName.toLowerCase() &&
+      u.lastName.toLowerCase() === formData.lastName.toLowerCase() &&
+      u.company === formData.company
+    );
   };
 
-  const validatePin = async (userData) => {
-    try {
-      const response = await fetch('/api/validate-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: userData.id,
-          pin: formData.pin
-        })
-      });
+  const validatePin = (userData) => {
+    if (!userData.pin || userData.isRegistered) return false;
+    if (userData.pinExpiry < Date.now()) return false;
+    if (userData.pinLockout && userData.pinLockout > Date.now()) return false;
+    if (userData.pinAttempts >= 3) return false;
+    
+    if (userData.pin !== formData.pin) {
+      // Update attempts
+      const stored = localStorage.getItem(`company_users_${formData.company}`);
+      const users = JSON.parse(stored);
+      const userIndex = users.findIndex(u => u.id === userData.id);
+      users[userIndex].pinAttempts++;
       
-      return response.ok;
-    } catch {
+      if (users[userIndex].pinAttempts >= 3) {
+        users[userIndex].pinLockout = Date.now() + (30 * 60 * 1000); // 30 min
+      }
+      
+      localStorage.setItem(`company_users_${formData.company}`, JSON.stringify(users));
       return false;
     }
+    
+    return true;
+  };
+
+  const markUserRegistered = (userData) => {
+    const stored = localStorage.getItem(`company_users_${formData.company}`);
+    const users = JSON.parse(stored);
+    const userIndex = users.findIndex(u => u.id === userData.id);
+    users[userIndex].isRegistered = true;
+    users[userIndex].pin = null; // Single use
+    localStorage.setItem(`company_users_${formData.company}`, JSON.stringify(users));
   };
 
   const handleSubmit = async (e) => {
@@ -69,7 +78,7 @@ export function PinLoginForm() {
     setError('');
 
     try {
-      const userData = await checkUserExists();
+      const userData = checkUserExists();
       
       if (!userData) {
         setError('Invalid credentials');
@@ -80,8 +89,9 @@ export function PinLoginForm() {
       if (userData.isRegistered) {
         // Returning user - regular login
         try {
+          const email = `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '')}.local`;
           const result = await signIn.create({
-            identifier: userData.email,
+            identifier: email,
             password: formData.password
           });
 
@@ -99,8 +109,7 @@ export function PinLoginForm() {
           return;
         }
 
-        const pinValid = await validatePin(userData);
-        if (!pinValid) {
+        if (!validatePin(userData)) {
           setError('Invalid PIN or PIN expired');
           setLoading(false);
           return;
@@ -108,8 +117,9 @@ export function PinLoginForm() {
 
         // Register user with Clerk
         try {
+          const email = `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '')}.local`;
           const result = await signUp.create({
-            emailAddress: `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '')}.local`,
+            emailAddress: email,
             password: formData.password,
             firstName: userData.firstName,
             lastName: userData.lastName,
@@ -121,14 +131,7 @@ export function PinLoginForm() {
 
           if (result.status === 'complete') {
             await setActive({ session: result.createdSessionId });
-            
-            // Mark user as registered
-            await fetch('/api/mark-registered', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: userData.id })
-            });
-
+            markUserRegistered(userData);
             navigate({ to: '/dashboard' });
           }
         } catch {
@@ -141,6 +144,14 @@ export function PinLoginForm() {
 
     setLoading(false);
   };
+
+  // Check if user exists when form changes
+  React.useEffect(() => {
+    if (formData.firstName && formData.lastName && formData.company) {
+      const userData = checkUserExists();
+      setIsFirstTime(userData && !userData.isRegistered);
+    }
+  }, [formData.firstName, formData.lastName, formData.company]);
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8">
@@ -247,3 +258,5 @@ export function PinLoginForm() {
     </div>
   );
 }
+
+export { PinLoginForm }
