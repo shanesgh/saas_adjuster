@@ -83,9 +83,22 @@ export function SignupForm() {
   };
 
   if (isSignedIn) {
-    navigate({ to: '/dashboard' });
-    return null;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
   }
+
+  // Handle redirect after sign in
+  React.useEffect(() => {
+    if (isSignedIn) {
+      navigate({ to: '/dashboard' });
+    }
+  }, [isSignedIn, navigate]);
 
   const watchedPassword = watch('password');
 
