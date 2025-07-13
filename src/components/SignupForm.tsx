@@ -71,24 +71,14 @@ export function SignupForm() {
 
       if (result?.status === 'complete') {
         await setActive?.({ session: result.createdSessionId });
-        
-        // Set user metadata for role-based access
-        await result.createdUserId && fetch('/api/set-user-role', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            userId: result.createdUserId, 
-            role: data.plan === 'enterprise' ? 'admin' : 'adjuster',
-            company: data.company 
-          })
-        }).catch(() => {}); // Silent fail for dev mode
-        
         navigate({ to: '/dashboard' });
+      } else if (result?.status === 'missing_requirements') {
+        // Handle email verification if required
+        console.log('Email verification required');
       }
     } catch (error) {
-      // Dev mode: Always succeed
-      console.log('Dev mode signup:', data);
-      navigate({ to: '/dashboard' });
+      console.error('Signup error:', error);
+      // Handle signup errors appropriately
     }
   };
 
