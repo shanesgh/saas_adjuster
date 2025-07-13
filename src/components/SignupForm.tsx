@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignUp, useAuth } from '@clerk/clerk-react';
@@ -94,7 +94,7 @@ export function SignupForm() {
   }
 
   // Handle redirect after sign in
-  React.useEffect(() => {
+  useEffect(() => {
     if (isSignedIn) {
       navigate({ to: '/dashboard' });
     }
