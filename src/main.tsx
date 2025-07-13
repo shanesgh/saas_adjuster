@@ -5,7 +5,11 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import { routeTree } from './routeTree.gen';
 import "./index.css";
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_ZGV2ZWxvcGluZy1jb2NrZXJlbC0xNy5jbGVyay5hY2NvdW50cy5kZXYk';
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error('Missing Publishable Key')
+}
 
 // Create a new router instance
 const router = createRouter({ routeTree });
