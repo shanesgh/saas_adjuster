@@ -67,6 +67,10 @@ export function SignupForm() {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        unsafeMetadata: {
+          company: data.company,
+          role: 'owner'
+        }
       });
 
       if (result?.status === 'complete') {
