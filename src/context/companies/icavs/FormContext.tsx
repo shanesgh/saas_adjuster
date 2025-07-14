@@ -31,13 +31,12 @@ const defaultFormData: Partial<ClaimsFormData> = {
   
   vehicle: {
     makeAndModel: 'Toyota Camry SE',
-    isAutomatic: true,
-    isGasolene: true,
-    isHybridElectric: false,
+    fuelType: 'gasoline',
+    transmissionType: 'AT',
     registration: 'PCS 1234',
     yearOfManufacture: '2022',
     color: 'Pearl White',
-    odometer: '15,000 km',
+    odometer: 15000,
     identification: {
       vinChassis: 'JT2BF22K1W0123456',
       engine: '2AZ-FE123456',

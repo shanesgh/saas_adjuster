@@ -107,50 +107,41 @@ export const addVehicleDetails = (
   pdf.setFont("helvetica", "normal");
   pdf.text(data.vehicle?.makeAndModel || "", margin + 160, currentY);
 
-  // Checkboxes for vehicle type
-  if (data.vehicle?.isAutomatic) {
-    pdf.text("[x]", margin + 270, currentY);
-  } else {
-    pdf.text("[ ]", margin + 270, currentY);
-  }
-  pdf.text("AUTOMATIC", margin + 285, currentY);
-
-  if (data.vehicle?.isGasolene) {
-    pdf.text("[x]", margin + 365, currentY);
-  } else {
-    pdf.text("[ ]", margin + 365, currentY);
-  }
-  pdf.text("GASOLENE", margin + 380, currentY);
-
-  if (data.vehicle?.isHybridElectric) {
-    pdf.text("[x]", margin + 453, currentY);
-  } else {
-    pdf.text("[ ]", margin + 453, currentY);
-  }
-  pdf.text("HYBRID", margin + 468, currentY);
+  // Fuel Type and Transmission
+  pdf.setFont("helvetica", "bold");
+  pdf.text("FUEL TYPE:", margin + 270, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(data.vehicle?.fuelType || "", margin + 340, currentY);
 
   currentY += 18;
 
+  pdf.setFont("helvetica", "bold");
+  pdf.text("TRANSMISSION:", margin, currentY);
+  pdf.setFont("helvetica", "normal");
+  pdf.text(data.vehicle?.transmissionType || "", margin + 100, currentY);
+
   // More vehicle details
   pdf.setFont("helvetica", "bold");
-  pdf.text("VEHICLE REG#:", margin, currentY);
+  pdf.text("VEHICLE REG#:", margin + 270, currentY);
   pdf.setFont("helvetica", "normal");
-  pdf.text(data.vehicle?.registration || "", margin + 100, currentY);
+  pdf.text(data.vehicle?.registration || "", margin + 370, currentY);
+
+  currentY += 18;
 
   pdf.setFont("helvetica", "bold");
-  pdf.text("YEAR OF MANU:", margin + 160, currentY);
+  pdf.text("YEAR OF MANU:", margin, currentY);
   pdf.setFont("helvetica", "normal");
-  pdf.text(data.vehicle?.yearOfManufacture || "", margin + 260, currentY);
+  pdf.text(data.vehicle?.yearOfManufacture || "", margin + 120, currentY);
 
   pdf.setFont("helvetica", "bold");
-  pdf.text("COLOUR:", margin + 295, currentY);
+  pdf.text("COLOUR:", margin + 200, currentY);
   pdf.setFont("helvetica", "normal");
-  pdf.text(data.vehicle?.color || "", margin + 355, currentY);
+  pdf.text(data.vehicle?.color || "", margin + 260, currentY);
 
   pdf.setFont("helvetica", "bold");
-  pdf.text("ODOMETER:", margin + 420, currentY);
+  pdf.text("ODOMETER:", margin + 350, currentY);
   pdf.setFont("helvetica", "normal");
-  pdf.text(data.vehicle?.odometer || "", margin + 498, currentY);
+  pdf.text(data.vehicle?.odometer ? `${data.vehicle.odometer} km` : "", margin + 420, currentY);
 
   currentY += 18;
 

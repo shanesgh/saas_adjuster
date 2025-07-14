@@ -24,13 +24,12 @@ export interface ClaimsFormData {
   // Vehicle Information
   vehicle: {
     makeAndModel: string;
-    isAutomatic: boolean;
-    isGasolene: boolean;
-    isHybridElectric: boolean;
+    fuelType: string;
+    transmissionType: string;
     registration: string;
     yearOfManufacture: string;
     color: string;
-    odometer: string;
+    odometer: number;
     identification: {
       vinChassis: string;
       engine: string;
@@ -156,13 +155,12 @@ features: {
   // Vehicle Information
   vehicle: {
     makeAndModel: string;
-    isAutomatic: boolean;
-    isGasolene: boolean;
-    isHybridElectric: boolean;
+    fuelType: string;
+    transmissionType: string;
     registration: string;
     yearOfManufacture: string;
     color: string;
-    odometer: string;
+    odometer: number;
     identification: {
       vinChassis: string;
       engine: string;
