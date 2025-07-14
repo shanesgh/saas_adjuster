@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
@@ -91,6 +92,33 @@ export const DocumentsForm = () => {
     }
   };
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (previewIndex === null) return;
+      
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          goToPrevious();
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          goToNext();
+          break;
+        case 'Escape':
+          event.preventDefault();
+          closePreview();
+          break;
+      }
+    };
+
+    if (previewIndex !== null) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [previewIndex, files.length]);
+
   const handleSubmit = () => {
     updateFormData({ documents: files });
   };
@@ -169,7 +197,10 @@ export const DocumentsForm = () => {
 
       {/* Preview Modal */}
       {currentFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          tabIndex={-1}
+        >
           <div className="bg-white rounded-lg max-w-6xl max-h-[95vh] overflow-hidden flex flex-col w-full">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b bg-gray-50">
@@ -177,6 +208,9 @@ export const DocumentsForm = () => {
                 <h3 className="font-medium text-lg">{currentFile.name}</h3>
                 <span className="text-sm text-gray-500">
                   {previewIndex! + 1} of {files.length}
+                </span>
+                <span className="text-xs text-gray-400">
+                  Use ← → arrow keys to navigate
                 </span>
               </div>
               <div className="flex items-center space-x-2">
