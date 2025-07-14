@@ -73,7 +73,7 @@ export function PinLoginForm() {
         console.log('PIN validated successfully, creating Clerk account...');
         // Create Clerk account
         try {
-          const email = `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '')}.local`;
+          const email = `${userData.firstName.toLowerCase()}.${userData.lastName.toLowerCase()}@${userData.company.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')}.com`;
           console.log('Generated email:', email);
           console.log('Creating signup with data:', {
             emailAddress: email,
@@ -126,7 +126,7 @@ export function PinLoginForm() {
         }
 
         try {
-          const email = `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@${formData.company.toLowerCase().replace(/\s+/g, '')}.local`;
+          const email = `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@${formData.company.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '')}.com`;
           console.log('Attempting login with email:', email);
           
           const result = await signIn?.create({
