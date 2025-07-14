@@ -12,6 +12,7 @@ type FormContextType = {
 };
 
 const defaultFormData: Partial<ClaimsFormData> = {
+  documents: [],
   letterDate: new Date().toISOString().split('T')[0],
   recipient: {
     name: 'Maritime General Insurance Company Limited',
@@ -140,6 +141,7 @@ const defaultFormData: Partial<ClaimsFormData> = {
 };
 
 const steps: FormStep[] = [
+  'documents',
   'header',
   'insured',
   'vehicle',

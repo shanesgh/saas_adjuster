@@ -3,6 +3,7 @@ import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { FormStep } from '../../../../types/companies/icavs/form';
 
 const steps: { key: FormStep; label: string }[] = [
+  { key: 'documents', label: 'Documents' },
   { key: 'header', label: 'Assignment Info' },
   { key: 'insured', label: 'Insured Details' },
   { key: 'vehicle', label: 'Vehicle Details' },

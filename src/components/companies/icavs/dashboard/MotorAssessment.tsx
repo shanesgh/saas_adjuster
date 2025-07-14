@@ -2,6 +2,7 @@ import React from 'react';
 import { FormProvider } from '../../../../context/companies/icavs/FormContext';
 import { FormStepper } from '../navigation/FormStepper';
 import { 
+  DocumentsForm,
   HeaderForm, 
   InsuredForm, 
   VehicleForm, 
@@ -19,6 +20,8 @@ const FormContent = () => {
   const { currentStep } = useForm();
   
   switch (currentStep) {
+    case 'documents':
+      return <DocumentsForm />;
     case 'header':
       return <HeaderForm />;
     case 'insured':

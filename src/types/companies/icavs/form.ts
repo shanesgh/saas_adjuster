@@ -1,4 +1,16 @@
+interface UploadedFile {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  uploadedAt: Date;
+}
+
 export interface ClaimsFormData {
+  // Documents
+  documents?: UploadedFile[];
+  
   // Header Information
   letterDate: string;
   recipient: {
@@ -278,6 +290,7 @@ features: {
 }
 
 export type FormStep = 
+  | 'documents'
   | 'header'
   | 'insured'
   | 'vehicle'

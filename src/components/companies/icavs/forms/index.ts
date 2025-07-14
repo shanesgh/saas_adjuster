@@ -1,4 +1,5 @@
 export { HeaderForm } from './HeaderForm';
+export { DocumentsForm } from './DocumentsForm';
 export { InsuredForm } from './InsuredForm';
 export { VehicleForm } from './VehicleForm';
 export { FeaturesForm } from './FeaturesForm';
