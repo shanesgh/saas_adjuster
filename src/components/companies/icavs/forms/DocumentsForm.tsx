@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
-import { FileText, Image, Trash2, Eye, Upload } from 'lucide-react';
+import { FileText, Image, Trash2, Upload, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface UploadedFile {
   id: string;
@@ -17,7 +17,7 @@ interface UploadedFile {
 export const DocumentsForm = () => {
   const { formData, updateFormData } = useForm();
   const [files, setFiles] = useState<UploadedFile[]>(formData.documents || []);
-  const [previewFile, setPreviewFile] = useState<UploadedFile | null>(null);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles = acceptedFiles.map(file => ({
@@ -45,10 +45,16 @@ export const DocumentsForm = () => {
     multiple: true
   });
 
-  const removeFile = (id: string) => {
+  const removeFile = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering preview when clicking delete
     const updatedFiles = files.filter(f => f.id !== id);
     setFiles(updatedFiles);
     localStorage.setItem('motor-assessment-files', JSON.stringify(updatedFiles));
+    
+    // Close preview if the deleted file was being previewed
+    if (previewIndex !== null && files[previewIndex]?.id === id) {
+      setPreviewIndex(null);
+    }
   };
 
   const formatFileSize = (bytes: number) => {
@@ -65,9 +71,31 @@ export const DocumentsForm = () => {
     return <FileText className="w-5 h-5" />;
   };
 
+  const openPreview = (index: number) => {
+    setPreviewIndex(index);
+  };
+
+  const closePreview = () => {
+    setPreviewIndex(null);
+  };
+
+  const goToPrevious = () => {
+    if (previewIndex !== null && previewIndex > 0) {
+      setPreviewIndex(previewIndex - 1);
+    }
+  };
+
+  const goToNext = () => {
+    if (previewIndex !== null && previewIndex < files.length - 1) {
+      setPreviewIndex(previewIndex + 1);
+    }
+  };
+
   const handleSubmit = () => {
     updateFormData({ documents: files });
   };
+
+  const currentFile = previewIndex !== null ? files[previewIndex] : null;
 
   return (
     <div className="space-y-6">
@@ -106,8 +134,12 @@ export const DocumentsForm = () => {
               <div className="space-y-3">
                 <h3 className="font-medium text-gray-900">Uploaded Files ({files.length})</h3>
                 <div className="grid gap-3">
-                  {files.map((file) => (
-                    <div key={file.id} className="flex items-center justify-between p-3 border rounded-lg bg-gray-50">
+                  {files.map((file, index) => (
+                    <div 
+                      key={file.id} 
+                      className="flex items-center justify-between p-3 border rounded-lg bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => openPreview(index)}
+                    >
                       <div className="flex items-center space-x-3">
                         {getFileIcon(file.type)}
                         <div>
@@ -117,22 +149,13 @@ export const DocumentsForm = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => setPreviewFile(file)}
-                          className="p-1 text-blue-600 hover:text-blue-800"
-                          title="Preview"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => removeFile(file.id)}
-                          className="p-1 text-red-600 hover:text-red-800"
-                          title="Remove"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                      <button
+                        onClick={(e) => removeFile(file.id, e)}
+                        className="p-1 text-red-600 hover:text-red-800 hover:bg-red-100 rounded"
+                        title="Remove"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -145,34 +168,73 @@ export const DocumentsForm = () => {
       </Card>
 
       {/* Preview Modal */}
-      {previewFile && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h3 className="font-medium">{previewFile.name}</h3>
-              <button
-                onClick={() => setPreviewFile(null)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
+      {currentFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-6xl max-h-[95vh] overflow-hidden flex flex-col w-full">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+              <div className="flex items-center space-x-4">
+                <h3 className="font-medium text-lg">{currentFile.name}</h3>
+                <span className="text-sm text-gray-500">
+                  {previewIndex! + 1} of {files.length}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                {/* Navigation buttons */}
+                <button
+                  onClick={goToPrevious}
+                  disabled={previewIndex === 0}
+                  className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Previous file"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={goToNext}
+                  disabled={previewIndex === files.length - 1}
+                  className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Next file"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={closePreview}
+                  className="p-2 rounded-lg hover:bg-gray-200"
+                  title="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
-            <div className="p-4 overflow-auto max-h-[80vh]">
-              {previewFile.type.startsWith('image/') ? (
+            
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-gray-100">
+              {currentFile.type.startsWith('image/') ? (
                 <img
-                  src={previewFile.url}
-                  alt={previewFile.name}
-                  className="max-w-full h-auto"
+                  src={currentFile.url}
+                  alt={currentFile.name}
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                 />
-              ) : previewFile.type === 'application/pdf' ? (
+              ) : currentFile.type === 'application/pdf' ? (
                 <iframe
-                  src={previewFile.url}
-                  className="w-full h-96"
-                  title={previewFile.name}
+                  src={currentFile.url}
+                  className="w-full h-full min-h-[600px] rounded-lg shadow-lg"
+                  title={currentFile.name}
                 />
               ) : (
-                <p className="text-gray-500">Preview not available for this file type</p>
+                <div className="text-center p-8">
+                  <FileText className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-500">Preview not available for this file type</p>
+                </div>
               )}
+            </div>
+            
+            {/* Footer with file info */}
+            <div className="p-4 border-t bg-gray-50 text-sm text-gray-600">
+              <div className="flex justify-between items-center">
+                <span>{formatFileSize(currentFile.size)}</span>
+                <span>Uploaded: {currentFile.uploadedAt.toLocaleDateString()}</span>
+              </div>
             </div>
           </div>
         </div>
