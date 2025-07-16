@@ -68,7 +68,7 @@ export const ReviewForm = () => {
     <div className="grid grid-cols-1 gap-6">
       <Card className="w-full">
         <CardHeader>
-          <h2 className="text-xl font-semibold">Review Form Information</h2>
+          <h2 className="text-xl font-semibold">Review Forms Information</h2>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -255,13 +255,29 @@ export const ReviewForm = () => {
             </div>
 
             <FormNavigation
-  onGeneratePdf={handleGeneratePdf}
-  isSubmitting={isGenerating}
-  canSubmit={true}
-  onSaveReport={handleSaveReport} 
-  isSaving={isSaving}              
- 
-/>
+              
+              customButtons={
+                <button
+                  onClick={handleSaveReport}
+                  disabled={isSaving}
+                  className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Save Report</span>
+                    </>
+                  )}
+                </button>
+              }
+              onGeneratePdf={handleGeneratePdf}
+              isSubmitting={isGenerating}
+              canSubmit={true}
+            />
           </div>
         </CardContent>
       </Card>
