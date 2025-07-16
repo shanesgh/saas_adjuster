@@ -3,6 +3,7 @@ import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Input } from '../../../ui/input';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 export const HeaderForm = () => {
   const { formData, updateFormData } = useForm();
@@ -218,6 +219,8 @@ export const HeaderForm = () => {
               onChange={handleChange}
             />
           </div>
+          
+          <NotesTextbox section="header" placeholder="Add notes about assignment information..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

@@ -3,6 +3,7 @@ import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Input } from '../../../ui/input';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 export const InsuredForm = () => {
   const { formData, updateFormData } = useForm();
@@ -42,6 +43,8 @@ export const InsuredForm = () => {
             onChange={handleThirdPartyChange}
             placeholder="Add third party name if applicable"
           />
+          
+          <NotesTextbox section="insured" placeholder="Add notes about client details..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

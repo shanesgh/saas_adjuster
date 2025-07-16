@@ -3,6 +3,7 @@ import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Checkbox } from '../../../ui/checkbox';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 interface CustomFeature {
   name: string;
@@ -138,6 +139,8 @@ export const FeaturesForm = () => {
           >
             + Add Custom Feature
           </button>
+          
+          <NotesTextbox section="features" placeholder="Add notes about vehicle features..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

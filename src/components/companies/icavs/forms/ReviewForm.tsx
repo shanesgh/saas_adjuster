@@ -6,12 +6,14 @@ import { PDFPreview } from "../pdf/PDFPreview";
 import { generatePdf } from "../pdf/pdfGenerator"; 
 import { useAuth } from '@clerk/clerk-react';
 import { apiClient } from '../../../../lib/api';
+import { useNotesStore } from '../../../../store/notesStore';
 
 export const ReviewForm = () => {
   const { formData } = useForm();
   const [isGenerating, setIsGenerating] = useState(false);
   const { getToken } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const { notes } = useNotesStore();
 
 
   const handleGeneratePdf = async () => {
@@ -230,6 +232,26 @@ export const ReviewForm = () => {
                 <span className="font-semibold">Reserve:</span> $
                 {formData.recommendation?.reserve}
               </p>
+            </div>
+
+            {/* Notes Section */}
+            <div className="p-3 rounded-md border border-secondary-200 space-y-2">
+              <h3 className="font-medium text-primary-600">
+                Notes
+              </h3>
+              {Object.entries(notes).map(([section, content]) => (
+                content && (
+                  <div key={section} className="mb-4">
+                    <h4 className="text-sm font-semibold capitalize">{section} Notes:</h4>
+                    <p className="text-sm text-gray-600 whitespace-pre-line p-2 bg-gray-50 rounded border">
+                      {content}
+                    </p>
+                  </div>
+                )
+              ))}
+              {Object.keys(notes).length === 0 && (
+                <p className="text-sm text-gray-500 italic">No notes added</p>
+              )}
             </div>
 
             <FormNavigation

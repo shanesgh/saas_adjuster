@@ -4,6 +4,7 @@ import { Input } from '../../../ui/input';
 import { Select } from '../../../ui/select';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 export const RecommendationForm = () => {
   const { formData, updateFormData } = useForm();
@@ -112,6 +113,8 @@ export const RecommendationForm = () => {
               placeholder="Enter recommendation remarks..."
             />
           </div>
+
+          <NotesTextbox section="recommendation" placeholder="Add notes about recommendation..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

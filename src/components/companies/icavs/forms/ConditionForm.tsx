@@ -4,6 +4,7 @@ import { Input } from '../../../ui/input';
 import { Select } from '../../../ui/select';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 export const ConditionForm = () => {
   const { formData, updateFormData } = useForm();
@@ -145,6 +146,8 @@ export const ConditionForm = () => {
               placeholder="Add general remarks on vehicle"
             />
           </div>
+
+          <NotesTextbox section="condition" placeholder="Add notes about vehicle condition..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

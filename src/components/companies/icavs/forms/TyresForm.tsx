@@ -4,6 +4,7 @@ import { Input } from '../../../ui/input';
 import { Select } from '../../../ui/select';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 const vehicleTypes = [
   { value: 'car', label: 'Car (4 tyres)' },
@@ -152,6 +153,8 @@ export const TyresForm = () => {
               + Add Tyre
             </button>
           )}
+          
+          <NotesTextbox section="tyres" placeholder="Add notes about tyre information..." />
 
           <FormNavigation onSubmit={handleSubmit} />
         </div>
