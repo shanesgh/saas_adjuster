@@ -1,6 +1,6 @@
 const API_BASE = import.meta.env.DEV 
   ? 'http://localhost:8788/api' 
-  : 'https://your-pages-domain.pages.dev/api';
+  : 'https://icavs-claims-form.pages.dev/api';
 
 class ApiClient {
   private baseUrl: string;
@@ -86,7 +86,10 @@ class ApiClient {
   async updateClaimStatus(id: string, status: string, reason?: string) {
     return this.request<any>(`/claims/${id}/status`, {
       method: 'PUT',
-      body: JSON.stringify({ status, reason }),
+      body: JSON.stringify({ 
+        status, 
+        reason: reason || undefined 
+      }),
     });
   }
 

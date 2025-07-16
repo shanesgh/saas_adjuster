@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader } from "../../../ui/card";
 import { FormNavigation, ReviewStatus } from "../navigation/FormNavigation";
 import { PDFPreview } from "../pdf/PDFPreview";
 import { generatePdf } from "../pdf/pdfGenerator"; 
-import { useAuth } from '@clerk/clerk-react';
-import { apiClient } from '../../../../lib/api';
+import { useAuth, useUser } from '@clerk/clerk-react';
+import { apiClient } from '@/lib/api';
 import { useNotesStore } from '../../../../store/notesStore';
 
 export const ReviewForm = () => {
   const { formData } = useForm();
+  const { user } = useUser();
   const [isGenerating, setIsGenerating] = useState(false);
   const { getToken } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
@@ -35,7 +36,7 @@ export const ReviewForm = () => {
       if (token) {
         apiClient.setToken(token);
         const claimData = {
-          claimNumber: formData.ourRef || `CLAIM-${Date.now()}`,
+          claimNumber: formData.ourRef || `CLAIM-${Date.now().toString().slice(-6)}`,
           insuredName: formData.insured,
           vehicleData: formData.vehicle || {},
           damageData: formData.damage || {},
@@ -72,7 +73,7 @@ export const ReviewForm = () => {
       if (token) {
         apiClient.setToken(token);
         const claimData = {
-          claimNumber: formData.ourRef || `CLAIM-${Date.now()}`,
+          claimNumber: formData.ourRef || `CLAIM-${Date.now().toString().slice(-6)}`,
           insuredName: formData.insured,
           vehicleData: formData.vehicle || {},
           damageData: formData.damage || {},
@@ -278,16 +279,16 @@ export const ReviewForm = () => {
               <h3 className="font-medium text-primary-600">
                 Notes
               </h3>
-              {Object.entries(notes).map(([section, content]) => (
-                content && (
+              {Object.entries(notes)
+                .filter(([_, content]) => content && content.trim() !== '')
+                .map(([section, content]) => (
                   <div key={section} className="mb-4">
                     <h4 className="text-sm font-semibold capitalize">{section} Notes:</h4>
                     <p className="text-sm text-gray-600 whitespace-pre-line p-2 bg-gray-50 rounded border">
                       {content}
                     </p>
                   </div>
-                )
-              ))}
+                ))}
               {Object.keys(notes).length === 0 && (
                 <p className="text-sm text-gray-500 italic">No notes added</p>
               )}
@@ -305,11 +306,11 @@ export const ReviewForm = () => {
                     {isSaving ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        <span>Saving...</span>
+                        <span>Saving Draft...</span>
                       </>
                     ) : (
                       <>
-                        <span>Save Report</span>
+                        <span>Save as Draft</span>
                       </>
                     )}
                   </button>
