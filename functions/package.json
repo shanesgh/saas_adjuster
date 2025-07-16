@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "wrangler pages dev functions --compatibility-date=2024-01-01",
     "deploy": "wrangler pages deploy",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:push": "drizzle-kit push:pg",
+    "db:migrate": "node -r dotenv/config db/migrate.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
