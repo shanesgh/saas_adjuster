@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "wrangler pages dev functions --compatibility-date=2024-01-01",
+    "dev": "npx wrangler pages dev functions --compatibility-date=2024-01-01",
     "deploy": "wrangler pages deploy",
     "db:generate": "npx drizzle-kit generate",
     "db:push": "npx drizzle-kit push",
