@@ -1,6 +1,6 @@
 name = "icavs-backend"
 compatibility_date = "2024-01-01"
 
-[env.production.vars]
+[vars]
 NEON_DATABASE_URL = "postgresql://neondb_owner:npg_k6IqUTBJMC8S@ep-dawn-moon-ae8oofoc-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 CLERK_SECRET_KEY = "pk_test_bW9kZXJuLXBhcnJvdC05MS5jbGVyay5hY2NvdW50cy5kZXYk"
