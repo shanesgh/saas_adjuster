@@ -16,7 +16,6 @@ export const FormNavigation = ({
   canSubmit = true,
   onGeneratePdf,
   customButtons,
-  customButtons,
 }: FormNavigationProps) => {
   const { goToPreviousStep, goToNextStep, isLastStep } = useForm();
 
