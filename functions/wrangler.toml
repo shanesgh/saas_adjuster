@@ -8,4 +8,4 @@ compatibility_date = "2024-01-01"
 
 [[env.production.kv_namespaces]]
 binding = "CACHE"
-id = "your-kv-namespace-id"
+id = "29b04035e82a4126b2b502df277a7591"
