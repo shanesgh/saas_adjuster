@@ -62,43 +62,6 @@ export const ReviewForm = () => {
     }
   };
 
-  const handleSaveReport = async () => {
-    setIsSaving(true);
-    try {
-      const token = await getToken();
-      if (token) {
-        apiClient.setToken(token);
-        const claimData = {
-          claimNumber: formData.ourRef || `CLAIM-${Date.now()}`,
-          insuredName: formData.insured,
-          vehicleData: formData.vehicle || {},
-          damageData: formData.damage || {},
-          estimateData: formData.estimate || {},
-          recommendationData: formData.recommendation || {},
-          yourRef: formData.yourRef,
-          ourRef: formData.ourRef,
-          dateReceived: formData.dateReceived ? new Date(formData.dateReceived).toISOString() : null,
-          dateInspected: formData.dateInspected ? new Date(formData.dateInspected).toISOString() : null,
-          dateOfLoss: formData.dateOfLoss ? new Date(formData.dateOfLoss).toISOString() : null,
-          letterDate: formData.letterDate ? new Date(formData.letterDate).toISOString() : null,
-          placeOfInspection: formData.placeOfInspection,
-          claimsTechnician: formData.claimsTechnician,
-          witness: formData.witness,
-          numberOfPhotographs: formData.numberOfPhotographs,
-        };
-        
-        const response = await apiClient.createClaim(claimData);
-        console.log('Saved claim:', response);
-        alert('Report saved successfully!');
-      }
-    } catch (error) {
-      console.error('Error saving report:', error);
-      alert(`Error saving report: ${error.message || 'Unknown error'}`);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="grid grid-cols-1 gap-6">
       <Card className="w-full">
