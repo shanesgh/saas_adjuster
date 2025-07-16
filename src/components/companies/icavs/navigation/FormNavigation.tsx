@@ -7,6 +7,7 @@ interface FormNavigationProps {
   isSubmitting?: boolean;
   canSubmit?: boolean;
   onGeneratePdf?: () => void;
+  customButtons?: React.ReactNode;
 }
 
 export const FormNavigation = ({
@@ -14,6 +15,7 @@ export const FormNavigation = ({
   isSubmitting = false,
   canSubmit = true,
   onGeneratePdf,
+  customButtons,
 }: FormNavigationProps) => {
   const { goToPreviousStep, goToNextStep, isLastStep } = useForm();
 
@@ -30,6 +32,8 @@ export const FormNavigation = ({
       </Button>
 
       <div className="flex gap-2">
+        {customButtons}
+        
         {isLastStep ? (
           <Button
             variant="default"

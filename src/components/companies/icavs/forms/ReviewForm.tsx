@@ -8,6 +8,8 @@ import { generatePdf } from "../pdf/pdfGenerator";
 export const ReviewForm = () => {
   const { formData } = useForm();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { getToken } = useAuth();
 
   const handleGeneratePdf = async () => {
     setIsGenerating(true);
@@ -17,6 +19,43 @@ export const ReviewForm = () => {
       console.error("Error generating PDF:", error);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleSaveReport = async () => {
+    setIsSaving(true);
+    try {
+      const token = await getToken();
+      if (token) {
+        apiClient.setToken(token);
+        const claimData = {
+          claimNumber: formData.ourRef || `CLAIM-${Date.now()}`,
+          insuredName: formData.insured,
+          vehicleData: formData.vehicle || {},
+          damageData: formData.damage || {},
+          estimateData: formData.estimate || {},
+          recommendationData: formData.recommendation || {},
+          yourRef: formData.yourRef,
+          ourRef: formData.ourRef,
+          dateReceived: formData.dateReceived ? new Date(formData.dateReceived).toISOString() : null,
+          dateInspected: formData.dateInspected ? new Date(formData.dateInspected).toISOString() : null,
+          dateOfLoss: formData.dateOfLoss ? new Date(formData.dateOfLoss).toISOString() : null,
+          letterDate: formData.letterDate ? new Date(formData.letterDate).toISOString() : null,
+          placeOfInspection: formData.placeOfInspection,
+          claimsTechnician: formData.claimsTechnician,
+          witness: formData.witness,
+          numberOfPhotographs: formData.numberOfPhotographs,
+        };
+        
+        const response = await apiClient.createClaim(claimData);
+        console.log('Saved claim:', response);
+        alert('Report saved successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving report:', error);
+      alert(`Error saving report: ${error.message || 'Unknown error'}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -191,6 +230,24 @@ export const ReviewForm = () => {
             </div>
 
             <FormNavigation
+              customButtons={
+                <button
+                  onClick={handleSaveReport}
+                  disabled={isSaving}
+                  className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Save Report</span>
+                    </>
+                  )}
+                </button>
+              }
               onGeneratePdf={handleGeneratePdf}
               isSubmitting={isGenerating}
               canSubmit={true}
