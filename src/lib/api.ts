@@ -83,6 +83,13 @@ class ApiClient {
     });
   }
 
+  async updateClaimStatus(id: string, status: string, reason?: string) {
+    return this.request<any>(`/claims/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status, reason }),
+    });
+  }
+
   // Notes
   async createNote(data: { claimId: string; section: string; content: string }) {
     return this.request<any>('/notes', {

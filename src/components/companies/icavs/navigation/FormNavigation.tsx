@@ -2,6 +2,8 @@ import { ArrowLeft, ArrowRight, FileText } from "lucide-react";
 import { useForm } from "../../../../context/companies/icavs/FormContext";
 import { Button } from "../../../ui/button";
 
+export type ReviewStatus = 'pending' | 'review' | 'cancelled' | 'completed';
+
 interface FormNavigationProps {
   onSubmit?: () => void;
   isSubmitting?: boolean;
@@ -32,8 +34,6 @@ export const FormNavigation = ({
       </Button>
 
       <div className="flex gap-2">
-        {customButtons}
-        
         {customButtons}
         
         {isLastStep ? (

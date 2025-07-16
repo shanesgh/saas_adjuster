@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "../../../../context/companies/icavs/FormContext";
 import { Card, CardContent, CardHeader } from "../../../ui/card";
-import { FormNavigation } from "../navigation/FormNavigation";
+import { FormNavigation, ReviewStatus } from "../navigation/FormNavigation";
 import { PDFPreview } from "../pdf/PDFPreview";
 import { generatePdf } from "../pdf/pdfGenerator"; 
 import { useAuth } from '@clerk/clerk-react';
@@ -13,6 +13,7 @@ export const ReviewForm = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { getToken } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [isSendingForReview, setIsSendingForReview] = useState(false);
   const { notes } = useNotesStore();
 
 
@@ -61,6 +62,44 @@ export const ReviewForm = () => {
       alert(`Error saving report: ${error.message || 'Unknown error'}`);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSendForReview = async () => {
+    setIsSendingForReview(true);
+    try {
+      const token = await getToken();
+      if (token) {
+        apiClient.setToken(token);
+        const claimData = {
+          claimNumber: formData.ourRef || `CLAIM-${Date.now()}`,
+          insuredName: formData.insured,
+          vehicleData: formData.vehicle || {},
+          damageData: formData.damage || {},
+          estimateData: formData.estimate || {},
+          recommendationData: formData.recommendation || {},
+          yourRef: formData.yourRef,
+          ourRef: formData.ourRef,
+          dateReceived: formData.dateReceived ? new Date(formData.dateReceived).toISOString() : null,
+          dateInspected: formData.dateInspected ? new Date(formData.dateInspected).toISOString() : null,
+          dateOfLoss: formData.dateOfLoss ? new Date(formData.dateOfLoss).toISOString() : null,
+          letterDate: formData.letterDate ? new Date(formData.letterDate).toISOString() : null,
+          placeOfInspection: formData.placeOfInspection,
+          claimsTechnician: formData.claimsTechnician,
+          witness: formData.witness,
+          numberOfPhotographs: formData.numberOfPhotographs,
+          status: 'review',
+        };
+        
+        const response = await apiClient.createClaim(claimData);
+        console.log('Sent for review:', response);
+        alert('Report sent for review successfully!');
+      }
+    } catch (error) {
+      console.error('Error sending for review:', error);
+      alert(`Error sending for review: ${error.message || 'Unknown error'}`);
+    } finally {
+      setIsSendingForReview(false);
     }
   };
 
@@ -257,22 +296,40 @@ export const ReviewForm = () => {
             <FormNavigation
               
               customButtons={
-                <button
-                  onClick={handleSaveReport}
-                  disabled={isSaving}
-                  className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  {isSaving ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Save Report</span>
-                    </>
-                  )}
-                </button>
+                <>
+                  <button
+                    onClick={handleSaveReport}
+                    disabled={isSaving}
+                    className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Save Report</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleSendForReview}
+                    disabled={isSendingForReview}
+                    className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  >
+                    {isSendingForReview ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send for Review</span>
+                      </>
+                    )}
+                  </button>
+                </>
               }
               onGeneratePdf={handleGeneratePdf}
               isSubmitting={isGenerating}

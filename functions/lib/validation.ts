@@ -35,6 +35,12 @@ export const updateClaimSchema = z.object({
   currentStep: z.string().optional(),
 });
 
+// Status update schema
+export const updateClaimStatusSchema = z.object({
+  status: z.enum(['pending', 'review', 'cancelled', 'completed']),
+  reason: z.string().optional(),
+});
+
 // Notes schemas
 export const createNoteSchema = z.object({
   claimId: z.string().uuid(),

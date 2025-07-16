@@ -77,6 +77,7 @@ export const claims = pgTable('claims', {
   claimsTechnician: varchar('claims_technician', { length: 255 }),
   witness: varchar('witness', { length: 255 }),
   numberOfPhotographs: integer('number_of_photographs').default(0),
+  cancellationReason: text('cancellation_reason'),
   
   // Status and workflow
   status: varchar('status', { length: 50 }).default('draft'), // 'draft', 'in_progress', 'completed', 'archived'
