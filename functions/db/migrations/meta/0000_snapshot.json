@@ -1,10 +1,8 @@
 {
-  "id": "8c57598c-b0d6-4bdf-a28e-ca3cc05fbec0",
-  "prevId": "00000000-0000-0000-0000-000000000000",
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "audit_log": {
+    "public.audit_log": {
       "name": "audit_log",
       "schema": "",
       "columns": {
@@ -61,33 +59,49 @@
       },
       "indexes": {
         "audit_log_record_idx": {
-          "name": "audit_log_record_idx",
           "columns": [
-            "table_name",
-            "record_id"
+            {
+              "expression": "table_name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "record_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "audit_log_record_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "audit_log_user_id_users_id_fk": {
           "name": "audit_log_user_id_users_id_fk",
           "tableFrom": "audit_log",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "claim_documents": {
+    "public.claim_documents": {
       "name": "claim_documents",
       "schema": "",
       "columns": {
@@ -162,45 +176,56 @@
       },
       "indexes": {
         "claim_documents_claim_id_idx": {
-          "name": "claim_documents_claim_id_idx",
           "columns": [
-            "claim_id"
+            {
+              "expression": "claim_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "claim_documents_claim_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "claim_documents_claim_id_claims_id_fk": {
           "name": "claim_documents_claim_id_claims_id_fk",
           "tableFrom": "claim_documents",
-          "tableTo": "claims",
           "columnsFrom": [
             "claim_id"
           ],
+          "tableTo": "claims",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "claim_documents_uploaded_by_users_id_fk": {
           "name": "claim_documents_uploaded_by_users_id_fk",
           "tableFrom": "claim_documents",
-          "tableTo": "users",
           "columnsFrom": [
             "uploaded_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "claim_notes": {
+    "public.claim_notes": {
       "name": "claim_notes",
       "schema": "",
       "columns": {
@@ -259,53 +284,77 @@
       },
       "indexes": {
         "claim_notes_claim_id_idx": {
-          "name": "claim_notes_claim_id_idx",
           "columns": [
-            "claim_id"
+            {
+              "expression": "claim_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "claim_notes_claim_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "claim_notes_current_idx": {
-          "name": "claim_notes_current_idx",
           "columns": [
-            "claim_id",
-            "is_current"
+            {
+              "expression": "claim_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "is_current",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "claim_notes_current_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "claim_notes_claim_id_claims_id_fk": {
           "name": "claim_notes_claim_id_claims_id_fk",
           "tableFrom": "claim_notes",
-          "tableTo": "claims",
           "columnsFrom": [
             "claim_id"
           ],
+          "tableTo": "claims",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "claim_notes_user_id_users_id_fk": {
           "name": "claim_notes_user_id_users_id_fk",
           "tableFrom": "claim_notes",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "claims": {
+    "public.claims": {
       "name": "claims",
       "schema": "",
       "columns": {
@@ -490,74 +539,109 @@
       },
       "indexes": {
         "claims_company_id_idx": {
-          "name": "claims_company_id_idx",
           "columns": [
-            "company_id"
+            {
+              "expression": "company_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "claims_company_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "claims_status_idx": {
-          "name": "claims_status_idx",
           "columns": [
-            "status"
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "claims_status_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "claims_created_at_idx": {
-          "name": "claims_created_at_idx",
           "columns": [
-            "created_at"
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "claims_created_at_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "claims_claim_number_idx": {
-          "name": "claims_claim_number_idx",
           "columns": [
-            "claim_number"
+            {
+              "expression": "claim_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "claims_claim_number_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "claims_company_id_companies_id_fk": {
           "name": "claims_company_id_companies_id_fk",
           "tableFrom": "claims",
-          "tableTo": "companies",
           "columnsFrom": [
             "company_id"
           ],
+          "tableTo": "companies",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "claims_created_by_users_id_fk": {
           "name": "claims_created_by_users_id_fk",
           "tableFrom": "claims",
-          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "claims_claim_number_unique": {
           "name": "claims_claim_number_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "claim_number"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
-      }
+      },
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "companies": {
+    "public.companies": {
       "name": "companies",
       "schema": "",
       "columns": {
@@ -617,9 +701,12 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "invoices": {
+    "public.invoices": {
       "name": "invoices",
       "schema": "",
       "columns": {
@@ -728,60 +815,79 @@
       },
       "indexes": {
         "invoices_company_id_idx": {
-          "name": "invoices_company_id_idx",
           "columns": [
-            "company_id"
+            {
+              "expression": "company_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "invoices_company_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "invoices_invoice_number_idx": {
-          "name": "invoices_invoice_number_idx",
           "columns": [
-            "invoice_number"
+            {
+              "expression": "invoice_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "invoices_invoice_number_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "invoices_company_id_companies_id_fk": {
           "name": "invoices_company_id_companies_id_fk",
           "tableFrom": "invoices",
-          "tableTo": "companies",
           "columnsFrom": [
             "company_id"
           ],
+          "tableTo": "companies",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "invoices_claim_id_claims_id_fk": {
           "name": "invoices_claim_id_claims_id_fk",
           "tableFrom": "invoices",
-          "tableTo": "claims",
           "columnsFrom": [
             "claim_id"
           ],
+          "tableTo": "claims",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "invoices_invoice_number_unique": {
           "name": "invoices_invoice_number_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "invoice_number"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
-      }
+      },
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "reports": {
+    "public.reports": {
       "name": "reports",
       "schema": "",
       "columns": {
@@ -858,80 +964,107 @@
       },
       "indexes": {
         "reports_company_id_idx": {
-          "name": "reports_company_id_idx",
           "columns": [
-            "company_id"
+            {
+              "expression": "company_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "reports_company_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "reports_claim_id_idx": {
-          "name": "reports_claim_id_idx",
           "columns": [
-            "claim_id"
+            {
+              "expression": "claim_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "reports_claim_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "reports_report_number_idx": {
-          "name": "reports_report_number_idx",
           "columns": [
-            "report_number"
+            {
+              "expression": "report_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "reports_report_number_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "reports_claim_id_claims_id_fk": {
           "name": "reports_claim_id_claims_id_fk",
           "tableFrom": "reports",
-          "tableTo": "claims",
           "columnsFrom": [
             "claim_id"
           ],
+          "tableTo": "claims",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "reports_company_id_companies_id_fk": {
           "name": "reports_company_id_companies_id_fk",
           "tableFrom": "reports",
-          "tableTo": "companies",
           "columnsFrom": [
             "company_id"
           ],
+          "tableTo": "companies",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "reports_generated_by_users_id_fk": {
           "name": "reports_generated_by_users_id_fk",
           "tableFrom": "reports",
-          "tableTo": "users",
           "columnsFrom": [
             "generated_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "reports_report_number_unique": {
           "name": "reports_report_number_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "report_number"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
-      }
+      },
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -1039,59 +1172,92 @@
       },
       "indexes": {
         "users_clerk_id_idx": {
-          "name": "users_clerk_id_idx",
           "columns": [
-            "clerk_id"
+            {
+              "expression": "clerk_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": true
+          "with": {},
+          "name": "users_clerk_id_idx",
+          "isUnique": true,
+          "method": "btree",
+          "concurrently": false
         },
         "users_company_id_idx": {
-          "name": "users_company_id_idx",
           "columns": [
-            "company_id"
+            {
+              "expression": "company_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "users_company_id_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         },
         "users_pin_expires_idx": {
-          "name": "users_pin_expires_idx",
           "columns": [
-            "pin_expires_at"
+            {
+              "expression": "pin_expires_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
           ],
-          "isUnique": false
+          "with": {},
+          "name": "users_pin_expires_idx",
+          "isUnique": false,
+          "method": "btree",
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "users_company_id_companies_id_fk": {
           "name": "users_company_id_companies_id_fk",
           "tableFrom": "users",
-          "tableTo": "companies",
           "columnsFrom": [
             "company_id"
           ],
+          "tableTo": "companies",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_clerk_id_unique": {
           "name": "users_clerk_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "clerk_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
-      }
+      },
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "8c57598c-b0d6-4bdf-a28e-ca3cc05fbec0",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "sequences": {},
+  "policies": {},
+  "views": {},
+  "roles": {}
 }
