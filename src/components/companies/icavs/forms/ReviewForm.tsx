@@ -10,10 +10,9 @@ import { apiClient } from '../../../../lib/api';
 export const ReviewForm = () => {
   const { formData } = useForm();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const { getToken } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
-  const { getToken } = useAuth();
+
 
   const handleGeneratePdf = async () => {
     setIsGenerating(true);
