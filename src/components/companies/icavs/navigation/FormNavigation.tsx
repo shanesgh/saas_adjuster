@@ -8,7 +8,6 @@ interface FormNavigationProps {
   canSubmit?: boolean;
   onGeneratePdf?: () => void;
   customButtons?: React.ReactNode;
-  customButtons?: React.ReactNode;
 }
 
 export const FormNavigation = ({
