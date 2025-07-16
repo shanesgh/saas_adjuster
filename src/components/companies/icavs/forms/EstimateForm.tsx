@@ -5,6 +5,7 @@ import { FormNavigation } from '../navigation/FormNavigation';
 import { EstimateSourceSection } from './EstimateSourceSection';
 import { PartsSection } from './PartsSection';
 import { LabourSection } from './LabourSection';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 // Parts source options
 const partsSourceOptions = [
@@ -366,6 +367,8 @@ export const EstimateForm = () => {
             labourCategoryOptions={labourCategoryOptions}
             generateLabourRemarksPreview={generateLabourRemarksPreview}
           />
+
+          <NotesTextbox section="estimate" placeholder="Add notes about estimate details..." />
 
           <FormNavigation onSubmit={handleSubmit} />
         </div>

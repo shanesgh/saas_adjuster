@@ -4,6 +4,7 @@ import { Input } from '../../../ui/input';
 import { Select } from '../../../ui/select';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 const areaOptions = [
   { value: 'Left broadside', label: 'Left broadside' },
@@ -150,6 +151,8 @@ export const DamageForm = () => {
             onChange={handleChange}
             placeholder="e.g. Left 'B' pillar and left rear wheel arch"
           />
+          
+          <NotesTextbox section="damage" placeholder="Add notes about damage assessment..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

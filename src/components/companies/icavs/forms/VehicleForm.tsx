@@ -6,6 +6,7 @@ import { Checkbox } from '../../../ui/checkbox';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
 import { z } from 'zod';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 // Trinidad and Tobago registration validation schema
 const registrationSchema = z.string()
@@ -266,6 +267,8 @@ export const VehicleForm = () => {
             checked={vehicleData.isForeignUsed}
             onChange={handleChange}
           />
+          
+          <NotesTextbox section="vehicle" placeholder="Add notes about vehicle information..." />
           
           <FormNavigation onSubmit={handleSubmit} />
         </div>

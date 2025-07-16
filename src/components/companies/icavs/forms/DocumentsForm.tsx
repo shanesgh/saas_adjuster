@@ -4,6 +4,7 @@ import { useForm } from '../../../../context/companies/icavs/FormContext';
 import { Card, CardContent, CardHeader } from '../../../ui/card';
 import { FormNavigation } from '../navigation/FormNavigation';
 import { FileText, Image, Trash2, Upload, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { NotesTextbox } from '../../../shared/NotesTextbox';
 
 interface UploadedFile {
   id: string;
@@ -188,6 +189,8 @@ export const DocumentsForm = () => {
                 </div>
               </div>
             )}
+
+            <NotesTextbox section="documents" placeholder="Add notes about uploaded documents..." />
 
             <FormNavigation onSubmit={handleSubmit} />
           </div>
