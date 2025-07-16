@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "wrangler pages dev functions --compatibility-date=2024-01-01",
     "deploy": "wrangler pages deploy",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:push": "drizzle-kit push:pg",
-    "db:migrate": "node -r dotenv/config db/migrate.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:generate": "drizzle-kit generate:pg --schema=./db/schema.ts",
+    "db:push": "drizzle-kit push:pg --schema=./db/schema.ts",
+    "db:migrate": "tsx db/migrate.ts",
+    "db:studio": "drizzle-kit studio --port 3333"
   },
   "dependencies": {
     "@clerk/backend": "^0.38.15",
@@ -19,7 +19,9 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240117.0",
-    "drizzle-kit": "^0.20.0",
+    "drizzle-kit": "^0.20.14",
+    "dotenv": "^16.4.5",
+    "tsx": "^4.7.1",
     "wrangler": "^3.0.0"
   }
 }
