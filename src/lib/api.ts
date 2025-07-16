@@ -105,36 +105,6 @@ class ApiClient {
       method: 'POST',
     });
   }
-
-  // Invoices
-  async getInvoices() {
-    return this.request<any[]>('/invoices');
-  }
-
-  async getInvoiceStats() {
-    return this.request<any>('/invoices/dashboard-stats');
-  }
-
-  async searchInvoices(params: {
-    status?: string;
-    startDate?: string;
-    endDate?: string;
-    claimId?: string;
-  }) {
-    const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) searchParams.append(key, value);
-    });
-    
-    return this.request<any[]>(`/invoices/search?${searchParams.toString()}`);
-  }
-
-  async createInvoice(data: any) {
-    return this.request<any>('/invoices', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  }
 }
 
 export const apiClient = new ApiClient(API_BASE);

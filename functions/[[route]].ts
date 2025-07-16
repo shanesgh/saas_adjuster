@@ -5,7 +5,6 @@ import usersApi from './api/users';
 import claimsApi from './api/claims';
 import notesApi from './api/notes';
 import reportsApi from './api/reports';
-import invoicesApi from './api/invoices';
 
 type CloudflareBindings = {
   NEON_DATABASE_URL: string;
@@ -25,7 +24,6 @@ app.route('/api/users', usersApi);
 app.route('/api/claims', claimsApi);
 app.route('/api/notes', notesApi);
 app.route('/api/reports', reportsApi);
-app.route('/api/invoices', invoicesApi);
 
 // 404 handler
 app.notFound((c) => {
