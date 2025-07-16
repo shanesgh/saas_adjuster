@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "wrangler pages dev functions --compatibility-date=2024-01-01",
     "deploy": "wrangler pages deploy",
-    "db:generate": "npx drizzle-kit generate:pg",
-    "db:push": "npx drizzle-kit push:pg",
+    "db:generate": "npx drizzle-kit generate",
+    "db:push": "npx drizzle-kit push",
     "db:migrate": "tsx db/migrate.ts",
     "db:studio": "drizzle-kit studio --port 3333"
   },
