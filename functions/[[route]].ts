@@ -9,7 +9,6 @@ import reportsApi from './api/reports';
 type CloudflareBindings = {
   NEON_DATABASE_URL: string;
   CLERK_SECRET_KEY: string;
-  CACHE: KVNamespace;
 };
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
