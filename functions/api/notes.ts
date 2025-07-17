@@ -4,7 +4,10 @@ import { createDb, claimNotes, users } from '../db';
 import { requireAuth } from '../lib/auth';
 import { createNoteSchema, updateNoteSchema } from '../lib/validation';
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono<{ 
+  Bindings: CloudflareBindings;
+  Variables: {}; 
+}>();
 
 // Get note history for a claim section
 app.get('/:claimId/:section/history', async (c) => {

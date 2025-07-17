@@ -4,7 +4,10 @@ import { createDb, claims, claimNotes, users } from '../db';
 import { requireAuth } from '../lib/auth';
 import { createClaimSchema, updateClaimSchema, updateClaimStatusSchema } from '../lib/validation';
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono<{ 
+  Bindings: CloudflareBindings;
+  Variables: {}; 
+}>();
 
 // Get all claims for company
 app.get('/', async (c) => {

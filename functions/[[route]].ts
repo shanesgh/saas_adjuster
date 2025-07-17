@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { handle } from 'hono/cloudflare-pages';
+import { handle } from 'hono/vercel';
 
 import usersApi from './api/users';
 import claimsApi from './api/claims';
@@ -11,7 +11,10 @@ type CloudflareBindings = {
   CLERK_SECRET_KEY: string;
 };
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono<{ 
+  Bindings: CloudflareBindings;
+  Variables: {}; 
+}>();
 
 // Health check
 app.get('/api/health', (c) => {

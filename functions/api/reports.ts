@@ -3,7 +3,10 @@ import { eq, desc } from 'drizzle-orm';
 import { createDb, reports, claims, users } from '../db';
 import { requireAuth } from '../lib/auth';
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono<{ 
+  Bindings: CloudflareBindings;
+  Variables: {}; 
+}>();
 
 // Get all reports for company
 app.get('/', async (c) => {

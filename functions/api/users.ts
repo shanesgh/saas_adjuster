@@ -4,7 +4,10 @@ import { createDb, users } from '../db';
 import { requireAuth } from '../lib/auth';
 import { createUserSchema, pinValidationSchema } from '../lib/validation';
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono<{ 
+  Bindings: CloudflareBindings;
+  Variables: {}; 
+}>();
 
 // Generate PIN for new user
 app.post('/generate-pin', async (c) => {

@@ -1,6 +1,6 @@
 const API_BASE = import.meta.env.DEV 
   ? 'http://localhost:8788/api' 
-  : 'https://icavs-claims-form.pages.dev/api';
+  : 'https://icavs-claims-form.pages.dev/functions/api';
 
 class ApiClient {
   private baseUrl: string;

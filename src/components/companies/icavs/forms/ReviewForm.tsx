@@ -32,11 +32,14 @@ export const ReviewForm = () => {
   const handleSaveReport = async () => {
     setIsSaving(true);
     try {
+      // Generate a shorter claim number for better performance
+      const claimNumber = formData.ourRef || `CL-${Date.now().toString().slice(-6)}`;
+      
       const token = await getToken();
       if (token) {
         apiClient.setToken(token);
         const claimData = {
-          claimNumber: formData.ourRef || `CLAIM-${Date.now().toString().slice(-6)}`,
+          claimNumber,
           insuredName: formData.insured,
           vehicleData: formData.vehicle || {},
           damageData: formData.damage || {},
@@ -69,11 +72,14 @@ export const ReviewForm = () => {
   const handleSendForReview = async () => {
     setIsSendingForReview(true);
     try {
+      // Generate a shorter claim number for better performance
+      const claimNumber = formData.ourRef || `CL-${Date.now().toString().slice(-6)}`;
+      
       const token = await getToken();
       if (token) {
         apiClient.setToken(token);
         const claimData = {
-          claimNumber: formData.ourRef || `CLAIM-${Date.now().toString().slice(-6)}`,
+          claimNumber,
           insuredName: formData.insured,
           vehicleData: formData.vehicle || {},
           damageData: formData.damage || {},
