@@ -80,7 +80,7 @@ export const claims = pgTable('claims', {
   cancellationReason: text('cancellation_reason'),
   
   // Status and workflow
-  status: varchar('status', { length: 50 }).default('draft'), // 'draft', 'in_progress', 'completed', 'archived'
+  status: varchar('status', { length: 50 }).default('pending'), // 'pending', 'review', 'completed', 'cancelled'
   currentStep: varchar('current_step', { length: 50 }).default('documents'),
   
   // Metadata

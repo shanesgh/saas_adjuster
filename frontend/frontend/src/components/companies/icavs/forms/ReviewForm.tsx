@@ -1,4 +1,3 @@
-@@ .. @@
 import { useState } from "react";
 import { useForm } from "../../../../context/companies/icavs/FormContext";
 import { Card, CardContent, CardHeader } from "../../../ui/card";
@@ -34,8 +33,7 @@ export const ReviewForm = () => {
     setIsSaving(true);
     try {
       // Generate a shorter claim number for better performance
--      const claimNumber = formData.ourRef || `CL-${Date.now().toString().slice(-6)}`;
-+      const claimNumber = formData.ourRef || `CL-${Date.now().toString().slice(-6)}`;
+      const claimNumber = formData.ourRef || `CL-${Date.now().toString().slice(-6)}`;
       
       const token = await getToken();
       if (token) {
@@ -57,7 +55,6 @@ export const ReviewForm = () => {
           claimsTechnician: formData.claimsTechnician,
           witness: formData.witness,
           numberOfPhotographs: formData.numberOfPhotographs,
-+          status: 'pending'
         };
         
         const response = await apiClient.createClaim(claimData);
@@ -128,11 +125,11 @@ export const ReviewForm = () => {
               </h3>
               <p>
                 <span className="font-semibold">Recipient:</span>{" "}
-                {formData.recipient?.name || "Maritime General Insurance Company Limited"}
+                {formData.recipient?.name}
               </p>
               <p>
                 <span className="font-semibold">Date:</span>{" "}
-                {formData.letterDate || new Date().toISOString().split('T')[0]}
+                {formData.letterDate}
               </p>
             </div>
 
@@ -143,37 +140,37 @@ export const ReviewForm = () => {
               </h3>
               <p>
                 <span className="font-semibold">Insured:</span>{" "}
-                {formData.insured || "John Smith"}
+                {formData.insured}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <p>
                   <span className="font-semibold">Date Received:</span>{" "}
-                  {formData.dateReceived || "2024-03-15"}
+                  {formData.dateReceived}
                 </p>
                 <p>
                   <span className="font-semibold">Your Ref:</span>{" "}
-                  {formData.yourRef || "REF-2024-001"}
+                  {formData.yourRef}
                 </p>
                 <p>
                   <span className="font-semibold">Date Inspected:</span>{" "}
-                  {formData.dateInspected || "2024-03-16"}
+                  {formData.dateInspected}
                 </p>
                 <p>
                   <span className="font-semibold">Our Ref:</span>{" "}
-                  {formData.ourRef || "ICAVS-2024-001"}
+                  {formData.ourRef}
                 </p>
                 <p>
                   <span className="font-semibold">Date of Loss:</span>{" "}
-                  {formData.dateOfLoss || "2024-03-14"}
+                  {formData.dateOfLoss}
                 </p>
                 <p>
                   <span className="font-semibold">Invoice:</span>{" "}
-                  {formData.invoice || "INV-2024-001"}
+                  {formData.invoice}
                 </p>
               </div>
               <p>
                 <span className="font-semibold">Claims Technician:</span>{" "}
-                {formData.claimsTechnician || "David Williams"}
+                {formData.claimsTechnician}
               </p>
             </div>
 
@@ -184,32 +181,32 @@ export const ReviewForm = () => {
               </h3>
               <p>
                 <span className="font-semibold">Make & Model:</span>{" "}
-                {formData.vehicle?.makeAndModel || "Toyota Camry SE"}
+                {formData.vehicle?.makeAndModel}
               </p>
               <p>
                 <span className="font-semibold">Registration:</span>{" "}
-                {formData.vehicle?.registration || "PCS 1234"}
+                {formData.vehicle?.registration}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <p>
                   <span className="font-semibold">Year of Manufacture:</span>{" "}
-                  {formData.vehicle?.yearOfManufacture || "2022"}
+                  {formData.vehicle?.yearOfManufacture}
                 </p>
                 <p>
                   <span className="font-semibold">Color:</span>{" "}
-                  {formData.vehicle?.color || "Pearl White"}
+                  {formData.vehicle?.color}
                 </p>
                 <p>
                   <span className="font-semibold">Odometer:</span>{" "}
-                  {formData.vehicle?.odometer || "15000"}
+                  {formData.vehicle?.odometer}
                 </p>
                 <p>
                   <span className="font-semibold">VIN/Chassis:</span>{" "}
-                  {formData.vehicle?.identification?.vinChassis || "JT2BF22K1W0123456"}
+                  {formData.vehicle?.identification?.vinChassis}
                 </p>
                 <p>
                   <span className="font-semibold">Engine:</span>{" "}
-                  {formData.vehicle?.identification?.engine || "2AZ-FE123456"}
+                  {formData.vehicle?.identification?.engine}
                 </p>
               </div>
             </div>
@@ -221,15 +218,15 @@ export const ReviewForm = () => {
               </h3>
               <p>
                 <span className="font-semibold">Affected Area:</span>{" "}
-                {formData.damage?.affectedArea || "Left broadside"}
+                {formData.damage?.affectedArea}
               </p>
               <p>
                 <span className="font-semibold">Deformation Severity:</span>{" "}
-                {formData.damage?.deformationSeverity || "Major"}
+                {formData.damage?.deformationSeverity}
               </p>
               <p>
                 <span className="font-semibold">Affected Components:</span>{" "}
-                {formData.damage?.affectedStructuralComponents || 'Left "B" pillar and left rear wheel arch'}
+                {formData.damage?.affectedStructuralComponents}
               </p>
             </div>
 
@@ -241,19 +238,19 @@ export const ReviewForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <p>
                   <span className="font-semibold">Parts Quoted:</span> $
-                  {formData.estimate?.parts.quotedFigure || "5800.00"}
+                  {formData.estimate?.parts.quotedFigure}
                 </p>
                 <p>
                   <span className="font-semibold">Parts Adjusted:</span> $
-                  {formData.estimate?.parts.adjustedFigure || "5200.00"}
+                  {formData.estimate?.parts.adjustedFigure}
                 </p>
                 <p>
                   <span className="font-semibold">Labour Quoted:</span> $
-                  {formData.estimate?.labour.quotedFigure || "2200.00"}
+                  {formData.estimate?.labour.quotedFigure}
                 </p>
                 <p>
                   <span className="font-semibold">Labour Adjusted:</span> $
-                  {formData.estimate?.labour.adjustedFigure || "2000.00"}
+                  {formData.estimate?.labour.adjustedFigure}
                 </p>
               </div>
             </div>
@@ -263,23 +260,23 @@ export const ReviewForm = () => {
               <h3 className="font-medium text-primary-600">Recommendation</h3>
               <p>
                 <span className="font-semibold">Settlement Basis:</span>{" "}
-                {formData.recommendation?.settlementBasis || "Repair or Cash In Lieu of Repair Basis"}
+                {formData.recommendation?.settlementBasis}
               </p>
               <p>
                 <span className="font-semibold">Cost of Repairs:</span> $
-                {formData.recommendation?.apparentCostOfRepairs || "7200.00"}
+                {formData.recommendation?.apparentCostOfRepairs}
               </p>
               <p>
                 <span className="font-semibold">Pre-Accident Value:</span> $
-                {formData.recommendation?.preAccidentValue || "45000.00"}
+                {formData.recommendation?.preAccidentValue}
               </p>
               <p>
                 <span className="font-semibold">Settlement Offer:</span> $
-                {formData.recommendation?.settlementOffer || "7200.00"}
+                {formData.recommendation?.settlementOffer}
               </p>
               <p>
                 <span className="font-semibold">Reserve:</span> $
-                {formData.recommendation?.reserve || "8000.00"}
+                {formData.recommendation?.reserve}
               </p>
             </div>
 

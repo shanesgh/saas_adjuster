@@ -21,6 +21,17 @@ export const createClaimSchema = z.object({
   ourRef: z.string().optional(),
   insuredName: z.string().optional(),
   vehicleData: z.record(z.any()).default({}),
+  damageData: z.record(z.any()).optional(),
+  estimateData: z.record(z.any()).optional(),
+  recommendationData: z.record(z.any()).optional(),
+  dateReceived: z.string().optional().nullable(),
+  dateInspected: z.string().optional().nullable(),
+  dateOfLoss: z.string().optional().nullable(),
+  letterDate: z.string().optional().nullable(),
+  placeOfInspection: z.string().optional(),
+  claimsTechnician: z.string().optional(),
+  witness: z.string().optional(),
+  numberOfPhotographs: z.number().optional(),
 });
 
 export const updateClaimSchema = z.object({
@@ -31,7 +42,7 @@ export const updateClaimSchema = z.object({
   damageData: z.record(z.any()).optional(),
   estimateData: z.record(z.any()).optional(),
   recommendationData: z.record(z.any()).optional(),
-  status: z.enum(['draft', 'in_progress', 'completed', 'archived']).optional(),
+  status: z.enum(['pending', 'review', 'completed', 'cancelled']).optional(),
   currentStep: z.string().optional(),
 });
 

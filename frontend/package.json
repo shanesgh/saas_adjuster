@@ -1,5 +1,5 @@
 {
-  "name": "icavs-claims-form-frontend",
+  "name": "zenassess-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -47,6 +47,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^5.4.2"
+    "vite": "^5.4.2",
+    "wrangler": "^3.0.0"
   }
 }

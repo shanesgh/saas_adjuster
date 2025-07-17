@@ -1,4 +1,3 @@
-@@ .. @@
 import React from 'react';
 import { useState } from 'react';
 import { FormProvider } from '../../../../context/companies/icavs/FormContext';
@@ -53,39 +52,19 @@ export const MotorAssessment = () => {
   const [reportStatus, setReportStatus] = useState<'pending' | 'review' | 'cancelled' | 'completed'>('pending');
   const [cancelReason, setCancelReason] = useState('');
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
-+  const { formData } = useForm();
-+  const { apiClient } = useApiClient();
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as 'pending' | 'review' | 'cancelled' | 'completed';
     if (newStatus === 'cancelled') {
       setShowCancelDialog(true);
     } else {
--      setReportStatus(newStatus);
-+      updateReportStatus(newStatus);
+      setReportStatus(newStatus);
     }
   };
 
-+  const updateReportStatus = async (status: 'pending' | 'review' | 'cancelled' | 'completed', reason?: string) => {
-+    if (!formData.id) return;
-+    
-+    setIsUpdatingStatus(true);
-+    try {
-+      await apiClient.updateClaimStatus(formData.id, status, reason);
-+      setReportStatus(status);
-+    } catch (error) {
-+      console.error('Error updating status:', error);
-+      alert('Failed to update status');
-+    } finally {
-+      setIsUpdatingStatus(false);
-+    }
-+  };
-
   const handleCancelConfirm = () => {
     if (cancelReason.trim()) {
--      setReportStatus('cancelled');
-+      updateReportStatus('cancelled', cancelReason);
+      setReportStatus('cancelled');
       setShowCancelDialog(false);
     }
   };
@@ -107,7 +86,6 @@ export const MotorAssessment = () => {
                     id="reportStatus"
                     value={reportStatus}
                     onChange={handleStatusChange}
-+                    disabled={isUpdatingStatus}
                     className={`px-3 py-2 border rounded-md text-sm font-medium ${
                       reportStatus === 'pending' ? 'bg-yellow-50 text-yellow-800 border-yellow-300' :
                       reportStatus === 'review' ? 'bg-blue-50 text-blue-800 border-blue-300' :
@@ -115,7 +93,6 @@ export const MotorAssessment = () => {
                       'bg-green-50 text-green-800 border-green-300'
                     }`}
                   >
-+                    {isUpdatingStatus && <span className="mr-2">⏳</span>}
                     <option value="pending">Pending</option>
                     <option value="review">Under Review</option>
                     <option value="cancelled">Cancelled</option>

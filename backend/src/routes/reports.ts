@@ -68,7 +68,7 @@ app.post('/generate/:claimId', async (c) => {
   }
 
   // Generate report number
-  const reportNumber = `RPT-${Date.now()}`;
+  const reportNumber = `RPT-${Date.now().toString().slice(-6)}`;
 
   // Create report with full data snapshot
   const newReport = await db.insert(reports)

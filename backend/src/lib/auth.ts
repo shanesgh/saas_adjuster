@@ -31,7 +31,7 @@ export async function getAuthUser(c: Context<{ Bindings: Bindings }>) {
 export async function requireAuth(c: Context<{ Bindings: Bindings }>) {
   const user = await getAuthUser(c);
   if (!user) {
-    return c.json({ error: 'Unauthorized' }, 401);
+    return null;
   }
   return user;
 }

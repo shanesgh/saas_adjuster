@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { eq, and, desc } from 'drizzle-orm';
-import { createDb, claims, claimNotes, users } from '../db/index';
+import { createDb, claims, claimNotes, users, companies } from '../db/index';
 import { requireAuth } from '../lib/auth';
 import { createClaimSchema, updateClaimSchema, updateClaimStatusSchema } from '../lib/validation';
 
@@ -161,6 +161,7 @@ app.put('/:id/status', async (c) => {
       status: data.status,
       cancellationReason: data.status === 'cancelled' ? data.reason : null,
       updatedAt: new Date(),
+      completedAt: data.status === 'completed' ? new Date() : null,
     })
     .where(eq(claims.id, claimId))
     .returning();

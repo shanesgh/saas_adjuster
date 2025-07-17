@@ -1,6 +1,6 @@
 const API_BASE = import.meta.env.DEV 
   ? 'http://localhost:8788/api' 
-  : 'https://zenassess.workers.dev/api';
+  : 'https://icavs-backend.workers.dev/api';
 
 class ApiClient {
   private baseUrl: string;

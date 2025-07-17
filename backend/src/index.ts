@@ -18,7 +18,7 @@ const app = new Hono<{
 
 // CORS middleware
 app.use('*', cors({
-  origin: ['http://localhost:5173', 'https://icavs-claims-form.pages.dev'],
+  origin: ['http://localhost:5173', 'https://zenassess.pages.dev'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
 }));
