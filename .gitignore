@@ -18,6 +18,7 @@ dist-ssr
 *.local
 .wrangler
 .cloudflare
+wrangler.toml
 
 # Editor directories and files
 .vscode/*
