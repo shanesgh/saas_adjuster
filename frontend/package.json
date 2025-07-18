@@ -1,1 +1,20 @@
-nom
+{
+  "name": "icavs-claims-form",
+  "name": "zenassess",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run deploy",
+    "build": "npm run build:frontend && npm run build:backend",
+    "deploy:frontend": "cd frontend && wrangler pages deploy dist",
+    "deploy:backend": "cd backend && npm run deploy",
+    "deploy": "npm run build && npm run deploy:frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
