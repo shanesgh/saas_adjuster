@@ -116,7 +116,7 @@ export function SignupForm() {
 
         console.log("Sending company data:", companyData);
 
-        const res = await create Company(companyData, userId);
+        const res = await createCompany(companyData, userId);
 
         if (!res.success) {
           if (res.error === "Company already exists") {
