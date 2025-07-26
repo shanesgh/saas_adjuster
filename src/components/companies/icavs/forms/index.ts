@@ -1,0 +1,11 @@
+export { HeaderForm } from './HeaderForm';
+export { DocumentsForm } from './DocumentsForm';
+export { InsuredForm } from './InsuredForm';
+export { VehicleForm } from './VehicleForm';
+export { FeaturesForm } from './FeaturesForm';
+export { ConditionForm } from './ConditionForm';
+export { TyresForm } from './TyresForm';
+export { DamageForm } from './DamageForm';
+export { EstimateForm } from './EstimateForm';
+export { RecommendationForm } from './RecommendationForm';
+export { ReviewForm } from './ReviewForm';

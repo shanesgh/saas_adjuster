@@ -1,0 +1,14 @@
+[env.production]
+name = "icavs-claims-form"
+compatibility_date = "2024-01-01"
+
+[site]
+bucket = "./dist"
+
+[build]
+command = "npm run build"
+upload.format = "service-worker"
+
+[vars]
+NEON_DATABASE_URL = ""
+CLERK_SECRET_KEY = ""
