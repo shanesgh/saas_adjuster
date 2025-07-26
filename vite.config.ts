@@ -5,7 +5,7 @@ import { tanstackRouter } from "@tanstack/router-vite-plugin";
 // import { analyzer } from "vite-bundle-analyzer";
 
 export default defineConfig({
-  plugins: [react(), tanstackRouter()]
+  plugins: [react(), tanstackRouter()
 ],
   resolve: {
     alias: {
