@@ -122,6 +122,19 @@ export const downloadReport = (reportId: string) => {
     },
   });
 };
+
+export const generatePin = (data: {
+  firstName: string;
+  lastName: string;
+  role: string;
+  userId: string;
+}) => {
+  return request<{ success: boolean; pin: string }>("/users/generate-pin", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
 export const createCompany = (data: any, userId: string) => {
   const payload = {
     ...data,
