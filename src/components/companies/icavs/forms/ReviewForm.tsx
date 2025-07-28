@@ -355,7 +355,7 @@ export const ReviewForm = () => {
                   <button
                     onClick={handleSendForReview}
                     disabled={isSendingForReview}
-                    className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                    className="flex items-center justify-center space-x-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-150 transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
                     {isSendingForReview ? (
                       <>

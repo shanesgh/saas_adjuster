@@ -65,31 +65,6 @@ const request = async <T>(
   }
 };
 
-// User functions
-export const generatePin = (userId: any) => {
-  return request<{ success: boolean; pin: string }>("/users/generate-pin", {
-    method: "POST",
-    body: JSON.stringify({ userId }),
-  });
-};
-
-export const validatePin = (userData: any) => {
-  return request<any>("/users/validate-pin", {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
-};
-
-export const getUserProfile = () => {
-  return request<any>("/users/profile");
-};
-
-export const createUser = (userData: any) => {
-  return request<any>("/users", {
-    method: "POST",
-    body: JSON.stringify(userData),
-  });
-};
 
 // Claims functions
 export const getClaims = () => {
@@ -128,31 +103,25 @@ export const updateClaimStatus = (
   });
 };
 
-export const createNote = (data: {
-  claimId: string;
-  section: string;
-  content: string;
-}) => {
-  return request<any>("/notes", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
-
-export const getNoteHistory = (claimId: string, section: string) => {
-  return request<any[]>(`/notes/${claimId}/${section}/history`);
-};
 
 export const getReports = () => {
   return request<any[]>("/reports");
 };
 
-export const generateReport = (claimId: string) => {
+export const generateReport = (claimId: string, pdfData: string) => {
   return request<any>(`/reports/generate/${claimId}`, {
     method: "POST",
+    body: JSON.stringify({ pdfData }),
   });
 };
 
+export const downloadReport = (reportId: string) => {
+  return fetch(`${API_BASE}/reports/${reportId}/download`, {
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+};
 export const createCompany = (data: any, userId: string) => {
   const payload = {
     ...data,
@@ -177,19 +146,14 @@ export const healthCheck = () => {
 export const apiClient = {
   setToken: setAuthToken,
   clearToken: clearAuthToken,
-  generatePin,
-  validatePin,
-  getUserProfile,
-  createUser,
   createCompany,
   getClaims,
   getClaim,
   createClaim,
   updateClaim,
   updateClaimStatus,
-  createNote,
-  getNoteHistory,
   getReports,
   generateReport,
+  downloadReport,
   healthCheck,
 };
