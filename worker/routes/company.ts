@@ -12,6 +12,15 @@ companyApi.post("/", async (c) => {
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
   try {
+    // Check if Clerk secret key is available
+    if (!process.env.CLERK_SECRET_KEY) {
+      console.error("❌ CLERK_SECRET_KEY environment variable is not set");
+      return c.json({
+        success: false,
+        error: "Server configuration error: Missing authentication key",
+      }, 500);
+    }
+
     const body = await c.req.json();
     console.log("📨 Received request body:", body);
 

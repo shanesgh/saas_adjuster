@@ -10,6 +10,11 @@ interface SessionClaims {
 }
 
 export function createAuth(secretKey: string) {
+  if (!secretKey) {
+    console.error("❌ Clerk secret key is missing");
+    throw new Error("Clerk secret key is required");
+  }
+  console.log("✅ Clerk secret key loaded:", secretKey.substring(0, 10) + "...");
   return createClerkClient({ secretKey });
 }
 
