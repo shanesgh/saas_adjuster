@@ -11,9 +11,9 @@ companyApi.post("/", async (c) => {
   let companyId: string | null = null;
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
-  console.log("🔍 Company route environment check:");
-  console.log("CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY ? "✅ EXISTS" : "❌ MISSING");
-  console.log("NEON_DATABASE_URL:", process.env.NEON_DATABASE_URL ? "✅ EXISTS" : "❌ MISSING");
+  console.log("🔍 Company route called");
+  console.log("CLERK_SECRET_KEY exists:", !!process.env.CLERK_SECRET_KEY);
+  console.log("NEON_DATABASE_URL exists:", !!process.env.NEON_DATABASE_URL);
 
   try {
     // Check if Clerk secret key is available
@@ -56,7 +56,7 @@ companyApi.post("/", async (c) => {
     // 🏢 Insert company record
     await db.insert(companies).values({
       id: companyId,
-      company_name: data.company_name,
+      name: data.company_name,
       first_name: data.first_name,
       last_name: data.last_name,
       address: data.address ?? "",
@@ -85,6 +85,7 @@ companyApi.post("/", async (c) => {
       console.log("✅ Updated Clerk user with metadata");
     } catch (clerkError) {
       console.error("❌ Failed to update Clerk metadata:", clerkError);
+      console.error("❌ Clerk error details:", clerkError.message);
 
       // Rollback company creation
       try {
