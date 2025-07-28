@@ -1,18 +1,25 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+
+// Load environment variables FIRST before any other imports
+import { config } from 'dotenv';
+config({ path: './.env' });
+config({ path: './worker/.env' });
+
 import usersApi from "./routes/users";
 import claimsApi from "./routes/claims";
 import notesApi from "./routes/notes";
 import reportsApi from "./routes/reports";
 import companyApi from "./routes/company";
 
-// Load environment variables first
-import { config } from 'dotenv';
-config({ path: './worker/.env' });
-
 // ✅ App instance
 export const app = new Hono();
+
+// Debug environment variables
+console.log("🔍 Environment check:");
+console.log("CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY ? "✅ EXISTS" : "❌ MISSING");
+console.log("NEON_DATABASE_URL:", process.env.NEON_DATABASE_URL ? "✅ EXISTS" : "❌ MISSING");
 
 // 📝 Logger middleware
 app.use("*", logger());
