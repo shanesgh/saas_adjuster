@@ -128,7 +128,7 @@ export const reports = pgTable(
     ),
   })
 );
-);
+
 // Relations
 export const companiesRelations = relations(companies, ({ many }) => ({
   claims: many(claims),
