@@ -11,6 +11,10 @@ companyApi.post("/", async (c) => {
   let companyId: string | null = null;
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
+  console.log("🔍 Company route environment check:");
+  console.log("CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY ? "✅ EXISTS" : "❌ MISSING");
+  console.log("NEON_DATABASE_URL:", process.env.NEON_DATABASE_URL ? "✅ EXISTS" : "❌ MISSING");
+
   try {
     // Check if Clerk secret key is available
     if (!process.env.CLERK_SECRET_KEY) {

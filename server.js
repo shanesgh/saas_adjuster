@@ -1,8 +1,14 @@
 import { serve } from '@hono/node-server';
-import { config } from 'dotenv';
+import { config as dotenvConfig } from 'dotenv';
 
-// Load environment variables
-config();
+// Load environment variables from multiple locations
+dotenvConfig({ path: './.env' });
+dotenvConfig({ path: './worker/.env' });
+
+// Debug environment loading
+console.log("🔍 Server environment check:");
+console.log("CLERK_SECRET_KEY:", process.env.CLERK_SECRET_KEY ? "✅ EXISTS" : "❌ MISSING");
+console.log("NODE_ENV:", process.env.NODE_ENV || "development");
 
 // Import the app using dynamic import to handle TypeScript
 async function startServer() {
