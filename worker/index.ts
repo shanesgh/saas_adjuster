@@ -62,5 +62,4 @@ app.onError((err, c) => {
 });
 
 // Export for Node.js server
-export { app };
 export default app;
