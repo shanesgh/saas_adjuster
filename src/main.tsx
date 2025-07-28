@@ -6,8 +6,7 @@ import { routeTree } from "./routeTree.gen";
 import "./index.css";
 
 const PUBLISHABLE_KEY =
-  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
-  "pk_test_bW9kZXJuLXBhcnJvdC05MS5jbGVyay5hY2NvdW50cy5kZXYk";
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");

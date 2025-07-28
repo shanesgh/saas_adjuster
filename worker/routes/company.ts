@@ -73,6 +73,26 @@ companyApi.post("/", async (c) => {
       const clerkClient = createAuth(process.env.CLERK_SECRET_KEY!);
       console.log("🔐 Updating Clerk user metadata...");
 
+      // Get the authorization header to extract the session token
+      const authHeader = c.req.header("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) {
+        throw new Error("Missing or invalid authorization header");
+      }
+
+      const sessionToken = authHeader.replace("Bearer ", "");
+      console.log("🎫 Session token:", sessionToken.substring(0, 20) + "...");
+
+      // Verify the session and get user ID
+      const session = await clerkClient.verifySession(sessionToken, {
+        secretKey: process.env.CLERK_SECRET_KEY!,
+      });
+      
+      if (!session || !session.userId) {
+        throw new Error("Invalid session or user ID not found");
+      }
+
+      console.log("👤 Verified user ID:", session.userId);
+
       await clerkClient.users.updateUser(data.userId, {
         privateMetadata: {
           companyId,

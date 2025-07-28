@@ -119,10 +119,6 @@ export function SignupForm() {
         password: data.password,
         firstName: data.first_name,
         lastName: data.last_name,
-        unsafeMetadata: {
-          company: data.company,
-          role: "owner",
-        },
       });
 
       if (signUpResult?.status === "complete") {
@@ -142,7 +138,8 @@ export function SignupForm() {
         console.log("Sending company data:", companyData);
 
         // Get token for API call
-        const token = await signUpResult.createdSessionId;
+        const session = await setActive?.({ session: signUpResult.createdSessionId });
+        const token = await session?.createdSessionId;
         const res = await createCompany(companyData, userId, token);
 
         if (!res.success) {
@@ -158,8 +155,6 @@ export function SignupForm() {
           return;
         }
 
-        // Step 4: Set active session and redirect
-        await setActive?.({ session: signUpResult.createdSessionId });
         console.log("✅ Signup complete, redirecting to dashboard");
         navigate({ to: "/dashboard" });
       } else if (signUpResult?.status === "missing_requirements") {

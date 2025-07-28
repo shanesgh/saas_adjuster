@@ -2,11 +2,6 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 
-// Load environment variables FIRST before any other imports
-import { config } from 'dotenv';
-config({ path: './.env' });
-config({ path: './worker/.env' });
-
 import usersApi from "./routes/users";
 import claimsApi from "./routes/claims";
 import notesApi from "./routes/notes";
