@@ -7,8 +7,9 @@ import notesApi from "./routes/notes";
 import reportsApi from "./routes/reports";
 import companyApi from "./routes/company";
 
-// Load environment variables
-import 'dotenv/config';
+// Load environment variables first
+import { config } from 'dotenv';
+config({ path: './worker/.env' });
 
 // ✅ App instance
 export const app = new Hono();
