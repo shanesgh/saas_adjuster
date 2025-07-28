@@ -1,5 +1,5 @@
-import { eq, and, desc } from "drizzle-orm";
-import { createDb, claims, claimNotes, users } from "../db/index";
+import { eq, desc } from "drizzle-orm";
+import { createDb, claims } from "../db/index";
 import { requireAuth } from "../lib/auth";
 import {
   createClaimSchema,
@@ -18,24 +18,18 @@ claimsApi.get("/", async (c) => {
 
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
-  // Get user to find company
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkId, auth.sub))
-    .limit(1);
-
-  if (!user.length) {
-    return c.json({ error: "User not found" }, 404);
+  const companyId = auth.companyId;
+  if (!companyId) {
+    return c.json({ error: "Company not found" }, 404);
   }
 
-  const companyClaims = await db
+  const claims = await db
     .select()
     .from(claims)
-    .where(eq(claims.companyId, user[0].companyId!))
+    .where(eq(claims.companyId, companyId))
     .orderBy(desc(claims.createdAt));
 
-  return c.json(companyClaims);
+  return c.json(claims);
 });
 
 // Get single claim with notes
@@ -56,24 +50,7 @@ claimsApi.get("/:id", async (c) => {
     return c.json({ error: "Claim not found" }, 404);
   }
 
-  // Get current notes for each section
-  const notes = await db
-    .select()
-    .from(claimNotes)
-    .where(
-      and(eq(claimNotes.claimId, claimId), eq(claimNotes.isCurrent, true))
-    );
-
-  return c.json({
-    ...claim[0],
-    notes: notes.reduce(
-      (acc, note) => {
-        acc[note.section] = note.content;
-        return acc;
-      },
-      {} as Record<string, string>
-    ),
-  });
+  return c.json(claim[0]);
 });
 
 // Create new claim
@@ -97,18 +74,6 @@ claimsApi.post("/", async (c) => {
     console.error("Missing companyId in Clerk privateMetadata");
     return c.json({ error: "Missing companyId" }, 400);
   }
-
-  // // ✅ Verify company exists
-  // const company = await db
-  //   .select()
-  //   .from(companies)
-  //   .where(eq(companies.id, companyId))
-  //   .limit(1);
-
-  // if (!company.length) {
-  //   console.error("Company not found:", companyId);
-  //   return c.json({ error: "Company not found" }, 404);
-  // }
 
   const insertData: typeof claims.$inferInsert = {
     companyId,
@@ -180,20 +145,7 @@ claimsApi.put("/:id/status", async (c) => {
 
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
-  // Get user to check role - if user doesn't exist in DB, assume owner role for testing
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkId, auth.sub))
-    .limit(1);
-
-  let userRole = "owner"; // Default to owner for testing
-
-  if (user.length > 0) {
-    userRole = user[0].role;
-  } else {
-    console.log("User not found in database, assuming owner role for testing");
-  }
+  const userRole = auth.role || "owner"; // Get role from Clerk metadata
 
   // Only owners can mark as completed
   if (data.status === "completed" && userRole !== "owner") {

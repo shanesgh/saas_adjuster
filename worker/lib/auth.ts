@@ -5,6 +5,7 @@ interface SessionClaims {
   sub: string;
   email?: string;
   companyId?: string;
+  role?: string;
   [key: string]: unknown;
 }
 
@@ -37,7 +38,18 @@ export async function getAuthUser(
       return null;
     }
 
-    const claims = session.toAuth().sessionClaims;
+    const sessionClaims = session.toAuth().sessionClaims;
+    
+    // Get user metadata from Clerk
+    const userId = sessionClaims.sub;
+    const user = await clerkClient.users.getUser(userId);
+    
+    const claims = {
+      ...sessionClaims,
+      companyId: user.privateMetadata?.companyId as string,
+      role: user.privateMetadata?.role as string,
+    };
+    
     console.log("Authenticated session:", claims);
 
     return {

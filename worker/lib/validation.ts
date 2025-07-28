@@ -1,21 +1,5 @@
 import { z } from "zod";
 
-// User schemas
-export const createUserSchema = z.object({
-  firstName: z.string().min(1).max(100),
-  lastName: z.string().min(1).max(100),
-  email: z.string().email(),
-  role: z.enum(["owner", "adjuster", "clerical"]),
-  companyId: z.string().uuid(),
-});
-
-export const pinValidationSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  company: z.string().min(1, "Company name is required"),
-  pin: z.string().length(8, "PIN must be exactly 8 characters"),
-});
-
 // Claim schemas
 export const createClaimSchema = z.object({
   claimNumber: z.string().min(1).max(100),
@@ -54,36 +38,18 @@ export const updateClaimStatusSchema = z.object({
   reason: z.string().optional(),
 });
 
-// Notes schemas
-export const createNoteSchema = z.object({
-  claimId: z.string().uuid(),
-  section: z.string().min(1).max(100),
-  content: z.string().min(1),
-});
-
-export const updateNoteSchema = z.object({
-  content: z.string().min(1),
-});
-
-// Document schemas
-export const createDocumentSchema = z.object({
-  claimId: z.string().uuid(),
-  filename: z.string().min(1),
-  originalFilename: z.string().min(1),
-  fileSize: z.number().positive(),
-  mimeType: z.string().min(1),
-  fileUrl: z.string().url(),
-  documentType: z.string().optional(),
-  description: z.string().optional(),
-});
-
 export const createCompanySchema = z.object({
   company_name: z.string().min(1),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
+  first_name: z.string().min(1),
+  last_name: z.string().min(1),
   address: z.string().optional(),
   phone: z.string().min(7).max(20),
   email: z.string().email(),
   plan: z.string().min(1),
   userId: z.string().min(1),
+});
+
+export const generateReportSchema = z.object({
+  claimId: z.string().uuid(),
+  pdfData: z.string().min(1),
 });

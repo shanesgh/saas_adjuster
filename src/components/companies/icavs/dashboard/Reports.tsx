@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Download, Eye, Trash2, Plus, FileText } from "lucide-react";
+import { Search, Download, Eye, Plus, FileText } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -124,6 +124,15 @@ export const Reports = () => {
     }
   };
 
+  const handleView = (reportId: string) => {
+    console.log("View report:", reportId);
+    // TODO: Implement view functionality
+  };
+
+  const handleDownload = (reportId: string) => {
+    console.log("Download report:", reportId);
+    // TODO: Implement download functionality
+  };
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -268,9 +277,6 @@ export const Reports = () => {
                           </button>
                           <button className="text-green-600 hover:text-green-900">
                             <Download className="w-4 h-4" />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900">
-                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>

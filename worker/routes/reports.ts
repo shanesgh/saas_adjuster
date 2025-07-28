@@ -1,6 +1,7 @@
 import { eq, desc } from "drizzle-orm";
-import { createDb, reports, claims, users } from "../db/index";
+import { createDb, reports, claims } from "../db/index";
 import { requireAuth } from "../lib/auth";
+import { generateReportSchema } from "../lib/validation";
 import { Hono } from "hono";
 
 
@@ -13,22 +14,16 @@ reportsApi.get("/", async (c) => {
 
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
-  // Get user to find company
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkId, auth.sub))
-    .limit(1);
-
-  if (!user.length) {
-    return c.json({ error: "User not found" }, 404);
+  const companyId = auth.companyId;
+  if (!companyId) {
+    return c.json({ error: "Company not found" }, 404);
   }
 
   // Get reports with minimal queries - all data in one table
   const companyReports = await db
     .select()
     .from(reports)
-    .where(eq(reports.companyId, user[0].companyId!))
+    .where(eq(reports.companyId, companyId))
     .orderBy(desc(reports.createdAt));
 
   return c.json(companyReports);
@@ -41,17 +36,14 @@ reportsApi.post("/generate/:claimId", async (c) => {
   const { user: auth } = res;
 
   const claimId = c.req.param("claimId");
+  const body = await c.req.json();
+  const { pdfData } = generateReportSchema.parse(body);
+  
   const db = createDb(process.env.NEON_DATABASE_URL!);
 
-  // Get user
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkId, auth.sub))
-    .limit(1);
-
-  if (!user.length) {
-    return c.json({ error: "User not found" }, 404);
+  const companyId = auth.companyId;
+  if (!companyId) {
+    return c.json({ error: "Company not found" }, 404);
   }
 
   // Get claim with all data
@@ -73,14 +65,44 @@ reportsApi.post("/generate/:claimId", async (c) => {
     .insert(reports)
     .values({
       claimId,
-      companyId: user[0].companyId!,
-      generatedBy: user[0].id,
+      companyId,
+      generatedBy: auth.sub,
       reportNumber,
       reportData: claim[0], // Full claim data snapshot
+      pdfData, // Store the PDF data
+      pdfFilename: `${reportNumber}.pdf`,
     })
     .returning();
 
   return c.json(newReport[0], 201);
 });
 
+// Download report PDF
+reportsApi.get("/:id/download", async (c) => {
+  const auth = await requireAuth(c);
+  if (!auth) return c.json({ error: "Unauthorized" }, 401);
+
+  const reportId = c.req.param("id");
+  const db = createDb(process.env.NEON_DATABASE_URL!);
+
+  const report = await db
+    .select()
+    .from(reports)
+    .where(eq(reports.id, reportId))
+    .limit(1);
+
+  if (!report.length || !report[0].pdfData) {
+    return c.json({ error: "Report not found" }, 404);
+  }
+
+  // Convert base64 to buffer
+  const pdfBuffer = Buffer.from(report[0].pdfData, 'base64');
+  
+  return new Response(pdfBuffer, {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${report[0].pdfFilename || 'report.pdf'}"`,
+    },
+  });
+});
 export default reportsApi;

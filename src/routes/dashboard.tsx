@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 import { DashboardNav } from '../components/companies/icavs/navigation/DashboardNav';
 import { Header } from '../components/shared/layout/Header';
+import { UserButton } from '@clerk/clerk-react';
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardLayout,
@@ -13,7 +14,16 @@ function DashboardLayout() {
       <div className="min-h-screen bg-gray-50 flex flex-col">
         {/* Header - full width at top on large screens only */}
         <div className="hidden lg:block w-full">
-          <Header />
+          <div className="bg-primary-500 text-white py-4">
+            <div className="container mx-auto px-4">
+              <div className="flex items-center justify-between">
+                <Header />
+                <div className="flex items-center space-x-4">
+                  <UserButton afterSignOutUrl="/" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Mobile/Tablet: Top navigation (shows below header space) */}

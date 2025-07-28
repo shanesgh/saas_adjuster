@@ -44,8 +44,8 @@ companyApi.post("/", async (c) => {
     await db.insert(companies).values({
       id: companyId,
       company_name: data.company_name,
-      first_name: data.firstName,
-      last_name: data.lastName,
+      first_name: data.first_name,
+      last_name: data.last_name,
       address: data.address ?? "",
       phone: data.phone,
       email: data.email,
@@ -65,6 +65,7 @@ companyApi.post("/", async (c) => {
           companyId,
           phoneNumber: data.phone,
           plan: data.plan, // ✅ Also store plan in Clerk metadata
+          role: "owner", // Set as owner since they're creating the company
         },
       });
 

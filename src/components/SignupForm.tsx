@@ -40,6 +40,10 @@ const signupSchema = z
       .string()
       .min(2, "Company name must be at least 2 characters")
       .max(100, "Company name must be less than 100 characters"),
+    address: z
+      .string()
+      .min(5, "Address must be at least 5 characters")
+      .max(200, "Address must be less than 200 characters"),
     plan: z.string().min(1, "Please select a plan"),
     acceptTerms: z
       .boolean()
@@ -104,14 +108,14 @@ export function SignupForm() {
         const userId = signUpResult.createdUserId!;
 
         const companyData = {
-          firstName: data.first_name,
-          lastName: data.last_name,
+          first_name: data.first_name,
+          last_name: data.last_name,
           email: data.email,
           company_name: data.company,
           phone: data.phoneNumber,
           plan: data.plan,
           userId: userId,
-          address: "",
+          address: data.address,
         };
 
         console.log("Sending company data:", companyData);
@@ -207,7 +211,21 @@ export function SignupForm() {
           </h1>
           <p className="text-gray-600">Sign in to your account</p>
         </div>
-        <PinLoginForm />
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="text-center mb-4">
+            <LogIn className="w-8 h-8 text-primary-500 mx-auto mb-2" />
+            <h2 className="text-xl font-bold text-gray-900">Sign In</h2>
+          </div>
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Use Clerk sign-in for returning users</p>
+            <button
+              onClick={() => setShowLogin(false)}
+              className="text-primary-600 hover:text-primary-700 underline"
+            >
+              Back to Sign Up
+            </button>
+          </div>
+        </div>
         <div className="text-center mt-4">
           <button
             onClick={() => setShowLogin(false)}
@@ -228,26 +246,26 @@ export function SignupForm() {
         transition={{ duration: 0.4 }}
         className="max-w-md mx-auto"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="text-center mb-6">
-              <UserPlus className="w-12 h-12 text-primary-500 mx-auto mb-2" />
+            <div className="text-center mb-4">
+              <UserPlus className="w-8 h-8 text-primary-500 mx-auto mb-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Create Account
               </h2>
-              <div className="flex justify-center space-x-4 mt-4">
+              <div className="flex justify-center space-x-2 mt-3">
                 <button
                   type="button"
-                  className="bg-primary-500 text-white px-4 py-2 rounded-lg"
+                  className="bg-primary-500 text-white px-3 py-1.5 rounded-lg text-sm"
                 >
                   Create Account
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowLogin(true)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+                  className="bg-gray-500 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1 text-sm"
                 >
-                  <LogIn className="w-4 h-4" />
+                  <LogIn className="w-3 h-3" />
                   <span>Login</span>
                 </button>
               </div>
@@ -258,21 +276,21 @@ export function SignupForm() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-red-50 border border-red-200 rounded-lg p-4"
+                className="bg-red-50 border border-red-200 rounded-lg p-3"
               >
                 <div className="flex items-center space-x-2">
-                  <AlertCircle className="w-5 h-5 text-red-500" />
+                  <AlertCircle className="w-4 h-4 text-red-500" />
                   <p className="text-sm text-red-700">{signupError}</p>
                 </div>
               </motion.div>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {/* First Name */}
               <div>
                 <label
                   htmlFor="first_name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   First Name *
                 </label>
@@ -280,7 +298,7 @@ export function SignupForm() {
                   autoComplete="given-name"
                   {...register("first_name")}
                   type="text"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.first_name ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="John"
@@ -289,9 +307,9 @@ export function SignupForm() {
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                    className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                   >
-                    <AlertCircle className="w-4 h-4" />
+                    <AlertCircle className="w-3 h-3" />
                     <span>{errors.first_name.message}</span>
                   </motion.p>
                 )}
@@ -301,7 +319,7 @@ export function SignupForm() {
               <div>
                 <label
                   htmlFor="last_name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Last Name *
                 </label>
@@ -309,7 +327,7 @@ export function SignupForm() {
                   autoComplete="family-name"
                   {...register("last_name")}
                   type="text"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.last_name ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Doe"
@@ -318,9 +336,9 @@ export function SignupForm() {
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                    className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                   >
-                    <AlertCircle className="w-4 h-4" />
+                    <AlertCircle className="w-3 h-3" />
                     <span>{errors.last_name.message}</span>
                   </motion.p>
                 )}
@@ -331,7 +349,7 @@ export function SignupForm() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Email Address *
               </label>
@@ -339,7 +357,7 @@ export function SignupForm() {
                 autoComplete="email"
                 {...register("email")}
                 type="email"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                   errors.email ? "border-red-300" : "border-gray-300"
                 }`}
                 placeholder="john@company.com"
@@ -348,9 +366,9 @@ export function SignupForm() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                  className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-3 h-3" />
                   <span>{errors.email.message}</span>
                 </motion.p>
               )}
@@ -360,7 +378,7 @@ export function SignupForm() {
             <div>
               <label
                 htmlFor="company"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Company Name *
               </label>
@@ -368,7 +386,7 @@ export function SignupForm() {
                 autoComplete="organization"
                 {...register("company")}
                 type="text"
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                   errors.company ? "border-red-300" : "border-gray-300"
                 }`}
                 placeholder="Your Insurance Company"
@@ -377,19 +395,49 @@ export function SignupForm() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                  className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-3 h-3" />
                   <span>{errors.company.message}</span>
                 </motion.p>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            
+            {/* Address */}
+            <div>
+              <label
+                htmlFor="address"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Company Address *
+              </label>
+              <input
+                autoComplete="street-address"
+                {...register("address")}
+                type="text"
+                className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
+                  errors.address ? "border-red-300" : "border-gray-300"
+                }`}
+                placeholder="123 Main Street, City, Country"
+              />
+              {errors.address && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-1 text-xs text-red-600 flex items-center space-x-1"
+                >
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{errors.address.message}</span>
+                </motion.p>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
               {/* Phone Number */}
               <div>
                 <label
                   htmlFor="phoneNumber"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Phone Number *
                 </label>
@@ -399,7 +447,7 @@ export function SignupForm() {
                   {...register("phoneNumber")}
                   type="tel"
                   inputMode="tel"
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.phoneNumber ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="+18685551212"
@@ -408,10 +456,43 @@ export function SignupForm() {
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                    className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                   >
-                    <AlertCircle className="w-4 h-4" />
+                    <AlertCircle className="w-3 h-3" />
                     <span>{errors.phoneNumber.message}</span>
+                  </motion.p>
+                )}
+              </div>
+              
+              {/* Plan Selection */}
+              <div>
+                <label
+                  htmlFor="plan"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Select Plan *
+                </label>
+                <select
+                  {...register("plan")}
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
+                    errors.plan ? "border-red-300" : "border-gray-300"
+                  }`}
+                >
+                  <option value="">Choose plan</option>
+                  {planOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.plan && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-1 text-xs text-red-600 flex items-center space-x-1"
+                  >
+                    <AlertCircle className="w-3 h-3" />
+                    <span>{errors.plan.message}</span>
                   </motion.p>
                 )}
               </div>
@@ -421,7 +502,7 @@ export function SignupForm() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Password *
               </label>
@@ -430,7 +511,7 @@ export function SignupForm() {
                   autoComplete="new-password"
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
-                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                  className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.password ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Enter a strong password"
@@ -438,28 +519,28 @@ export function SignupForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-150"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-150"
                 >
                   {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="w-4 h-4" />
                   ) : (
-                    <Eye className="w-5 h-5" />
+                    <Eye className="w-4 h-4" />
                   )}
                 </button>
               </div>
 
               {/* Password Strength Indicator */}
               {watchedPassword && (
-                <div className="mt-2">
+                <div className="mt-1">
                   <div className="flex items-center space-x-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div className="flex-1 bg-gray-200 rounded-full h-1.5">
                       <div
-                        className={`h-2 rounded-full transition-all duration-200 bg-${passwordStrength.color}-500`}
+                        className={`h-1.5 rounded-full transition-all duration-200 bg-${passwordStrength.color}-500`}
                         style={{ width: `${passwordStrength.strength}%` }}
                       ></div>
                     </div>
                     <span
-                      className={`text-sm text-${passwordStrength.color}-600`}
+                      className={`text-xs text-${passwordStrength.color}-600`}
                     >
                       {passwordStrength.label}
                     </span>
@@ -471,9 +552,9 @@ export function SignupForm() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                  className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-3 h-3" />
                   <span>{errors.password.message}</span>
                 </motion.p>
               )}
@@ -483,7 +564,7 @@ export function SignupForm() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Confirm Password *
               </label>
@@ -492,7 +573,7 @@ export function SignupForm() {
                   autoComplete="new-password"
                   {...register("confirmPassword")}
                   type={showConfirmPassword ? "text" : "password"}
-                  className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
+                  className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.confirmPassword
                       ? "border-red-300"
                       : "border-gray-300"
@@ -502,12 +583,12 @@ export function SignupForm() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-150"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-150"
                 >
                   {showConfirmPassword ? (
-                    <EyeOff className="w-5 h-5" />
+                    <EyeOff className="w-4 h-4" />
                   ) : (
-                    <Eye className="w-5 h-5" />
+                    <Eye className="w-4 h-4" />
                   )}
                 </button>
               </div>
@@ -515,46 +596,14 @@ export function SignupForm() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                  className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-3 h-3" />
                   <span>{errors.confirmPassword.message}</span>
                 </motion.p>
               )}
             </div>
 
-            {/* Plan Selection */}
-            <div>
-              <label
-                htmlFor="plan"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Select Plan *
-              </label>
-              <select
-                {...register("plan")}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 ${
-                  errors.plan ? "border-red-300" : "border-gray-300"
-                }`}
-              >
-                <option value="">Choose your plan</option>
-                {planOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {errors.plan && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="mt-1 text-sm text-red-600 flex items-center space-x-1"
-                >
-                  <AlertCircle className="w-4 h-4" />
-                  <span>{errors.plan.message}</span>
-                </motion.p>
-              )}
-            </div>
 
             {/* Terms and Conditions */}
             <div>
@@ -562,7 +611,7 @@ export function SignupForm() {
                 <input
                   {...register("acceptTerms")}
                   type="checkbox"
-                  className="mt-1 w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                  className="mt-0.5 w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 />
                 <span className="text-sm text-gray-700">
                   I agree to the{" "}
@@ -587,9 +636,9 @@ export function SignupForm() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-1 text-sm text-red-600 flex items-center space-x-1"
+                  className="mt-1 text-xs text-red-600 flex items-center space-x-1"
                 >
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-3 h-3" />
                   <span>{errors.acceptTerms.message}</span>
                 </motion.p>
               )}
@@ -599,16 +648,16 @@ export function SignupForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-4 rounded-lg hover:shadow-lg transition-all duration-150 transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
+              className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-150 transform hover:scale-105 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   <span>Creating Account...</span>
                 </>
               ) : (
                 <>
-                  <UserPlus className="w-5 h-5" />
+                  <UserPlus className="w-4 h-4" />
                   <span>Create Account</span>
                 </>
               )}
