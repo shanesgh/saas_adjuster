@@ -38,7 +38,6 @@ export const ReviewForm = () => {
 
       const token = await getToken();
       if (token) {
-        apiClient.setToken(token);
         const claimData = {
           claimNumber,
           insuredName: formData.insured,
@@ -67,7 +66,7 @@ export const ReviewForm = () => {
           status: "pending",
         };
 
-        const response = await apiClient.createClaim(claimData);
+        const response = await createClaim(claimData, token);
         console.log("Saved claim:", response);
         alert("Report saved successfully!");
       }
@@ -93,7 +92,6 @@ export const ReviewForm = () => {
 
       const token = await getToken();
       if (token) {
-        apiClient.setToken(token);
         const claimData = {
           claimNumber,
           insuredName: formData.insured,
@@ -122,7 +120,7 @@ export const ReviewForm = () => {
           status: "review",
         };
 
-        const response = await apiClient.createClaim(claimData);
+        const response = await createClaim(claimData, token);
         console.log("Sent for review:", response);
         alert("Report sent for review successfully!");
       }

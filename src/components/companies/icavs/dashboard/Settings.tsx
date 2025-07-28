@@ -16,11 +16,13 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { generatePin } from "@/lib/api";
+import { useAuth } from "@clerk/clerk-react";
 
 type Role = User["role"];
 
 export const Settings = () => {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { users, addUser, removeUser } = useUserStore();
   const [showAddUser, setShowAddUser] = useState(false);
   const [newUser, setNewUser] = useState<{
@@ -50,12 +52,13 @@ export const Settings = () => {
   const companyUsers = users.filter((u) => u.company === company);
   const handleAddUser = async () => {
     try {
+      const token = await getToken();
       const result = await generatePin({
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         role: newUser.role,
         userId: user?.id,
-      });
+      }, token);
 
       if (!result || !result.success) {
         console.warn("Failed to generate PIN");
