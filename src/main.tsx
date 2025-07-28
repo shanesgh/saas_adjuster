@@ -6,7 +6,7 @@ import { routeTree } from "./routeTree.gen";
 import "./index.css";
 
 const PUBLISHABLE_KEY =
-  import.meta.env.CLERK_PUBLISHABLE_KEY ||
+  import.meta.env.VITE_CLERK_PUBLISHABLE_KEY ||
   "pk_test_bW9kZXJuLXBhcnJvdC05MS5jbGVyay5hY2NvdW50cy5kZXYk";
 
 if (!PUBLISHABLE_KEY) {

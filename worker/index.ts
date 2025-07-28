@@ -1,29 +1,29 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { logger } from "hono/logger";
 import usersApi from "./routes/users";
 import claimsApi from "./routes/claims";
 import notesApi from "./routes/notes";
 import reportsApi from "./routes/reports";
 import companyApi from "./routes/company";
 
-// ✅ Shared type for environment bindings
-export type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
+// Load environment variables
+import 'dotenv/config';
 
-// ✅ App instance with typed bindings
-export const app = new Hono<{ Bindings: Bindings; Variables: {} }>();
+// ✅ App instance
+export const app = new Hono();
+
+// 📝 Logger middleware
+app.use("*", logger());
 
 // 🔐 CORS middleware
 app.use(
   "*",
   cors({
     origin: [
+      "http://localhost:5173",
       "http://localhost:4173",
-      "https://zenassess.YOUR-SUBDOMAIN.workers.dev",
+      "http://localhost:3000",
     ],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
@@ -31,9 +31,14 @@ app.use(
 );
 
 // 🫀 Health check
-app.get("/health", (c) =>
-  c.json({ status: "ok", timestamp: new Date().toISOString() })
-);
+app.get("/health", (c) => {
+  return c.json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    environment: "node",
+    database: process.env.NEON_DATABASE_URL ? "connected" : "not configured"
+  });
+});
 
 // 🧩 Route mounting (modular, circular-safe)
 app.route("/api/users", usersApi);
@@ -56,7 +61,5 @@ app.onError((err, c) => {
   return c.json({ error: "Internal server error" }, 500);
 });
 
-// 🪄 Cloudflare Worker export
-export default {
-  fetch: app.fetch,
-};
+// Export for Node.js server
+export default app;

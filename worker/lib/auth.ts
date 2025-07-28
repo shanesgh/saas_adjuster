@@ -1,12 +1,6 @@
 import { createClerkClient } from "@clerk/backend";
 import { Context } from "hono";
 
-type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
 interface SessionClaims {
   sub: string;
   email?: string;
@@ -19,7 +13,7 @@ export function createAuth(secretKey: string) {
 }
 
 export async function getAuthUser(
-  c: Context<{ Bindings: Bindings; Variables: {} }>
+  c: Context
 ): Promise<null | {
   user: SessionClaims;
   clerkClient: ReturnType<typeof createAuth>;
@@ -31,11 +25,11 @@ export async function getAuthUser(
     return null;
   }
 
-  const clerkClient = createAuth(c.env.CLERK_SECRET_KEY);
+  const clerkClient = createAuth(process.env.CLERK_SECRET_KEY!);
 
   try {
     const session = await clerkClient.authenticateRequest(c.req.raw, {
-      publishableKey: c.env.CLERK_PUBLISHABLE_KEY,
+      publishableKey: process.env.CLERK_PUBLISHABLE_KEY!,
     });
 
     if (!session.isAuthenticated) {
@@ -57,7 +51,7 @@ export async function getAuthUser(
 }
 
 export async function requireAuth(
-  c: Context<{ Bindings: Bindings; Variables: {} }>
+  c: Context
 ): Promise<null | {
   user: SessionClaims;
   clerkClient: ReturnType<typeof createAuth>;

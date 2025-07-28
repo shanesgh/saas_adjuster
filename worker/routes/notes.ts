@@ -102,14 +102,8 @@ import { createDb, claimNotes, users } from "../db/index";
 import { requireAuth } from "../lib/auth";
 import { createNoteSchema } from "../lib/validation";
 
-type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
 
-const notesApi = new Hono<{ Bindings: Bindings; Variables: {} }>();
+const notesApi = new Hono();
 
 // Get note history for a claim section
 notesApi.get("/:claimId/:section/history", async (c) => {
@@ -118,7 +112,7 @@ notesApi.get("/:claimId/:section/history", async (c) => {
 
   const claimId = c.req.param("claimId");
   const section = c.req.param("section");
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   const noteHistory = await db
     .select()
@@ -139,7 +133,7 @@ notesApi.post("/", async (c) => {
 
   const body = await c.req.json();
   const data = createNoteSchema.parse(body);
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   const user = await db
     .select()

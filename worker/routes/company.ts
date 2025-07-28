@@ -4,18 +4,12 @@ import { createCompanySchema } from "@worker/lib/validation";
 import { createAuth } from "@worker/lib/auth";
 import { Hono } from "hono";
 
-type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
 
-const companyApi = new Hono<{ Bindings: Bindings; Variables: {} }>();
+const companyApi = new Hono();
 
 companyApi.post("/", async (c) => {
   let companyId: string | null = null;
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   try {
     const body = await c.req.json();
@@ -63,7 +57,7 @@ companyApi.post("/", async (c) => {
 
     // 🔐 Update existing Clerk user with privateMetadata
     try {
-      const clerkClient = createAuth(c.env.CLERK_SECRET_KEY);
+      const clerkClient = createAuth(process.env.CLERK_SECRET_KEY!);
       console.log("🔐 Updating Clerk user metadata...");
 
       await clerkClient.users.updateUser(data.userId, {

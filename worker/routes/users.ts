@@ -4,16 +4,7 @@ import { requireAuth } from "../lib/auth";
 import { createUserSchema, pinValidationSchema } from "../lib/validation";
 import { Hono } from "hono";
 
-type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
-const usersApi = new Hono<{
-  Bindings: Bindings;
-  Variables: {};
-}>();
+const usersApi = new Hono();
 
 usersApi.get("/profile", async (c) => {
   try {
@@ -21,7 +12,7 @@ usersApi.get("/profile", async (c) => {
     if (!res) return c.json({ error: "Unauthorized" }, 401);
     const { user: auth } = res;
 
-    const db = createDb(c.env.NEON_DATABASE_URL);
+    const db = createDb(process.env.NEON_DATABASE_URL!);
 
     const user = await db
       .select({
@@ -60,7 +51,7 @@ usersApi.post("/", async (c) => {
     const body = await c.req.json();
     const data = createUserSchema.parse(body);
 
-    const db = createDb(c.env.NEON_DATABASE_URL);
+    const db = createDb(process.env.NEON_DATABASE_URL!);
 
     const currentUser = await db
       .select()
@@ -100,7 +91,7 @@ usersApi.post("/generate-pin", async (c) => {
     if (!userId) {
       return c.json({ error: "userId is required" }, 400);
     }
-    const db = createDb(c.env.NEON_DATABASE_URL);
+    const db = createDb(process.env.NEON_DATABASE_URL!);
     const generateMixedCasePIN = () => {
       const chars =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -150,7 +141,7 @@ usersApi.post("/validate-pin", async (c) => {
     const body = await c.req.json();
     const { firstName, lastName, company, pin } =
       pinValidationSchema.parse(body);
-    const db = createDb(c.env.NEON_DATABASE_URL);
+    const db = createDb(process.env.NEON_DATABASE_URL!);
 
     // 🔍 Lookup company
     const companyRecord = await db

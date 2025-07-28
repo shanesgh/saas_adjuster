@@ -3,21 +3,15 @@ import { createDb, reports, claims, users } from "../db/index";
 import { requireAuth } from "../lib/auth";
 import { Hono } from "hono";
 
-type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
 
-const reportsApi = new Hono<{ Bindings: Bindings; Variables: {} }>();
+const reportsApi = new Hono();
 // Get all reports for company
 reportsApi.get("/", async (c) => {
   const res = await requireAuth(c);
   if (!res) return c.json({ error: "Unauthorized" }, 401);
   const { user: auth } = res;
 
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   // Get user to find company
   const user = await db
@@ -47,7 +41,7 @@ reportsApi.post("/generate/:claimId", async (c) => {
   const { user: auth } = res;
 
   const claimId = c.req.param("claimId");
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   // Get user
   const user = await db

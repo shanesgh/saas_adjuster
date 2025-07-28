@@ -8,21 +8,15 @@ import {
 } from "../lib/validation";
 import { Hono } from "hono";
 
-type Bindings = {
-  NEON_DATABASE_URL: string;
-  CLERK_SECRET_KEY: string;
-  CLERK_PUBLISHABLE_KEY: string;
-  ASSETS: Fetcher;
-};
 
-const claimsApi = new Hono<{ Bindings: Bindings; Variables: {} }>();
+const claimsApi = new Hono();
 // Get all claims for company
 claimsApi.get("/", async (c) => {
   const res = await requireAuth(c);
   if (!res) return c.json({ error: "Unauthorized" }, 401);
   const { user: auth } = res;
 
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   // Get user to find company
   const user = await db
@@ -50,7 +44,7 @@ claimsApi.get("/:id", async (c) => {
   if (!auth) return c.json({ error: "Unauthorized" }, 401);
 
   const claimId = c.req.param("id");
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   const claim = await db
     .select()
@@ -92,7 +86,7 @@ claimsApi.post("/", async (c) => {
   const body = await c.req.json();
   const data = createClaimSchema.parse(body);
 
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
   const clerkUserId = auth.sub;
 
   // 🔍 Fetch full user object from Clerk
@@ -156,7 +150,7 @@ claimsApi.put("/:id", async (c) => {
   const body = await c.req.json();
   const data = updateClaimSchema.parse(body);
 
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   const updatedClaim = await db
     .update(claims)
@@ -184,7 +178,7 @@ claimsApi.put("/:id/status", async (c) => {
   const body = await c.req.json();
   const data = updateClaimStatusSchema.parse(body);
 
-  const db = createDb(c.env.NEON_DATABASE_URL);
+  const db = createDb(process.env.NEON_DATABASE_URL!);
 
   // Get user to check role - if user doesn't exist in DB, assume owner role for testing
   const user = await db
