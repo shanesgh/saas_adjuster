@@ -1,13 +1,28 @@
 import { serve } from '@hono/node-server';
-import app from './worker/index.js';
+import { config } from 'dotenv';
 
-const port = process.env.PORT || 8888;
+// Load environment variables
+config();
 
-console.log(`🚀 Server starting on port ${port}`);
+// Import the app using dynamic import to handle TypeScript
+async function startServer() {
+  try {
+    const { app } = await import('./worker/index.ts');
+    
+    const port = process.env.PORT || 8888;
+    
+    console.log(`🚀 Server starting on port ${port}`);
+    
+    serve({
+      fetch: app.fetch,
+      port: parseInt(port.toString()),
+    });
+    
+    console.log(`✅ Server running at http://localhost:${port}`);
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
-serve({
-  fetch: app.fetch,
-  port: port,
-});
-
-console.log(`✅ Server running at http://localhost:${port}`);
+startServer();
