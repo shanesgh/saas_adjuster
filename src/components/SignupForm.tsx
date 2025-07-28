@@ -120,7 +120,9 @@ export function SignupForm() {
 
         console.log("Sending company data:", companyData);
 
-        const res = await createCompany(companyData, userId);
+        // Get token for API call
+        const token = await signUpResult.createdSessionId;
+        const res = await createCompany(companyData, userId, token);
 
         if (!res.success) {
           if (res.error === "Company already exists") {
