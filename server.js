@@ -1,5 +1,5 @@
 import { serve } from '@hono/node-server';
-import { app } from './worker/index.ts';
+import { app } from './worker/index';
 
 const port = process.env.PORT || 8888;
 
