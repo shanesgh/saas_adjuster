@@ -8,8 +8,16 @@ import { UserPlus, AlertCircle, Eye, EyeOff, LogIn } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { PrivacyModal } from "./PrivacyModal";
 import { TermsModal } from "./TermsModal";
-import { PinLoginForm } from "./PinLoginForm";
 import { createCompany } from "@/lib/api";
+
+// Country codes with validation
+const countryCodes = [
+  { code: "+1", country: "US/CA", digits: 10, flag: "🇺🇸" },
+  { code: "+44", country: "UK", digits: 10, flag: "🇬🇧" },
+  { code: "+1868", country: "TT", digits: 7, flag: "🇹🇹" },
+  { code: "+1876", country: "JM", digits: 7, flag: "🇯🇲" },
+  { code: "+1246", country: "BB", digits: 7, flag: "🇧🇧" },
+];
 
 const signupSchema = z
   .object({
@@ -30,12 +38,8 @@ const signupSchema = z
         "Password must contain at least one uppercase letter, one lowercase letter, and one number"
       ),
     confirmPassword: z.string(),
-    phoneNumber: z
-      .string()
-      .regex(
-        /^\+(?:[0-9] ?){6,14}[0-9]$/,
-        "Phone number may start with '+' and but must contain 7–15 digits, optionally separated by spaces"
-      ),
+    countryCode: z.string().min(1, "Please select country code"),
+    phoneNumber: z.string().min(1, "Phone number is required"),
     company: z
       .string()
       .min(2, "Company name must be at least 2 characters")
@@ -55,6 +59,15 @@ const signupSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
+  })
+  .refine((data) => {
+    const country = countryCodes.find(c => c.code === data.countryCode);
+    if (!country) return false;
+    const phoneRegex = new RegExp(`^\\d{${country.digits}}$`);
+    return phoneRegex.test(data.phoneNumber.replace(/\s/g, ''));
+  }, {
+    message: "Invalid phone number for selected country",
+    path: ["phoneNumber"],
   });
 
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -63,7 +76,6 @@ export function SignupForm() {
   const { signUp, setActive } = useSignUp();
   const { isSignedIn } = useAuth();
   const navigate = useNavigate();
-  const [showLogin, setShowLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -75,9 +87,13 @@ export function SignupForm() {
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
+    setValue,
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     mode: "onChange",
+    defaultValues: {
+      countryCode: "+1868", // Default to Trinidad
+    },
   });
 
   const planOptions = [
@@ -87,11 +103,16 @@ export function SignupForm() {
     { value: "enterprise", label: "Enterprise - $6,200/year" },
   ];
 
+  const watchedCountryCode = watch("countryCode");
+  const selectedCountry = countryCodes.find(c => c.code === watchedCountryCode);
+
   const onSubmit = async (data: SignupFormData) => {
     console.log("Form values on submit:", data);
     setSignupError(""); // Clear previous errors
 
     try {
+      const fullPhoneNumber = data.countryCode + data.phoneNumber.replace(/\s/g, '');
+      
       // Step 1: Create Clerk user
       const signUpResult = await signUp?.create({
         emailAddress: data.email,
@@ -112,7 +133,7 @@ export function SignupForm() {
           last_name: data.last_name,
           email: data.email,
           company_name: data.company,
-          phone: data.phoneNumber,
+          phone: fullPhoneNumber,
           plan: data.plan,
           userId: userId,
           address: data.address,
@@ -204,41 +225,6 @@ export function SignupForm() {
 
   const passwordStrength = getPasswordStrength(watchedPassword);
 
-  if (showLogin) {
-    return (
-      <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gradient mb-4">
-            Welcome Back
-          </h1>
-          <p className="text-gray-600">Sign in to your account</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow-xl p-6">
-          <div className="text-center mb-4">
-            <LogIn className="w-8 h-8 text-primary-500 mx-auto mb-2" />
-            <h2 className="text-xl font-bold text-gray-900">Sign In</h2>
-          </div>
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">Use Clerk sign-in for returning users</p>
-            <button
-              onClick={() => setShowLogin(false)}
-              className="text-primary-600 hover:text-primary-700 underline"
-            >
-              Back to Sign Up
-            </button>
-          </div>
-        </div>
-        <div className="text-center mt-4">
-          <button
-            onClick={() => setShowLogin(false)}
-            className="text-primary-600 hover:text-primary-700 underline"
-          >
-            Need to create an account?
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -248,29 +234,13 @@ export function SignupForm() {
         transition={{ duration: 0.4 }}
         className="max-w-md mx-auto"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-xl p-4 border border-gray-100">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="text-center mb-4">
+            <div className="text-center mb-3">
               <UserPlus className="w-8 h-8 text-primary-500 mx-auto mb-2" />
               <h2 className="text-2xl font-bold text-gray-900">
                 Create Account
               </h2>
-              <div className="flex justify-center space-x-2 mt-3">
-                <button
-                  type="button"
-                  className="bg-primary-500 text-white px-3 py-1.5 rounded-lg text-sm"
-                >
-                  Create Account
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowLogin(true)}
-                  className="bg-gray-500 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1 text-sm"
-                >
-                  <LogIn className="w-3 h-3" />
-                  <span>Login</span>
-                </button>
-              </div>
             </div>
 
             {/* Display signup error */}
@@ -278,7 +248,7 @@ export function SignupForm() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-red-50 border border-red-200 rounded-lg p-3"
+                className="bg-red-50 border border-red-200 rounded-lg p-2"
               >
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 text-red-500" />
@@ -287,7 +257,7 @@ export function SignupForm() {
               </motion.div>
             )}
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {/* First Name */}
               <div>
                 <label
@@ -300,7 +270,7 @@ export function SignupForm() {
                   autoComplete="given-name"
                   {...register("first_name")}
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
+                  className={`w-full px-2 py-1.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.first_name ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="John"
@@ -329,7 +299,7 @@ export function SignupForm() {
                   autoComplete="family-name"
                   {...register("last_name")}
                   type="text"
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
+                  className={`w-full px-2 py-1.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.last_name ? "border-red-300" : "border-gray-300"
                   }`}
                   placeholder="Doe"
@@ -434,26 +404,36 @@ export function SignupForm() {
               )}
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {/* Phone Number */}
               <div>
                 <label
-                  htmlFor="phoneNumber"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Phone Number *
                 </label>
-                <input
-                  id="phoneNumber"
-                  autoComplete="tel"
-                  {...register("phoneNumber")}
-                  type="tel"
-                  inputMode="tel"
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
-                    errors.phoneNumber ? "border-red-300" : "border-gray-300"
-                  }`}
-                  placeholder="+18685551212"
-                />
+                <div className="flex">
+                  <select
+                    {...register("countryCode")}
+                    className="px-2 py-1.5 border border-r-0 rounded-l-lg focus:ring-2 focus:ring-primary-500 text-sm bg-gray-50"
+                  >
+                    {countryCodes.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.flag} {country.code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    {...register("phoneNumber")}
+                    type="tel"
+                    inputMode="numeric"
+                    className={`flex-1 px-2 py-1.5 border rounded-r-lg focus:ring-2 focus:ring-primary-500 text-sm ${
+                      errors.phoneNumber ? "border-red-300" : "border-gray-300"
+                    }`}
+                    placeholder={selectedCountry ? `${'0'.repeat(selectedCountry.digits)}` : "Phone number"}
+                    maxLength={selectedCountry?.digits || 10}
+                  />
+                </div>
                 {errors.phoneNumber && (
                   <motion.p
                     initial={{ opacity: 0 }}
@@ -462,6 +442,16 @@ export function SignupForm() {
                   >
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.phoneNumber.message}</span>
+                  </motion.p>
+                )}
+                {errors.countryCode && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-1 text-xs text-red-600 flex items-center space-x-1"
+                  >
+                    <AlertCircle className="w-3 h-3" />
+                    <span>{errors.countryCode.message}</span>
                   </motion.p>
                 )}
               </div>
@@ -476,7 +466,7 @@ export function SignupForm() {
                 </label>
                 <select
                   {...register("plan")}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
+                  className={`w-full px-2 py-1.5 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-150 text-sm ${
                     errors.plan ? "border-red-300" : "border-gray-300"
                   }`}
                 >

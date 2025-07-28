@@ -53,3 +53,17 @@ export const generateReportSchema = z.object({
   claimId: z.string().uuid(),
   pdfData: z.string().min(1),
 });
+
+export const pinValidationSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  company: z.string().min(1),
+  pin: z.string().min(1),
+});
+
+export const generatePinSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  role: z.enum(["adjuster", "clerical"]),
+  companyId: z.string().uuid(),
+});

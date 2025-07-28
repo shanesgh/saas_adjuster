@@ -28,6 +28,90 @@ export const companies = pgTable("companies", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Company PINs table
+export const companyPins = pgTable(
+  "company_pins",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id").references(() => companies.id, {
+      onDelete: "cascade",
+    }),
+    createdBy: varchar("created_by", { length: 255 }).notNull(),
+    firstName: varchar("first_name", { length: 100 }).notNull(),
+    lastName: varchar("last_name", { length: 100 }).notNull(),
+    userRole: varchar("user_role", { length: 50 }).notNull(),
+    pin: varchar("pin", { length: 10 }).notNull(),
+    usesRemaining: integer("uses_remaining").default(3),
+    maxUses: integer("max_uses").default(3),
+    createdAt: timestamp("created_at").defaultNow(),
+    expiresAt: timestamp("expires_at").notNull(),
+    lockedUntil: timestamp("locked_until"),
+    failedAttempts: integer("failed_attempts").default(0),
+  },
+  (table) => [
+    index("company_pins_company_id_idx").on(table.companyId),
+    index("company_pins_expires_at_idx").on(table.expiresAt),
+    index("company_pins_created_by_idx").on(table.createdBy),
+    uniqueIndex("company_pins_unique_active").on(
+      table.companyId,
+      table.firstName,
+      table.lastName
+    ),
+    index("company_pins_lookup_idx").on(
+      table.companyId,
+      table.firstName,
+      table.lastName,
+      table.pin
+    ),
+  ]
+);
+
+// Claim Notes table
+export const claimNotes = pgTable(
+  "claim_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    claimId: uuid("claim_id").references(() => claims.id, {
+      onDelete: "cascade",
+    }),
+    section: varchar("section", { length: 100 }).notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => [
+    index("claim_notes_claim_id_idx").on(table.claimId),
+  ]
+);
+
+// Invoices table
+export const invoices = pgTable(
+  "invoices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    companyId: uuid("company_id").references(() => companies.id, {
+      onDelete: "cascade",
+    }),
+    claimId: uuid("claim_id").references(() => claims.id),
+    invoiceNumber: varchar("invoice_number", { length: 100 }).notNull().unique(),
+    invoiceDate: timestamp("invoice_date").notNull(),
+    dueDate: timestamp("due_date"),
+    billToName: varchar("bill_to_name", { length: 255 }).notNull(),
+    billToAddress: text("bill_to_address").notNull(),
+    subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
+    vatRate: decimal("vat_rate", { precision: 5, scale: 2 }).default("12.5"),
+    vatAmount: decimal("vat_amount", { precision: 10, scale: 2 }).notNull(),
+    totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+    lineItems: jsonb("line_items").notNull().default([]),
+    status: varchar("status", { length: 50 }).default("draft"),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => [
+    index("invoices_company_id_idx").on(table.companyId),
+    uniqueIndex("invoices_invoice_number_idx").on(table.invoiceNumber),
+  ]
+);
+
 
 // Claims table - main entity with embedded data for minimal queries
 export const claims = pgTable(
@@ -133,12 +217,39 @@ export const reports = pgTable(
 export const companiesRelations = relations(companies, ({ many }) => ({
   claims: many(claims),
   reports: many(reports),
+  pins: many(companyPins),
+  invoices: many(invoices),
 }));
 
-export const claimsRelations = relations(claims, ({ one }) => ({
+export const claimsRelations = relations(claims, ({ one, many }) => ({
   company: one(companies, {
     fields: [claims.companyId],
     references: [companies.id],
   }),
+  notes: many(claimNotes),
 }));
 
+export const companyPinsRelations = relations(companyPins, ({ one }) => ({
+  company: one(companies, {
+    fields: [companyPins.companyId],
+    references: [companies.id],
+  }),
+}));
+
+export const claimNotesRelations = relations(claimNotes, ({ one }) => ({
+  claim: one(claims, {
+    fields: [claimNotes.claimId],
+    references: [claims.id],
+  }),
+}));
+
+export const invoicesRelations = relations(invoices, ({ one }) => ({
+  company: one(companies, {
+    fields: [invoices.companyId],
+    references: [companies.id],
+  }),
+  claim: one(claims, {
+    fields: [invoices.claimId],
+    references: [claims.id],
+  }),
+}));

@@ -53,11 +53,18 @@ export const Settings = () => {
   const handleAddUser = async () => {
     try {
       const token = await getToken();
+      const companyId = user?.privateMetadata?.companyId as string;
+      
+      if (!companyId) {
+        alert("Company ID not found");
+        return;
+      }
+      
       const result = await generatePin({
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         role: newUser.role,
-        userId: user?.id,
+        companyId: companyId,
       }, token);
 
       if (!result || !result.success) {
@@ -67,19 +74,7 @@ export const Settings = () => {
 
       console.log(`PIN created:`);
 
-      // Optionally show PIN in UI
-      const updatedUser = {
-        ...newUser,
-        company,
-        pin: result.pin,
-        isRegistered: false, // assuming they haven't signed up yet
-        id: user?.id,
-        pinExpiry: new Date().getDate() + 5, // again: this must be the new user's ID
-      };
-
-      addUser(updatedUser); // 💡 Inject the user with PIN into your store
-
-      // setExpiry(result.expiresAt);
+      alert(`PIN generated: ${result.pin}\nExpires: ${new Date(result.expiresAt).toLocaleDateString()}`);
     } catch (err) {
       console.error("Error generating PIN:", err);
       console.warn("Something went wrong while generating the PIN.");
