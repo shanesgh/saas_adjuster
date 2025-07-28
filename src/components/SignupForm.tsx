@@ -399,7 +399,7 @@ export function SignupForm() {
               )}
             </div>
             
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-4">
               {/* Phone Number */}
               <div>
                 <label
